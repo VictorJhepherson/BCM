@@ -2,12 +2,11 @@ export { mockData } from './data';
 export { mockHelpers } from './helpers';
 
 export type {
-  MockControllerProps,
-  MockMapperProps,
-  MockRepositoryProps,
-  MockServiceProps,
+  ControllerMockProps,
+  MapperMockProps,
+  RepositoryMockProps,
+  ServiceMockProps,
 } from './context/context.mocks.types';
 
-export type { MockLanguage, MockProject, MockTranslation } from './data';
-
-export { MockDataFactory, MockFactory } from './factories/factories.mocks';
+export type { LanguageMock, ProjectMock, TranslationMock } from './data';
+export { MockDataFactory, MockMethodFactory } from './factories/';

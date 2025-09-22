@@ -1,19 +1,19 @@
 import { Project } from '@shared/models';
 import {
+  MapperMockProps,
   MockDataFactory,
-  MockMapperProps,
-  MockProject,
+  ProjectMock,
   mockData,
 } from '@shared/testing';
 import { ProjectMapper } from './projects.mapper';
 
-const { data } = new MockDataFactory<MockProject>(mockData.factory.project)
+const { data } = new MockDataFactory<ProjectMock>(mockData.factory.project)
   .select<'data', Required<Project>>('data')
-  .addData('_id', mockData.values.mongo._id)
-  .createMock();
+  .add('_id', mockData.values.mongo._id)
+  .build();
 
 describe('[mappers] - ProjectMapper', () => {
-  const context = {} as MockMapperProps<ProjectMapper>;
+  const context = {} as MapperMockProps<ProjectMapper>;
 
   beforeEach(() => {
     context.mapper = new ProjectMapper();

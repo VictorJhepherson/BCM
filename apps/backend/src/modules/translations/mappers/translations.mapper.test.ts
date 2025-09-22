@@ -1,24 +1,24 @@
 import { PopulateTranslation } from '@shared/models';
 import {
+  MapperMockProps,
   mockData,
   MockDataFactory,
-  MockMapperProps,
-  MockTranslation,
+  TranslationMock,
 } from '@shared/testing';
 import { TranslationMapper } from './translations.mapper';
 
-const { data } = new MockDataFactory<MockTranslation>(
+const { data } = new MockDataFactory<TranslationMock>(
   mockData.factory.translation,
 )
   .select<'data', PopulateTranslation>('data')
-  .addData('languageId', {
+  .add('languageId', {
     _id: mockData.values.mongo._id,
     language: mockData.values.language.language,
   })
-  .createMock();
+  .build();
 
 describe('[mappers] - TranslationMapper', () => {
-  const context = {} as MockMapperProps<TranslationMapper>;
+  const context = {} as MapperMockProps<TranslationMapper>;
 
   beforeEach(() => {
     context.mapper = new TranslationMapper();

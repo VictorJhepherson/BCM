@@ -1,10 +1,10 @@
 import { Test } from '@nestjs/testing';
 import {
+  LanguageMock,
   mockData,
   MockDataFactory,
-  MockFactory,
-  MockLanguage,
-  MockServiceProps,
+  MockMethodFactory,
+  ServiceMockProps,
 } from '@shared/testing';
 import { LanguageRepository } from '../repositories/languages.repository';
 import { LanguageService } from './languages.service';
@@ -17,15 +17,15 @@ jest.mock('../mappers/languages.mapper', () => ({
   })),
 }));
 
-const { dto, data, filter } = new MockDataFactory<MockLanguage>(
+const { dto, data, filter } = new MockDataFactory<LanguageMock>(
   mockData.factory.language,
 )
   .select('data')
-  .addData('id', mockData.values.mongo.id)
-  .createMock();
+  .add('id', mockData.values.mongo.id)
+  .build();
 
 describe('[services] - LanguageService', () => {
-  const context = {} as MockServiceProps<LanguageService, LanguageRepository>;
+  const context = {} as ServiceMockProps<LanguageService, LanguageRepository>;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -34,12 +34,12 @@ describe('[services] - LanguageService', () => {
         {
           provide: LanguageRepository,
           useFactory: () =>
-            new MockFactory<LanguageRepository>()
-              .addMethod('getAll', jest.fn())
-              .addMethod('addLanguage', jest.fn())
-              .addMethod('editLanguage', jest.fn())
-              .addMethod('removeLanguage', jest.fn())
-              .createMock(),
+            new MockMethodFactory<LanguageRepository>()
+              .add('getAll', jest.fn())
+              .add('addLanguage', jest.fn())
+              .add('editLanguage', jest.fn())
+              .add('removeLanguage', jest.fn())
+              .build(),
         },
       ],
     }).compile();

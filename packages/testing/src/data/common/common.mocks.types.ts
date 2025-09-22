@@ -13,7 +13,7 @@ export type ValuesType = {
   translation: ITranslation;
 };
 
-export type MockData<T, D, F> = {
+export type DataMock<T, D, F> = {
   dto: T;
   data: D;
   filter: F;

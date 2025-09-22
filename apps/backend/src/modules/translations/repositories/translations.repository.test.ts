@@ -4,23 +4,23 @@ import { TranslationEntity } from '@shared/models';
 import {
   mockData,
   MockDataFactory,
-  MockFactory,
-  MockRepositoryProps,
-  MockTranslation,
+  MockMethodFactory,
+  RepositoryMockProps,
+  TranslationMock,
 } from '@shared/testing';
 import { Model } from 'mongoose';
 import util from 'node:util';
 import { TranslationRepository } from './translations.repository';
 
-const { dto, data, filter } = new MockDataFactory<MockTranslation>(
+const { dto, data, filter } = new MockDataFactory<TranslationMock>(
   mockData.factory.translation,
 )
   .select('data')
-  .addData('_id', mockData.values.mongo._id)
-  .createMock();
+  .add('_id', mockData.values.mongo._id)
+  .build();
 
 describe('[repositories] - TranslationRepository', () => {
-  const context = {} as MockRepositoryProps<
+  const context = {} as RepositoryMockProps<
     TranslationRepository,
     Model<TranslationEntity>
   >;
@@ -32,14 +32,14 @@ describe('[repositories] - TranslationRepository', () => {
         {
           provide: getModelToken(TranslationEntity.name),
           useFactory: () =>
-            new MockFactory<Model<TranslationEntity>>()
-              .addMethod('find', jest.fn())
-              .addMethod('create', jest.fn())
-              .addMethod('findOne', jest.fn())
-              .addMethod('deleteOne', jest.fn())
-              .addMethod('deleteMany', jest.fn())
-              .addMethod('findOneAndUpdate', jest.fn())
-              .createMock(),
+            new MockMethodFactory<Model<TranslationEntity>>()
+              .add('find', jest.fn())
+              .add('create', jest.fn())
+              .add('findOne', jest.fn())
+              .add('deleteOne', jest.fn())
+              .add('deleteMany', jest.fn())
+              .add('findOneAndUpdate', jest.fn())
+              .build(),
         },
       ],
     }).compile();

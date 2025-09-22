@@ -2,25 +2,25 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
 import { LanguageEntity } from '@shared/models';
 import {
+  LanguageMock,
   MockDataFactory,
-  MockFactory,
-  MockLanguage,
-  MockRepositoryProps,
+  MockMethodFactory,
+  RepositoryMockProps,
   mockData,
 } from '@shared/testing';
 import { Model } from 'mongoose';
 import util from 'node:util';
 import { LanguageRepository } from './languages.repository';
 
-const { dto, data, filter } = new MockDataFactory<MockLanguage>(
+const { dto, data, filter } = new MockDataFactory<LanguageMock>(
   mockData.factory.language,
 )
   .select('data')
-  .addData('_id', mockData.values.mongo._id)
-  .createMock();
+  .add('_id', mockData.values.mongo._id)
+  .build();
 
 describe('[repositories] - LanguageRepository', () => {
-  const context = {} as MockRepositoryProps<
+  const context = {} as RepositoryMockProps<
     LanguageRepository,
     Model<LanguageEntity>
   >;
@@ -32,12 +32,12 @@ describe('[repositories] - LanguageRepository', () => {
         {
           provide: getModelToken(LanguageEntity.name),
           useFactory: () =>
-            new MockFactory<Model<LanguageEntity>>()
-              .addMethod('find', jest.fn())
-              .addMethod('create', jest.fn())
-              .addMethod('deleteOne', jest.fn())
-              .addMethod('findOneAndUpdate', jest.fn())
-              .createMock(),
+            new MockMethodFactory<Model<LanguageEntity>>()
+              .add('find', jest.fn())
+              .add('create', jest.fn())
+              .add('deleteOne', jest.fn())
+              .add('findOneAndUpdate', jest.fn())
+              .build(),
         },
       ],
     }).compile();

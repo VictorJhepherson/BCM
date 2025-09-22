@@ -1,19 +1,19 @@
 import { AddLanguageDTO, EditLanguageDTO, Language } from '@shared/models';
 import { Types } from 'mongoose';
-import { MockData } from '../common/common.mocks.types';
+import { DataMock } from '../common/common.mocks.types';
 
-export type MockLanguageData = Partial<Language>;
-export type MockLanguageDTO = {
+export type LanguageMockData = Partial<Language>;
+export type LanguageMockDTO = {
   add: AddLanguageDTO;
   edit: EditLanguageDTO;
 };
 
-export type MockLanguageFilter = {
+export type LanguageMockFilter = {
   id: Types.ObjectId;
 };
 
-export type MockLanguage = MockData<
-  MockLanguageDTO,
-  MockLanguageData,
-  MockLanguageFilter
+export type LanguageMock = DataMock<
+  LanguageMockDTO,
+  LanguageMockData,
+  LanguageMockFilter
 >;

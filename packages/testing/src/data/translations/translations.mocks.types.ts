@@ -4,21 +4,21 @@ import {
   Translation,
 } from '@shared/models';
 import { Types } from 'mongoose';
-import { MockData } from '../common/common.mocks.types';
+import { DataMock } from '../common/common.mocks.types';
 
-export type MockTranslationData = Partial<Translation>;
-export type MockTranslationDTO = {
+export type TranslationMockData = Partial<Translation>;
+export type TranslationMockDTO = {
   add: AddTranslationDTO;
   edit: EditTranslationDTO;
 };
 
-export type MockTranslationFilter = {
+export type TranslationMockFilter = {
   projectId: Types.ObjectId;
   languageId: Types.ObjectId;
 };
 
-export type MockTranslation = MockData<
-  MockTranslationDTO,
-  MockTranslationData,
-  MockTranslationFilter
+export type TranslationMock = DataMock<
+  TranslationMockDTO,
+  TranslationMockData,
+  TranslationMockFilter
 >;

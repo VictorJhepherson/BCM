@@ -1,9 +1,9 @@
 import { Test } from '@nestjs/testing';
 import {
-  MockControllerProps,
+  ControllerMockProps,
   MockDataFactory,
-  MockFactory,
-  MockProject,
+  MockMethodFactory,
+  ProjectMock,
   mockData,
 } from '@shared/testing';
 import { ProjectService } from '../services/projects.service';
@@ -11,15 +11,15 @@ import { ProjectController } from './projects.controller';
 
 jest.mock('../services/projects.service');
 
-const { dto, data, filter } = new MockDataFactory<MockProject>(
+const { dto, data, filter } = new MockDataFactory<ProjectMock>(
   mockData.factory.project,
 )
   .select('data')
-  .addData('_id', mockData.values.mongo._id)
-  .createMock();
+  .add('_id', mockData.values.mongo._id)
+  .build();
 
 describe('[controllers] - ProjectController', () => {
-  const context = {} as MockControllerProps<ProjectController, ProjectService>;
+  const context = {} as ControllerMockProps<ProjectController, ProjectService>;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -28,12 +28,12 @@ describe('[controllers] - ProjectController', () => {
         {
           provide: ProjectService,
           useFactory: () =>
-            new MockFactory<ProjectService>()
-              .addMethod('getAll', jest.fn())
-              .addMethod('addProject', jest.fn())
-              .addMethod('editProject', jest.fn())
-              .addMethod('removeProject', jest.fn())
-              .createMock(),
+            new MockMethodFactory<ProjectService>()
+              .add('getAll', jest.fn())
+              .add('addProject', jest.fn())
+              .add('editProject', jest.fn())
+              .add('removeProject', jest.fn())
+              .build(),
         },
       ],
     }).compile();

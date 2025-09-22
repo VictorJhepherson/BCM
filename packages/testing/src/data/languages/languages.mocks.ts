@@ -1,13 +1,13 @@
 import { AddLanguageDTO, EditLanguageDTO } from '@shared/models';
 import { values } from '../common/common.mocks';
 import {
-  MockLanguage,
-  MockLanguageData,
-  MockLanguageDTO,
-  MockLanguageFilter,
+  LanguageMock,
+  LanguageMockData,
+  LanguageMockDTO,
+  LanguageMockFilter,
 } from './languages.mocks.types';
 
-const dto: MockLanguageDTO = {
+const dto: LanguageMockDTO = {
   add: Object.assign(new AddLanguageDTO(), {
     language: values.language.language,
     countries: values.language.countries,
@@ -17,16 +17,16 @@ const dto: MockLanguageDTO = {
   }),
 };
 
-const data: MockLanguageData = {
+const data: LanguageMockData = {
   language: values.language.language,
   countries: values.language.countries,
 };
 
-const filter: MockLanguageFilter = {
+const filter: LanguageMockFilter = {
   id: values.mongo._id,
 };
 
-export const language: MockLanguage = {
+export const language: LanguageMock = {
   dto,
   data,
   filter,

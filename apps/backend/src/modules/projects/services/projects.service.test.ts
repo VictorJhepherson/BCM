@@ -2,9 +2,9 @@ import { Test } from '@nestjs/testing';
 import {
   mockData,
   MockDataFactory,
-  MockFactory,
-  MockProject,
-  MockServiceProps,
+  MockMethodFactory,
+  ProjectMock,
+  ServiceMockProps,
 } from '@shared/testing';
 import { ProjectRepository } from '../repositories/projects.repository';
 import { ProjectService } from './projects.service';
@@ -17,15 +17,15 @@ jest.mock('../mappers/projects.mapper', () => ({
   })),
 }));
 
-const { dto, data, filter } = new MockDataFactory<MockProject>(
+const { dto, data, filter } = new MockDataFactory<ProjectMock>(
   mockData.factory.project,
 )
   .select('data')
-  .addData('_id', mockData.values.mongo._id)
-  .createMock();
+  .add('_id', mockData.values.mongo._id)
+  .build();
 
 describe('[services] - ProjectService', () => {
-  const context = {} as MockServiceProps<ProjectService, ProjectRepository>;
+  const context = {} as ServiceMockProps<ProjectService, ProjectRepository>;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -34,12 +34,12 @@ describe('[services] - ProjectService', () => {
         {
           provide: ProjectRepository,
           useFactory: () =>
-            new MockFactory<ProjectRepository>()
-              .addMethod('getAll', jest.fn())
-              .addMethod('addProject', jest.fn())
-              .addMethod('editProject', jest.fn())
-              .addMethod('removeProject', jest.fn())
-              .createMock(),
+            new MockMethodFactory<ProjectRepository>()
+              .add('getAll', jest.fn())
+              .add('addProject', jest.fn())
+              .add('editProject', jest.fn())
+              .add('removeProject', jest.fn())
+              .build(),
         },
       ],
     }).compile();

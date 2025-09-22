@@ -3,24 +3,24 @@ import { Test } from '@nestjs/testing';
 import { ProjectEntity } from '@shared/models';
 import {
   MockDataFactory,
-  MockFactory,
-  MockProject,
-  MockRepositoryProps,
+  MockMethodFactory,
+  ProjectMock,
+  RepositoryMockProps,
   mockData,
 } from '@shared/testing';
 import { Model } from 'mongoose';
 import util from 'node:util';
 import { ProjectRepository } from './projects.repository';
 
-const { dto, data, filter } = new MockDataFactory<MockProject>(
+const { dto, data, filter } = new MockDataFactory<ProjectMock>(
   mockData.factory.project,
 )
   .select('data')
-  .addData('_id', mockData.values.mongo._id)
-  .createMock();
+  .add('_id', mockData.values.mongo._id)
+  .build();
 
 describe('[repositories] - ProjectRepository', () => {
-  const context = {} as MockRepositoryProps<
+  const context = {} as RepositoryMockProps<
     ProjectRepository,
     Model<ProjectEntity>
   >;
@@ -32,12 +32,12 @@ describe('[repositories] - ProjectRepository', () => {
         {
           provide: getModelToken(ProjectEntity.name),
           useFactory: () =>
-            new MockFactory<Model<ProjectEntity>>()
-              .addMethod('find', jest.fn())
-              .addMethod('create', jest.fn())
-              .addMethod('deleteOne', jest.fn())
-              .addMethod('findOneAndUpdate', jest.fn())
-              .createMock(),
+            new MockMethodFactory<Model<ProjectEntity>>()
+              .add('find', jest.fn())
+              .add('create', jest.fn())
+              .add('deleteOne', jest.fn())
+              .add('findOneAndUpdate', jest.fn())
+              .build(),
         },
       ],
     }).compile();

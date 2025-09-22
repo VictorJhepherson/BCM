@@ -1,19 +1,19 @@
 import { Language } from '@shared/models';
 import {
-  MockDataFactory,
-  MockLanguage,
-  MockMapperProps,
+  LanguageMock,
+  MapperMockProps,
   mockData,
+  MockDataFactory,
 } from '@shared/testing';
 import { LanguageMapper } from './languages.mapper';
 
-const { data } = new MockDataFactory<MockLanguage>(mockData.factory.language)
+const { data } = new MockDataFactory<LanguageMock>(mockData.factory.language)
   .select<'data', Required<Language>>('data')
-  .addData('_id', mockData.values.mongo._id)
-  .createMock();
+  .add('_id', mockData.values.mongo._id)
+  .build();
 
 describe('[mappers] - LanguageMapper', () => {
-  const context = {} as MockMapperProps<LanguageMapper>;
+  const context = {} as MapperMockProps<LanguageMapper>;
 
   beforeEach(() => {
     context.mapper = new LanguageMapper();

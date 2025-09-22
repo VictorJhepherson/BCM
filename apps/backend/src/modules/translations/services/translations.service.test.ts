@@ -2,9 +2,9 @@ import { Test } from '@nestjs/testing';
 import {
   mockData,
   MockDataFactory,
-  MockFactory,
-  MockServiceProps,
-  MockTranslation,
+  MockMethodFactory,
+  ServiceMockProps,
+  TranslationMock,
 } from '@shared/testing';
 import { TranslationRepository } from '../repositories/translations.repository';
 import { TranslationService } from './translations.service';
@@ -18,15 +18,15 @@ jest.mock('../mappers/translations.mapper', () => ({
   })),
 }));
 
-const { dto, data, filter } = new MockDataFactory<MockTranslation>(
+const { dto, data, filter } = new MockDataFactory<TranslationMock>(
   mockData.factory.translation,
 )
   .select('data')
-  .addData('_id', mockData.values.mongo._id)
-  .createMock();
+  .add('_id', mockData.values.mongo._id)
+  .build();
 
 describe('[services] - TranslationService', () => {
-  const context = {} as MockServiceProps<
+  const context = {} as ServiceMockProps<
     TranslationService,
     TranslationRepository
   >;
@@ -38,14 +38,14 @@ describe('[services] - TranslationService', () => {
         {
           provide: TranslationRepository,
           useFactory: () =>
-            new MockFactory<TranslationRepository>()
-              .addMethod('getByProject', jest.fn())
-              .addMethod('getByLanguage', jest.fn())
-              .addMethod('addTranslation', jest.fn())
-              .addMethod('editTranslation', jest.fn())
-              .addMethod('removeByProject', jest.fn())
-              .addMethod('removeByLanguage', jest.fn())
-              .createMock(),
+            new MockMethodFactory<TranslationRepository>()
+              .add('getByProject', jest.fn())
+              .add('getByLanguage', jest.fn())
+              .add('addTranslation', jest.fn())
+              .add('editTranslation', jest.fn())
+              .add('removeByProject', jest.fn())
+              .add('removeByLanguage', jest.fn())
+              .build(),
         },
       ],
     }).compile();

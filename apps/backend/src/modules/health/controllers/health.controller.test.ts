@@ -1,23 +1,10 @@
 import { HealthCheckService, MongooseHealthIndicator } from '@nestjs/terminus';
 import { Test } from '@nestjs/testing';
-import { MockControllerProps, MockFactory } from '@shared/testing';
+import { ControllerMockProps, MockMethodFactory } from '@shared/testing';
 import { HealthController } from './health.controller';
 
-const mockCheck = jest.fn().mockImplementation(async (indicators) => {
-  const results = await Promise.all(indicators.map((fn) => fn()));
-
-  return {
-    status: 'ok',
-    details: results.reduce((acc, cur) => ({ ...acc, ...cur }), {}),
-  };
-});
-
-const mockPingCheck = jest.fn().mockResolvedValue({
-  mongo: { status: 'up' },
-});
-
 describe('[controllers] - HealthController', () => {
-  const context = {} as MockControllerProps<
+  const context = {} as ControllerMockProps<
     HealthController,
     HealthCheckService,
     { mongo: MongooseHealthIndicator }
@@ -30,16 +17,16 @@ describe('[controllers] - HealthController', () => {
         {
           provide: HealthCheckService,
           useFactory: () =>
-            new MockFactory<HealthCheckService>()
-              .addMethod('check', mockCheck)
-              .createMock(),
+            new MockMethodFactory<HealthCheckService>()
+              .add('check', jest.fn())
+              .build(),
         },
         {
           provide: MongooseHealthIndicator,
           useFactory: () =>
-            new MockFactory<MongooseHealthIndicator>()
-              .addMethod('pingCheck', mockPingCheck)
-              .createMock(),
+            new MockMethodFactory<MongooseHealthIndicator>()
+              .add('pingCheck', jest.fn())
+              .build(),
         },
       ],
     }).compile();
@@ -56,6 +43,21 @@ describe('[controllers] - HealthController', () => {
 
   describe('[check]', () => {
     it('[success] - should return app healthy', async () => {
+      (context.service.check as jest.Mock).mockImplementationOnce(
+        async (indicators) => {
+          const results = await Promise.all(indicators.map((fn) => fn()));
+
+          return {
+            status: 'ok',
+            details: results.reduce((acc, cur) => ({ ...acc, ...cur }), {}),
+          };
+        },
+      );
+
+      (context.providers.mongo.pingCheck as jest.Mock).mockResolvedValueOnce({
+        mongo: { status: 'up' },
+      });
+
       expect(await context.controller.check()).toEqual({
         status: 'ok',
         details: { mongo: { status: 'up' } },

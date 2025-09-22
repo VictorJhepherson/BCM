@@ -1,13 +1,13 @@
 import { AddProjectDTO, EditProjectDTO } from '@shared/models';
 import { values } from '../common/common.mocks';
 import {
-  MockProject,
-  MockProjectData,
-  MockProjectDTO,
-  MockProjectFilter,
+  ProjectMock,
+  ProjectMockData,
+  ProjectMockDTO,
+  ProjectMockFilter,
 } from './projects.mocks.types';
 
-const dto: MockProjectDTO = {
+const dto: ProjectMockDTO = {
   add: Object.assign(new AddProjectDTO(), {
     name: values.project.name,
     description: values.project.description,
@@ -17,16 +17,16 @@ const dto: MockProjectDTO = {
   }),
 };
 
-const data: MockProjectData = {
+const data: ProjectMockData = {
   name: values.project.name,
   description: values.project.description,
 };
 
-const filter: MockProjectFilter = {
+const filter: ProjectMockFilter = {
   id: values.mongo._id,
 };
 
-export const project: MockProject = {
+export const project: ProjectMock = {
   dto,
   data,
   filter,

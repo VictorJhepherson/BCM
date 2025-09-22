@@ -1,52 +1,44 @@
-import { MockReplace } from './data.factory.mocks.types';
+import { BaseType, MockReplace } from './data.factory.mocks.types';
 
-export class MockDataFactory<T extends Record<string, any>, R = T> {
-  protected readonly base: Partial<T>;
-  protected readonly data: Partial<T> = {};
+export class MockDataFactory<
+  T extends BaseType,
+  Root = T,
+  Current extends BaseType = T,
+> {
+  private readonly base: Partial<Current> = {};
+  private readonly overrides: Partial<Current> = {};
 
-  constructor(base: Partial<T>) {
-    this.base = base;
+  constructor(defaults: Partial<Current> = {}) {
+    this.base = { ...defaults };
   }
 
-  select<K extends keyof T, N extends Record<string, any> = T[K]>(
+  select<K extends keyof Current, N extends BaseType = Current[K]>(
     key: K,
-  ): MockDataFactory<N, MockReplace<T, K, N>> {
-    if (!(key in this.data)) {
-      this.data[key] = {} as T[K];
-    }
-
-    return new MockDataFactoryProxy<N, MockReplace<T, K, N>>(
-      this.base[key] as N,
-      (value: N) => {
-        (this.data as T[K])[key] = value;
-        return this as unknown as MockDataFactory<T, MockReplace<T, K, N>>;
-      },
+  ): MockDataFactory<N, MockReplace<Root, K, N>, N> {
+    const factory = new MockDataFactory<N, MockReplace<Root, K, N>>(
+      this.base[key] as Partial<Current[K]>,
     );
+
+    const build = factory.build.bind(factory);
+
+    factory.build = () => {
+      (this.overrides as Current[K])[key] = build();
+
+      return {
+        ...this.base,
+        ...this.overrides,
+      } as unknown as MockReplace<Root, K, N>;
+    };
+
+    return factory;
   }
 
-  addData<K extends keyof T>(key: K, value: T[K]): this {
-    this.data[key] = value;
+  add<K extends keyof Current>(key: K, value: Current[K]): this {
+    this.overrides[key] = value;
     return this;
   }
 
-  createMock(): R {
-    return { ...this.base, ...this.data } as R;
-  }
-}
-
-class MockDataFactoryProxy<
-  T extends Record<string, any>,
-  R,
-> extends MockDataFactory<T, R> {
-  constructor(
-    base: Partial<T>,
-    private readonly apply: (value: T) => MockDataFactory<any, R>,
-  ) {
-    super(base);
-  }
-
-  override createMock(): R {
-    const mock = super.createMock() as unknown as T;
-    return this.apply(mock).createMock();
+  build(): Root {
+    return { ...this.base, ...this.overrides } as Root;
   }
 }
