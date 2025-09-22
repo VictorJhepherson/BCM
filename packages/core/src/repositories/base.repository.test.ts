@@ -1,0 +1,37 @@
+import { BaseRepository } from './base.repository';
+
+class TestRepository extends BaseRepository {
+  constructor() {
+    super('[test]');
+  }
+
+  async run<T>(fn: () => Promise<T>) {
+    return this.execute(fn);
+  }
+}
+
+describe('[base] - repository', () => {
+  afterEach(() => jest.clearAllMocks());
+
+  describe('[execute]', () => {
+    const repository = new TestRepository();
+
+    it('[success] - should call `execute` function successfully', async () => {
+      const mockFn = jest.fn().mockResolvedValue({ success: true });
+
+      const response = await repository.run(mockFn);
+
+      expect(mockFn).toHaveBeenCalled();
+      expect(response).toStrictEqual({ success: true });
+    });
+
+    it('[failed] - should call `execute` function with failure', async () => {
+      const mockFn = jest.fn().mockRejectedValue({ success: false });
+
+      await expect(repository.run(mockFn)).rejects.toEqual({
+        referrer: '[test][repository]',
+        error: { success: false },
+      });
+    });
+  });
+});

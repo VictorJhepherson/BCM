@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": ["src"],
+  "references": [
+    { "path": "../../packages/core" },
+    { "path": "../../packages/models" },
+    { "path": "../../packages/testing" },
+  ],
+  "compilerOptions": {
+    "outDir": "./dist",
+    "incremental": true,
+    "sourceMap": true,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "noFallthroughCasesInSwitch": false,
+  }
+}
