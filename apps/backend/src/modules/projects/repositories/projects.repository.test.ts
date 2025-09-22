@@ -14,10 +14,7 @@ import { ProjectRepository } from './projects.repository';
 
 const { dto, data, filter } = new MockDataFactory<ProjectMock>(
   mockData.factory.project,
-)
-  .select('data')
-  .add('_id', mockData.values.mongo._id)
-  .build();
+).build();
 
 describe('[repositories] - ProjectRepository', () => {
   const context = {} as RepositoryMockProps<

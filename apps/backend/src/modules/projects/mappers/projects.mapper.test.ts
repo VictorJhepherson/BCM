@@ -9,7 +9,6 @@ import { ProjectMapper } from './projects.mapper';
 
 const { data } = new MockDataFactory<ProjectMock>(mockData.factory.project)
   .select<'data', Required<Project>>('data')
-  .add('_id', mockData.values.mongo._id)
   .build();
 
 describe('[mappers] - ProjectMapper', () => {

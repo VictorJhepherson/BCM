@@ -19,10 +19,7 @@ jest.mock('../mappers/projects.mapper', () => ({
 
 const { dto, data, filter } = new MockDataFactory<ProjectMock>(
   mockData.factory.project,
-)
-  .select('data')
-  .add('_id', mockData.values.mongo._id)
-  .build();
+).build();
 
 describe('[services] - ProjectService', () => {
   const context = {} as ServiceMockProps<ProjectService, ProjectRepository>;

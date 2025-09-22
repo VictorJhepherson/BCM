@@ -27,8 +27,8 @@ describe('[mappers] - TranslationMapper', () => {
   describe('[mapTranslation]', () => {
     it('should map translation correctly', () => {
       expect(context.mapper.mapTranslation(data)).toEqual({
-        language: data.languageId.language,
-        translations: data.translations,
+        language: mockData.values.language.language,
+        translations: mockData.values.translation.translations,
       });
     });
   });
@@ -38,8 +38,8 @@ describe('[mappers] - TranslationMapper', () => {
       expect(context.mapper.mapTranslations([data])).toEqual(
         expect.arrayContaining([
           {
-            language: data.languageId.language,
-            translations: data.translations,
+            language: mockData.values.language.language,
+            translations: mockData.values.translation.translations,
           },
         ]),
       );

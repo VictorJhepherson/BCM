@@ -9,7 +9,6 @@ import { LanguageMapper } from './languages.mapper';
 
 const { data } = new MockDataFactory<LanguageMock>(mockData.factory.language)
   .select<'data', Required<Language>>('data')
-  .add('_id', mockData.values.mongo._id)
   .build();
 
 describe('[mappers] - LanguageMapper', () => {

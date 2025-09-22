@@ -14,10 +14,7 @@ import { LanguageRepository } from './languages.repository';
 
 const { dto, data, filter } = new MockDataFactory<LanguageMock>(
   mockData.factory.language,
-)
-  .select('data')
-  .add('_id', mockData.values.mongo._id)
-  .build();
+).build();
 
 describe('[repositories] - LanguageRepository', () => {
   const context = {} as RepositoryMockProps<

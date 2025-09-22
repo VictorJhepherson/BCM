@@ -14,10 +14,7 @@ import { TranslationRepository } from './translations.repository';
 
 const { dto, data, filter } = new MockDataFactory<TranslationMock>(
   mockData.factory.translation,
-)
-  .select('data')
-  .add('_id', mockData.values.mongo._id)
-  .build();
+).build();
 
 describe('[repositories] - TranslationRepository', () => {
   const context = {} as RepositoryMockProps<

@@ -13,10 +13,7 @@ jest.mock('../services/projects.service');
 
 const { dto, data, filter } = new MockDataFactory<ProjectMock>(
   mockData.factory.project,
-)
-  .select('data')
-  .add('_id', mockData.values.mongo._id)
-  .build();
+).build();
 
 describe('[controllers] - ProjectController', () => {
   const context = {} as ControllerMockProps<ProjectController, ProjectService>;

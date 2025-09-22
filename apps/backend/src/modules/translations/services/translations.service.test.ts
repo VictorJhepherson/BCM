@@ -20,10 +20,7 @@ jest.mock('../mappers/translations.mapper', () => ({
 
 const { dto, data, filter } = new MockDataFactory<TranslationMock>(
   mockData.factory.translation,
-)
-  .select('data')
-  .add('_id', mockData.values.mongo._id)
-  .build();
+).build();
 
 describe('[services] - TranslationService', () => {
   const context = {} as ServiceMockProps<
