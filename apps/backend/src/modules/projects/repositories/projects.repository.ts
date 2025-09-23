@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { BaseRepository } from '@shared/core';
+import { format } from '@shared/helpers';
 import {
   AddProjectDTO,
   EditProjectDTO,
@@ -14,7 +15,6 @@ import {
   ProjectFilter,
 } from '@shared/models';
 import { Model } from 'mongoose';
-import util from 'node:util';
 
 @Injectable()
 export class ProjectRepository
@@ -48,7 +48,7 @@ export class ProjectRepository
 
       if (!added) {
         throw new InternalServerErrorException({
-          message: `Failed to create a project for: ${util.inspect(dto)}`,
+          message: `Failed to create a project for: ${format.base(dto)}`,
         });
       }
 

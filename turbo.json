@@ -16,6 +16,10 @@
       "cache": false,
       "persistent": true,
       "dependsOn": ["^build"]
+    },
+    "test:coverage": {
+      "cache": false,
+      "persistent": true
     }
   }
 }

@@ -5,6 +5,7 @@
   "references": [
     { "path": "packages/core" },
     { "path": "packages/models" },
+    { "path": "packages/helpers" },
     { "path": "packages/testing" },
   ],
   "compilerOptions": {
@@ -28,6 +29,7 @@
     "paths": {
       "@shared/core": ["packages/core/src/*"],
       "@shared/models": ["packages/models/src/*"],
+      "@shared/helpers": ["packages/helpers/src/*"],
       "@shared/testing": ["packages/testing/src/*"],
     }
   },

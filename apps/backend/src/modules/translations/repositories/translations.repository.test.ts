@@ -1,5 +1,6 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
+import { format } from '@shared/helpers';
 import { TranslationEntity } from '@shared/models';
 import {
   mockData,
@@ -9,7 +10,6 @@ import {
   TranslationMock,
 } from '@shared/testing';
 import { Model } from 'mongoose';
-import util from 'node:util';
 import { TranslationRepository } from './translations.repository';
 
 const { dto, data, filter } = new MockDataFactory<TranslationMock>(
@@ -84,7 +84,7 @@ describe('[repositories] - TranslationRepository', () => {
       });
 
       await expect(context.repository.getByProject(filter)).rejects.toThrow(
-        `Unable to find translation(s) by: ${util.inspect(filter)}`,
+        `Unable to find translation(s) by: ${format.base(filter)}`,
       );
     });
 
@@ -98,7 +98,7 @@ describe('[repositories] - TranslationRepository', () => {
       });
 
       await expect(context.repository.getByProject(filter)).rejects.toThrow(
-        `Unable to find translation(s) by: ${util.inspect(filter)}`,
+        `Unable to find translation(s) by: ${format.base(filter)}`,
       );
     });
   });
@@ -140,7 +140,7 @@ describe('[repositories] - TranslationRepository', () => {
       });
 
       await expect(context.repository.getByLanguage(filter)).rejects.toThrow(
-        `Unable to find translation by: ${util.inspect(filter)}`,
+        `Unable to find translation by: ${format.base(filter)}`,
       );
     });
   });
@@ -168,7 +168,7 @@ describe('[repositories] - TranslationRepository', () => {
       (context.model.create as jest.Mock).mockResolvedValue(undefined);
 
       await expect(context.repository.addTranslation(dto.add)).rejects.toThrow(
-        `Failed to create a translation for: ${util.inspect(dto.add)}`,
+        `Failed to create a translation for: ${format.base(dto.add)}`,
       );
     });
   });
@@ -202,7 +202,7 @@ describe('[repositories] - TranslationRepository', () => {
       await expect(
         context.repository.editTranslation(filter, dto.edit),
       ).rejects.toThrow(
-        `Unable to find a translation for: ${util.inspect(filter)}`,
+        `Unable to find a translation for: ${format.base(filter)}`,
       );
     });
   });
@@ -232,7 +232,7 @@ describe('[repositories] - TranslationRepository', () => {
       });
 
       await expect(context.repository.removeByProject(filter)).rejects.toThrow(
-        `Failed to delete translation(s) for: ${util.inspect(filter)}`,
+        `Failed to delete translation(s) for: ${format.base(filter)}`,
       );
     });
   });
@@ -262,7 +262,7 @@ describe('[repositories] - TranslationRepository', () => {
       });
 
       await expect(context.repository.removeByLanguage(filter)).rejects.toThrow(
-        `Failed to delete a translation for: ${util.inspect(filter)}`,
+        `Failed to delete a translation for: ${format.base(filter)}`,
       );
     });
   });

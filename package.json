@@ -4,6 +4,7 @@
   "scripts": {
     "build": "turbo run build",
     "start:back:dev": "turbo run start:back:dev --filter=backend",
+    "test:coverage": "turbo run test:coverage",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"

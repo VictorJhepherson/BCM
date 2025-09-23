@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { BaseRepository } from '@shared/core';
+import { format } from '@shared/helpers';
 import {
   AddTranslationDTO,
   EditTranslationDTO,
@@ -15,7 +16,6 @@ import {
   TranslationFilter,
 } from '@shared/models';
 import { Model } from 'mongoose';
-import util from 'node:util';
 
 @Injectable()
 export class TranslationRepository
@@ -41,7 +41,7 @@ export class TranslationRepository
 
       if (!finded?.length) {
         throw new NotFoundException({
-          message: `Unable to find translation(s) by: ${util.inspect(filter)}`,
+          message: `Unable to find translation(s) by: ${format.base(filter)}`,
         });
       }
 
@@ -59,7 +59,7 @@ export class TranslationRepository
 
       if (!finded) {
         throw new NotFoundException({
-          message: `Unable to find translation by: ${util.inspect(filter)}`,
+          message: `Unable to find translation by: ${format.base(filter)}`,
         });
       }
 
@@ -73,7 +73,7 @@ export class TranslationRepository
 
       if (!added) {
         throw new InternalServerErrorException({
-          message: `Failed to create a translation for: ${util.inspect(dto)}`,
+          message: `Failed to create a translation for: ${format.base(dto)}`,
         });
       }
 
@@ -92,7 +92,7 @@ export class TranslationRepository
 
       if (!edited) {
         throw new NotFoundException({
-          message: `Unable to find a translation for: ${util.inspect(filter)}`,
+          message: `Unable to find a translation for: ${format.base(filter)}`,
         });
       }
 
@@ -108,7 +108,7 @@ export class TranslationRepository
 
       if (deleted.deletedCount < 1) {
         throw new NotFoundException({
-          message: `Failed to delete translation(s) for: ${util.inspect(filter)}`,
+          message: `Failed to delete translation(s) for: ${format.base(filter)}`,
         });
       }
     });
@@ -120,7 +120,7 @@ export class TranslationRepository
 
       if (deleted.deletedCount < 1) {
         throw new NotFoundException({
-          message: `Failed to delete a translation for: ${util.inspect(filter)}`,
+          message: `Failed to delete a translation for: ${format.base(filter)}`,
         });
       }
     });

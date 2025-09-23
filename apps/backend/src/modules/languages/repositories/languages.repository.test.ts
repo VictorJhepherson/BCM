@@ -1,5 +1,6 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
+import { format } from '@shared/helpers';
 import { LanguageEntity } from '@shared/models';
 import {
   LanguageMock,
@@ -9,7 +10,6 @@ import {
   mockData,
 } from '@shared/testing';
 import { Model } from 'mongoose';
-import util from 'node:util';
 import { LanguageRepository } from './languages.repository';
 
 const { dto, data, filter } = new MockDataFactory<LanguageMock>(
@@ -106,7 +106,7 @@ describe('[repositories] - LanguageRepository', () => {
       (context.model.create as jest.Mock).mockResolvedValue(undefined);
 
       await expect(context.repository.addLanguage(dto.add)).rejects.toThrow(
-        `Failed to create a language for: ${util.inspect(dto.add)}`,
+        `Failed to create a language for: ${format.base(dto.add)}`,
       );
     });
   });

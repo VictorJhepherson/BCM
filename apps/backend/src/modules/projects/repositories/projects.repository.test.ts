@@ -1,5 +1,6 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
+import { format } from '@shared/helpers';
 import { ProjectEntity } from '@shared/models';
 import {
   MockDataFactory,
@@ -9,7 +10,6 @@ import {
   mockData,
 } from '@shared/testing';
 import { Model } from 'mongoose';
-import util from 'node:util';
 import { ProjectRepository } from './projects.repository';
 
 const { dto, data, filter } = new MockDataFactory<ProjectMock>(
@@ -106,7 +106,7 @@ describe('[repositories] - ProjectRepository', () => {
       (context.model.create as jest.Mock).mockResolvedValue(undefined);
 
       await expect(context.repository.addProject(dto.add)).rejects.toThrow(
-        `Failed to create a project for: ${util.inspect(dto.add)}`,
+        `Failed to create a project for: ${format.base(dto.add)}`,
       );
     });
   });
