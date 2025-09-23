@@ -56,7 +56,7 @@ export class ProjectController
   @Version('1')
   @HttpCode(204)
   @Delete('/:id')
-  async removeProject(@Param('id') id: ProjectFilter['id']): Promise<void> {
-    return this.execute(() => this.service.removeProject({ id }));
+  async deleteProject(@Param('id') id: ProjectFilter['id']): Promise<void> {
+    return this.execute(() => this.service.deleteProject({ id }));
   }
 }

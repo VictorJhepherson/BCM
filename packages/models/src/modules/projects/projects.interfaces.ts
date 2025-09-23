@@ -7,26 +7,26 @@ export interface IProject {
 }
 
 export interface IProjectRepository {
-  getAll(): Promise<Project[]>;
-  addProject(dto: AddProjectDTO): Promise<Project>;
-  editProject(filter: ProjectFilter, dto: EditProjectDTO): Promise<Project>;
-  removeProject(filter: ProjectFilter): Promise<void>;
+  find(): Promise<Project[]>;
+  create(dto: AddProjectDTO): Promise<Project>;
+  update(filter: ProjectFilter, dto: EditProjectDTO): Promise<Project | null>;
+  delete(filter: ProjectFilter): Promise<Project | null>;
 }
 
 export interface IProjectService {
   getAll(): Promise<MappedProject[]>;
   addProject(dto: AddProjectDTO): Promise<Project>;
   editProject(filter: ProjectFilter, dto: EditProjectDTO): Promise<Project>;
-  removeProject(filter: ProjectFilter): Promise<void>;
+  deleteProject(filter: ProjectFilter): Promise<void>;
 }
 
 export interface IProjectController {
   getAll(): Promise<MappedProject[]>;
   addProject(dto: AddProjectDTO): Promise<Project>;
   editProject(id: ProjectFilter['id'], dto: EditProjectDTO): Promise<Project>;
-  removeProject(id: ProjectFilter['id']): Promise<void>;
+  deleteProject(id: ProjectFilter['id']): Promise<void>;
 }
 
 export interface IProjectMapper {
-  mapProjects(documents: Project[]): MappedProject[];
+  mapProjects(projects: Project[]): MappedProject[];
 }

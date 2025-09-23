@@ -6,11 +6,11 @@ import {
 } from '@shared/models';
 
 export class ProjectMapper implements IProjectMapper {
-  mapProjects(documents: Project[]): MappedProject[] {
-    return documents.map((document) => ({
-      id: document._id,
-      name: document.name,
-      description: document.description,
+  mapProjects(projects: Project[]): MappedProject[] {
+    return projects.map((project) => ({
+      id: project._id,
+      name: project.name,
+      description: project.description,
     }));
   }
 }

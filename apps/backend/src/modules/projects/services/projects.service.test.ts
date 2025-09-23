@@ -1,4 +1,5 @@
 import { Test } from '@nestjs/testing';
+import { format } from '@shared/helpers';
 import {
   mockData,
   MockDataFactory,
@@ -32,10 +33,10 @@ describe('[services] - ProjectService', () => {
           provide: ProjectRepository,
           useFactory: () =>
             new MockMethodFactory<ProjectRepository>()
-              .add('getAll', jest.fn())
-              .add('addProject', jest.fn())
-              .add('editProject', jest.fn())
-              .add('removeProject', jest.fn())
+              .add('find', jest.fn())
+              .add('create', jest.fn())
+              .add('update', jest.fn())
+              .add('delete', jest.fn())
               .build(),
         },
       ],
@@ -49,13 +50,13 @@ describe('[services] - ProjectService', () => {
 
   describe('[getAll]', () => {
     it('[success] - should return all projects', async () => {
-      (context.repository.getAll as jest.Mock).mockResolvedValue([data]);
+      (context.repository.find as jest.Mock).mockResolvedValue([data]);
 
       expect(await context.service.getAll()).toEqual([data]);
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.repository.getAll as jest.Mock).mockRejectedValue(
+      (context.repository.find as jest.Mock).mockRejectedValue(
         new Error('REPOSITORY ERROR'),
       );
 
@@ -63,17 +64,23 @@ describe('[services] - ProjectService', () => {
         'REPOSITORY ERROR',
       );
     });
+
+    it('[edge-case] - should return empty array when has no projects', async () => {
+      (context.repository.find as jest.Mock).mockResolvedValue([]);
+
+      expect(await context.service.getAll()).toEqual([]);
+    });
   });
 
   describe('[addProject]', () => {
     it('[success] - should added a project', async () => {
-      (context.repository.addProject as jest.Mock).mockResolvedValue(data);
+      (context.repository.create as jest.Mock).mockResolvedValue(data);
 
       expect(await context.service.addProject(dto.add)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.repository.addProject as jest.Mock).mockRejectedValue(
+      (context.repository.create as jest.Mock).mockRejectedValue(
         new Error('REPOSITORY ERROR'),
       );
 
@@ -85,13 +92,13 @@ describe('[services] - ProjectService', () => {
 
   describe('[editProject]', () => {
     it('[success] - should edited a project', async () => {
-      (context.repository.editProject as jest.Mock).mockResolvedValue(data);
+      (context.repository.update as jest.Mock).mockResolvedValue(data);
 
       expect(await context.service.editProject(filter, dto.edit)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.repository.editProject as jest.Mock).mockRejectedValue(
+      (context.repository.update as jest.Mock).mockRejectedValue(
         new Error('REPOSITORY ERROR'),
       );
 
@@ -99,24 +106,38 @@ describe('[services] - ProjectService', () => {
         context.service.editProject(filter, dto.edit),
       ).rejects.toThrow('REPOSITORY ERROR');
     });
+
+    it('[edge-case] - should failed to edit a project', async () => {
+      (context.repository.update as jest.Mock).mockResolvedValue(undefined);
+
+      await expect(
+        context.service.editProject(filter, dto.edit),
+      ).rejects.toThrow(`Unable to find a project for: ${format.base(filter)}`);
+    });
   });
 
-  describe('[removeProject]', () => {
+  describe('[deleteProject]', () => {
     it('[success] - should removed a project', async () => {
-      (context.repository.removeProject as jest.Mock).mockResolvedValue(
-        undefined,
-      );
+      (context.repository.delete as jest.Mock).mockResolvedValue(data);
 
-      expect(await context.service.removeProject(filter)).toBeFalsy();
+      expect(await context.service.deleteProject(filter)).toBeFalsy();
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.repository.removeProject as jest.Mock).mockRejectedValue(
+      (context.repository.delete as jest.Mock).mockRejectedValue(
         new Error('REPOSITORY ERROR'),
       );
 
-      await expect(context.service.removeProject(filter)).rejects.toThrow(
+      await expect(context.service.deleteProject(filter)).rejects.toThrow(
         'REPOSITORY ERROR',
+      );
+    });
+
+    it('[edge-case] - should failed to remove a project', async () => {
+      (context.repository.delete as jest.Mock).mockResolvedValue(undefined);
+
+      await expect(context.service.deleteProject(filter)).rejects.toThrow(
+        `Failed to delete a project for: ${format.base(filter)}`,
       );
     });
   });

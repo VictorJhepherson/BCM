@@ -29,7 +29,7 @@ describe('[controllers] - ProjectController', () => {
               .add('getAll', jest.fn())
               .add('addProject', jest.fn())
               .add('editProject', jest.fn())
-              .add('removeProject', jest.fn())
+              .add('deleteProject', jest.fn())
               .build(),
         },
       ],
@@ -99,17 +99,17 @@ describe('[controllers] - ProjectController', () => {
 
   describe('[removeProject]', () => {
     it('[success] - should removed a project', async () => {
-      (context.service.removeProject as jest.Mock).mockResolvedValue(undefined);
+      (context.service.deleteProject as jest.Mock).mockResolvedValue(undefined);
 
-      expect(await context.controller.removeProject(filter.id)).toBeFalsy();
+      expect(await context.controller.deleteProject(filter.id)).toBeFalsy();
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.service.removeProject as jest.Mock).mockRejectedValue(
+      (context.service.deleteProject as jest.Mock).mockRejectedValue(
         new Error('SERVICE ERROR'),
       );
 
-      await expect(context.controller.removeProject(filter.id)).rejects.toThrow(
+      await expect(context.controller.deleteProject(filter.id)).rejects.toThrow(
         'SERVICE ERROR',
       );
     });
