@@ -6,17 +6,20 @@ export interface ILanguage {
 }
 
 export interface ILanguageRepository {
-  getAll(): Promise<Language[]>;
-  addLanguage(dto: AddLanguageDTO): Promise<Language>;
-  editLanguage(filter: LanguageFilter, dto: EditLanguageDTO): Promise<Language>;
-  removeLanguage(filter: LanguageFilter): Promise<void>;
+  find(): Promise<Language[]>;
+  create(dto: AddLanguageDTO): Promise<Language>;
+  update(
+    filter: LanguageFilter,
+    dto: EditLanguageDTO,
+  ): Promise<Language | null>;
+  delete(filter: LanguageFilter): Promise<Language | null>;
 }
 
 export interface ILanguageService {
   getAll(): Promise<MappedLanguage[]>;
   addLanguage(dto: AddLanguageDTO): Promise<Language>;
   editLanguage(filter: LanguageFilter, dto: EditLanguageDTO): Promise<Language>;
-  removeLanguage(filter: LanguageFilter): Promise<void>;
+  deleteLanguage(filter: LanguageFilter): Promise<void>;
 }
 
 export interface ILanguageController {
@@ -26,9 +29,9 @@ export interface ILanguageController {
     id: LanguageFilter['id'],
     dto: EditLanguageDTO,
   ): Promise<Language>;
-  removeLanguage(id: LanguageFilter['id']): Promise<void>;
+  deleteLanguage(id: LanguageFilter['id']): Promise<void>;
 }
 
 export interface ILanguageMapper {
-  mapLanguages(documents: Language[]): MappedLanguage[];
+  mapLanguages(languages: Language[]): MappedLanguage[];
 }

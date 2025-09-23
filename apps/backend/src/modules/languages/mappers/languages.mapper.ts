@@ -6,10 +6,10 @@ import {
 } from '@shared/models';
 
 export class LanguageMapper implements ILanguageMapper {
-  mapLanguages(documents: Language[]): MappedLanguage[] {
-    return documents.map((document) => ({
-      id: document._id,
-      language: document.language,
+  mapLanguages(languages: Language[]): MappedLanguage[] {
+    return languages.map((language) => ({
+      id: language._id,
+      language: language.language,
     }));
   }
 }

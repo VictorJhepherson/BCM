@@ -32,7 +32,7 @@ describe('[controllers] - LanguageController', () => {
               .add('getAll', jest.fn())
               .add('addLanguage', jest.fn())
               .add('editLanguage', jest.fn())
-              .add('removeLanguage', jest.fn())
+              .add('deleteLanguage', jest.fn())
               .build(),
         },
       ],
@@ -100,22 +100,22 @@ describe('[controllers] - LanguageController', () => {
     });
   });
 
-  describe('[removeLanguage]', () => {
+  describe('[deleteLanguage]', () => {
     it('[success] - should removed a language', async () => {
-      (context.service.removeLanguage as jest.Mock).mockResolvedValue(
+      (context.service.deleteLanguage as jest.Mock).mockResolvedValue(
         undefined,
       );
 
-      expect(await context.controller.removeLanguage(filter.id)).toBeFalsy();
+      expect(await context.controller.deleteLanguage(filter.id)).toBeFalsy();
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.service.removeLanguage as jest.Mock).mockRejectedValue(
+      (context.service.deleteLanguage as jest.Mock).mockRejectedValue(
         new Error('SERVICE ERROR'),
       );
 
       await expect(
-        context.controller.removeLanguage(filter.id),
+        context.controller.deleteLanguage(filter.id),
       ).rejects.toThrow('SERVICE ERROR');
     });
   });

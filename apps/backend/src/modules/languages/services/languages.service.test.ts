@@ -1,4 +1,5 @@
 import { Test } from '@nestjs/testing';
+import { format } from '@shared/helpers';
 import {
   LanguageMock,
   mockData,
@@ -32,10 +33,10 @@ describe('[services] - LanguageService', () => {
           provide: LanguageRepository,
           useFactory: () =>
             new MockMethodFactory<LanguageRepository>()
-              .add('getAll', jest.fn())
-              .add('addLanguage', jest.fn())
-              .add('editLanguage', jest.fn())
-              .add('removeLanguage', jest.fn())
+              .add('find', jest.fn())
+              .add('create', jest.fn())
+              .add('update', jest.fn())
+              .add('delete', jest.fn())
               .build(),
         },
       ],
@@ -49,13 +50,13 @@ describe('[services] - LanguageService', () => {
 
   describe('[getAll]', () => {
     it('[success] - should return all languages', async () => {
-      (context.repository.getAll as jest.Mock).mockResolvedValue([data]);
+      (context.repository.find as jest.Mock).mockResolvedValue([data]);
 
       expect(await context.service.getAll()).toEqual([data]);
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.repository.getAll as jest.Mock).mockRejectedValue(
+      (context.repository.find as jest.Mock).mockRejectedValue(
         new Error('REPOSITORY ERROR'),
       );
 
@@ -63,17 +64,23 @@ describe('[services] - LanguageService', () => {
         'REPOSITORY ERROR',
       );
     });
+
+    it('[edge-case] - should return empty array when has no languages', async () => {
+      (context.repository.find as jest.Mock).mockResolvedValue([]);
+
+      expect(await context.service.getAll()).toEqual([]);
+    });
   });
 
   describe('[addLanguage]', () => {
     it('[success] - should added a language', async () => {
-      (context.repository.addLanguage as jest.Mock).mockResolvedValue(data);
+      (context.repository.create as jest.Mock).mockResolvedValue(data);
 
       expect(await context.service.addLanguage(dto.add)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.repository.addLanguage as jest.Mock).mockRejectedValue(
+      (context.repository.create as jest.Mock).mockRejectedValue(
         new Error('REPOSITORY ERROR'),
       );
 
@@ -85,7 +92,7 @@ describe('[services] - LanguageService', () => {
 
   describe('[editLanguage]', () => {
     it('[success] - should edited a language', async () => {
-      (context.repository.editLanguage as jest.Mock).mockResolvedValue(data);
+      (context.repository.update as jest.Mock).mockResolvedValue(data);
 
       expect(await context.service.editLanguage(filter, dto.edit)).toEqual(
         data,
@@ -93,7 +100,7 @@ describe('[services] - LanguageService', () => {
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.repository.editLanguage as jest.Mock).mockRejectedValue(
+      (context.repository.update as jest.Mock).mockRejectedValue(
         new Error('REPOSITORY ERROR'),
       );
 
@@ -101,24 +108,40 @@ describe('[services] - LanguageService', () => {
         context.service.editLanguage(filter, dto.edit),
       ).rejects.toThrow('REPOSITORY ERROR');
     });
+
+    it('[edge-case] - should failed to edit a language', async () => {
+      (context.repository.update as jest.Mock).mockResolvedValue(undefined);
+
+      await expect(
+        context.service.editLanguage(filter, dto.edit),
+      ).rejects.toThrow(
+        `Unable to find a language for: ${format.base(filter)}`,
+      );
+    });
   });
 
-  describe('[removeLanguage]', () => {
+  describe('[deleteLanguage]', () => {
     it('[success] - should removed a language', async () => {
-      (context.repository.removeLanguage as jest.Mock).mockResolvedValue(
-        undefined,
-      );
+      (context.repository.delete as jest.Mock).mockResolvedValue(data);
 
-      expect(await context.service.removeLanguage(filter)).toBeFalsy();
+      expect(await context.service.deleteLanguage(filter)).toBeFalsy();
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.repository.removeLanguage as jest.Mock).mockRejectedValue(
+      (context.repository.delete as jest.Mock).mockRejectedValue(
         new Error('REPOSITORY ERROR'),
       );
 
-      await expect(context.service.removeLanguage(filter)).rejects.toThrow(
+      await expect(context.service.deleteLanguage(filter)).rejects.toThrow(
         'REPOSITORY ERROR',
+      );
+    });
+
+    it('[edge-case] - should failed to remove a language', async () => {
+      (context.repository.delete as jest.Mock).mockResolvedValue(undefined);
+
+      await expect(context.service.deleteLanguage(filter)).rejects.toThrow(
+        `Failed to delete a language for: ${format.base(filter)}`,
       );
     });
   });

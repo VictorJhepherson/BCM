@@ -1,6 +1,5 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
-import { format } from '@shared/helpers';
 import { LanguageEntity } from '@shared/models';
 import {
   LanguageMock,
@@ -32,8 +31,8 @@ describe('[repositories] - LanguageRepository', () => {
             new MockMethodFactory<Model<LanguageEntity>>()
               .add('find', jest.fn())
               .add('create', jest.fn())
-              .add('deleteOne', jest.fn())
-              .add('findOneAndUpdate', jest.fn())
+              .add('findByIdAndUpdate', jest.fn())
+              .add('findByIdAndDelete', jest.fn())
               .build(),
         },
       ],
@@ -45,13 +44,13 @@ describe('[repositories] - LanguageRepository', () => {
 
   afterEach(() => jest.clearAllMocks());
 
-  describe('[getAll]', () => {
+  describe('[find]', () => {
     it('[success] - should return all languages', async () => {
       (context.model.find as jest.Mock).mockReturnValue({
         exec: jest.fn().mockResolvedValue([data]),
       });
 
-      expect(await context.repository.getAll()).toEqual([data]);
+      expect(await context.repository.find()).toEqual([data]);
     });
 
     it('[failure] - should handle an error', async () => {
@@ -59,116 +58,64 @@ describe('[repositories] - LanguageRepository', () => {
         exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
       });
 
-      await expect(context.repository.getAll()).rejects.toThrow('MODEL ERROR');
-    });
-
-    it('[edge-case] - should failed to get all languages when is undefined', async () => {
-      (context.model.find as jest.Mock).mockReturnValue({
-        exec: jest.fn().mockResolvedValue(undefined),
-      });
-
-      await expect(context.repository.getAll()).rejects.toThrow(
-        'Unable to find all languages.',
-      );
-    });
-
-    it('[edge-case] - should failed to get all languages when is empty array', async () => {
-      (context.model.find as jest.Mock).mockReturnValue({
-        exec: jest.fn().mockResolvedValue([]),
-      });
-
-      await expect(context.repository.getAll()).rejects.toThrow(
-        'Unable to find all languages.',
-      );
+      await expect(context.repository.find()).rejects.toThrow('MODEL ERROR');
     });
   });
 
-  describe('[addLanguage]', () => {
+  describe('[create]', () => {
     it('[success] - should added languages', async () => {
-      (context.model.create as jest.Mock).mockReturnValue({
-        save: jest.fn().mockResolvedValue(data),
-      });
+      (context.model.create as jest.Mock).mockResolvedValue(data);
 
-      expect(await context.repository.addLanguage(dto.add)).toEqual(data);
+      expect(await context.repository.create(dto.add)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.model.create as jest.Mock).mockReturnValue({
-        save: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
-      });
-
-      await expect(context.repository.addLanguage(dto.add)).rejects.toThrow(
-        'MODEL ERROR',
-      );
-    });
-
-    it('[edge-case] - should failed to add a language', async () => {
-      (context.model.create as jest.Mock).mockResolvedValue(undefined);
-
-      await expect(context.repository.addLanguage(dto.add)).rejects.toThrow(
-        `Failed to create a language for: ${format.base(dto.add)}`,
-      );
-    });
-  });
-
-  describe('[editLanguage]', () => {
-    it('[success] - should edited a language', async () => {
-      (context.model.findOneAndUpdate as jest.Mock).mockReturnValue({
-        save: jest.fn().mockResolvedValue(data),
-      });
-
-      expect(await context.repository.editLanguage(filter, dto.edit)).toEqual(
-        data,
-      );
-    });
-
-    it('[failure] - should handle an error', async () => {
-      (context.model.findOneAndUpdate as jest.Mock).mockReturnValue({
-        save: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
-      });
-
-      await expect(
-        context.repository.editLanguage(filter, dto.edit),
-      ).rejects.toThrow('MODEL ERROR');
-    });
-
-    it('[edge-case] - should failed to edit a language', async () => {
-      (context.model.findOneAndUpdate as jest.Mock).mockResolvedValue(
-        undefined,
-      );
-
-      await expect(
-        context.repository.editLanguage(filter, dto.edit),
-      ).rejects.toThrow(`Unable to find a language for: ${filter.id}`);
-    });
-  });
-
-  describe('[removeLanguage]', () => {
-    it('[success] - should removed a language', async () => {
-      (context.model.deleteOne as jest.Mock).mockResolvedValue({
-        deletedCount: 1,
-      });
-
-      expect(await context.repository.removeLanguage(filter)).toBeFalsy();
-    });
-
-    it('[failure] - should handle an error', async () => {
-      (context.model.deleteOne as jest.Mock).mockRejectedValue(
+      (context.model.create as jest.Mock).mockRejectedValue(
         new Error('MODEL ERROR'),
       );
 
-      await expect(context.repository.removeLanguage(filter)).rejects.toThrow(
+      await expect(context.repository.create(dto.add)).rejects.toThrow(
         'MODEL ERROR',
       );
     });
+  });
 
-    it('[edge-case] - should failed to remove a language', async () => {
-      (context.model.deleteOne as jest.Mock).mockResolvedValue({
-        deletedCount: 0,
+  describe('[update]', () => {
+    it('[success] - should edited a language', async () => {
+      (context.model.findByIdAndUpdate as jest.Mock).mockReturnValue({
+        exec: jest.fn().mockResolvedValue(data),
       });
 
-      await expect(context.repository.removeLanguage(filter)).rejects.toThrow(
-        `Failed to delete a language for: ${filter.id}`,
+      expect(await context.repository.update(filter, dto.edit)).toEqual(data);
+    });
+
+    it('[failure] - should handle an error', async () => {
+      (context.model.findByIdAndUpdate as jest.Mock).mockReturnValue({
+        exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
+      });
+
+      await expect(context.repository.update(filter, dto.edit)).rejects.toThrow(
+        'MODEL ERROR',
+      );
+    });
+  });
+
+  describe('[delete]', () => {
+    it('[success] - should removed a language', async () => {
+      (context.model.findByIdAndDelete as jest.Mock).mockReturnValue({
+        exec: jest.fn().mockResolvedValue(data),
+      });
+
+      expect(await context.repository.delete(filter)).toEqual(data);
+    });
+
+    it('[failure] - should handle an error', async () => {
+      (context.model.findByIdAndDelete as jest.Mock).mockReturnValue({
+        exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
+      });
+
+      await expect(context.repository.delete(filter)).rejects.toThrow(
+        'MODEL ERROR',
       );
     });
   });

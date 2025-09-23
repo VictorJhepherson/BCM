@@ -56,7 +56,7 @@ export class LanguageController
   @Version('1')
   @HttpCode(204)
   @Delete('/:id')
-  async removeLanguage(@Param('id') id: LanguageFilter['id']): Promise<void> {
-    return this.execute(() => this.service.removeLanguage({ id }));
+  async deleteLanguage(@Param('id') id: LanguageFilter['id']): Promise<void> {
+    return this.execute(() => this.service.deleteLanguage({ id }));
   }
 }

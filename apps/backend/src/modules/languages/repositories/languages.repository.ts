@@ -1,11 +1,6 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { BaseRepository } from '@shared/core';
-import { format } from '@shared/helpers';
 import {
   AddLanguageDTO,
   EditLanguageDTO,
@@ -28,62 +23,24 @@ export class LanguageRepository
     super('[languages]');
   }
 
-  async getAll(): Promise<Language[]> {
-    return this.execute(async () => {
-      const finded = await this.model.find().exec();
-
-      if (!finded?.length) {
-        throw new NotFoundException({
-          message: 'Unable to find all languages.',
-        });
-      }
-
-      return finded;
-    });
+  async find(): Promise<Language[]> {
+    return this.execute(() => this.model.find().exec());
   }
 
-  async addLanguage(dto: AddLanguageDTO): Promise<Language> {
-    return this.execute(async () => {
-      const added = await this.model.create(dto);
-
-      if (!added) {
-        throw new InternalServerErrorException({
-          message: `Failed to create a language for: ${format.base(dto)}`,
-        });
-      }
-
-      return added.save();
-    });
+  async create(dto: AddLanguageDTO): Promise<Language> {
+    return this.execute(() => this.model.create(dto));
   }
 
-  async editLanguage(
-    { id }: LanguageFilter,
+  async update(
+    filter: LanguageFilter,
     dto: EditLanguageDTO,
-  ): Promise<Language> {
-    return this.execute(async () => {
-      const edited = await this.model.findOneAndUpdate({ _id: id }, dto, {
-        new: true,
-      });
-
-      if (!edited) {
-        throw new NotFoundException({
-          message: `Unable to find a language for: ${id}`,
-        });
-      }
-
-      return edited.save();
-    });
+  ): Promise<Language | null> {
+    return this.execute(() =>
+      this.model.findByIdAndUpdate(filter.id, dto, { new: true }).exec(),
+    );
   }
 
-  async removeLanguage({ id }: LanguageFilter): Promise<void> {
-    return this.execute(async () => {
-      const deleted = await this.model.deleteOne({ _id: id });
-
-      if (deleted.deletedCount < 1) {
-        throw new NotFoundException({
-          message: `Failed to delete a language for: ${id}`,
-        });
-      }
-    });
+  async delete(filter: LanguageFilter): Promise<Language | null> {
+    return this.execute(() => this.model.findByIdAndDelete(filter.id).exec());
   }
 }
