@@ -10,7 +10,6 @@ export class LanguageMapper implements ILanguageMapper {
     return documents.map((document) => ({
       id: document._id,
       language: document.language,
-      countries: document.countries,
     }));
   }
 }

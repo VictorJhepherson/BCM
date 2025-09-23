@@ -1,10 +1,4 @@
-import {
-  IsArray,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  Matches,
-} from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, Matches } from 'class-validator';
 import { ValidatorMessages } from '../../errors/messages/validators.messages';
 import { RegexLanguages } from './languages.constants';
 import { ILanguage } from './languages.interfaces';
@@ -14,15 +8,6 @@ export class AddLanguageDTO implements ILanguage {
   @IsNotEmpty({ message: ValidatorMessages.isNotEmpty })
   @Matches(RegexLanguages.LANGUAGE, { message: ValidatorMessages.isMatches })
   language: string;
-
-  @IsArray({ message: ValidatorMessages.isArray })
-  @IsString({ each: true, message: ValidatorMessages.isString })
-  @IsNotEmpty({ message: ValidatorMessages.isNotEmpty })
-  @Matches(RegexLanguages.COUNTRY, {
-    each: true,
-    message: ValidatorMessages.isMatches,
-  })
-  countries: string[];
 }
 
 export class EditLanguageDTO implements Partial<ILanguage> {
@@ -30,13 +15,4 @@ export class EditLanguageDTO implements Partial<ILanguage> {
   @IsOptional({ message: ValidatorMessages.isOptional })
   @Matches(RegexLanguages.LANGUAGE, { message: ValidatorMessages.isMatches })
   language?: string;
-
-  @IsArray({ message: ValidatorMessages.isArray })
-  @IsString({ each: true, message: ValidatorMessages.isString })
-  @IsOptional({ message: ValidatorMessages.isOptional })
-  @Matches(RegexLanguages.COUNTRY, {
-    each: true,
-    message: ValidatorMessages.isMatches,
-  })
-  countries?: string[];
 }

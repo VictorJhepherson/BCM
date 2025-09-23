@@ -18,9 +18,15 @@ export class AddTranslationDTO implements ITranslation {
   translations: TranslationTree;
 }
 
-export class EditTranslationDTO
-  implements Partial<Omit<ITranslation, 'projectId' | 'languageId'>>
-{
+export class EditTranslationDTO implements Partial<ITranslation> {
+  @IsMongoId({ message: ValidatorMessages.isMongoId })
+  @IsOptional({ message: ValidatorMessages.isOptional })
+  projectId?: Types.ObjectId;
+
+  @IsMongoId({ message: ValidatorMessages.isMongoId })
+  @IsOptional({ message: ValidatorMessages.isOptional })
+  languageId?: Types.ObjectId;
+
   @IsObject({ message: ValidatorMessages.isObject })
   @IsOptional({ message: ValidatorMessages.isOptional })
   translations?: TranslationTree;

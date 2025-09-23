@@ -25,7 +25,6 @@ describe('[mappers] - LanguageMapper', () => {
           {
             id: data._id,
             language: data.language,
-            countries: data.countries,
           },
         ]),
       );

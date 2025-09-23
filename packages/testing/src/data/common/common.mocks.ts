@@ -11,7 +11,6 @@ const mongo = {
 
 const language: ILanguage = {
   language: 'en',
-  countries: ['US', 'CA'],
 };
 
 const project: IProject = {

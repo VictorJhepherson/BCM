@@ -3,7 +3,6 @@ import { Language, LanguageFilter, MappedLanguage } from './languages.types';
 
 export interface ILanguage {
   language: string;
-  countries: string[];
 }
 
 export interface ILanguageRepository {

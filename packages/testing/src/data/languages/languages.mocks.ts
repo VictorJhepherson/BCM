@@ -10,16 +10,14 @@ import {
 const dto: LanguageMockDTO = {
   add: Object.assign(new AddLanguageDTO(), {
     language: values.language.language,
-    countries: values.language.countries,
   }),
   edit: Object.assign(new EditLanguageDTO(), {
-    countries: ['US', 'CA', 'GB'],
+    language: 'pt',
   }),
 };
 
 const data: LanguageMockData = {
   language: values.language.language,
-  countries: values.language.countries,
 };
 
 const filter: LanguageMockFilter = {
