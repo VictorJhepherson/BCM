@@ -1,15 +1,9 @@
+import { TestLogger } from '@shared/testing';
 import { BaseController } from './base.controller';
 
-class TestLogger {
-  info = jest.fn();
-  warn = jest.fn();
-  error = jest.fn();
-  debug = jest.fn();
-}
-
 class TestController extends BaseController {
-  constructor() {
-    super('[test]', new TestLogger());
+  constructor(logger: TestLogger) {
+    super('[test]', logger);
   }
 
   async run<T>(props: { fn: () => Promise<T> }) {
@@ -20,8 +14,10 @@ class TestController extends BaseController {
 describe('[base] - controller', () => {
   afterEach(() => jest.clearAllMocks());
 
+  const logger = new TestLogger();
+
   describe('[execute]', () => {
-    const controller = new TestController();
+    const controller = new TestController(logger);
 
     it('[success] - should call `execute` function successfully', async () => {
       const mockFn = jest.fn().mockResolvedValue({ success: true });
@@ -29,6 +25,7 @@ describe('[base] - controller', () => {
       const response = await controller.run({ fn: mockFn });
 
       expect(mockFn).toHaveBeenCalled();
+      expect(logger.debug).toHaveBeenCalled();
       expect(response).toStrictEqual({ success: true });
     });
 
@@ -39,6 +36,8 @@ describe('[base] - controller', () => {
         referrer: '[test][controller]',
         error: { success: false },
       });
+
+      expect(logger.error).toHaveBeenCalled();
     });
   });
 });

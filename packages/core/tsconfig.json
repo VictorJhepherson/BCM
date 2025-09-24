@@ -2,7 +2,8 @@
   "extends": "../../tsconfig.json",
   "include": ["src"],
   "references": [
-    { "path": "../models" }
+    { "path": "../models" },
+    { "path": "../testing" }
   ],
   "compilerOptions": {
     "outDir": "dist",

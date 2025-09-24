@@ -1,14 +1,9 @@
+import { TestLogger, TestMapper } from '@shared/testing';
 import { BaseStrategy } from './base.strategy';
 
-class TestMapper {
-  mapTest(data: Record<string, string>): string {
-    return Object.values(data)[0] || '';
-  }
-}
-
 class TestStrategy extends BaseStrategy<TestMapper> {
-  constructor(mapper?: TestMapper) {
-    super('[test]', mapper);
+  constructor(logger: TestLogger, mapper?: TestMapper) {
+    super('[test]', logger, mapper);
   }
 
   async run<T>(props: { mapKey?: string; fn: () => Promise<T> }) {
@@ -19,8 +14,11 @@ class TestStrategy extends BaseStrategy<TestMapper> {
 describe('[base] - strategy', () => {
   afterEach(() => jest.clearAllMocks());
 
+  const logger = new TestLogger();
+  const mapper = new TestMapper();
+
   describe('[execute]', () => {
-    const strategy = new TestStrategy();
+    const strategy = new TestStrategy(logger);
 
     it('[success] - should call `execute` function successfully', async () => {
       const mockFn = jest.fn().mockResolvedValue({ success: true });
@@ -28,6 +26,7 @@ describe('[base] - strategy', () => {
       const response = await strategy.run({ fn: mockFn });
 
       expect(mockFn).toHaveBeenCalled();
+      expect(logger.debug).toHaveBeenCalled();
       expect(response).toStrictEqual({ success: true });
     });
 
@@ -38,22 +37,25 @@ describe('[base] - strategy', () => {
         referrer: '[test][strategy]',
         error: { success: false },
       });
+
+      expect(logger.error).toHaveBeenCalled();
     });
 
     describe('[map]', () => {
       const mockFn = jest.fn().mockResolvedValue({ value: 'TEST' });
 
       it('[success] - should map entity using provided mapper', async () => {
-        const strategy = new TestStrategy(new TestMapper());
+        const strategy = new TestStrategy(logger, mapper);
 
         const response = await strategy.run({ mapKey: 'mapTest', fn: mockFn });
 
         expect(mockFn).toHaveBeenCalled();
+        expect(logger.debug).toHaveBeenCalled();
         expect(response).toEqual('TEST');
       });
 
       it('[failure] - should throw when mapper is not implemented', async () => {
-        const strategy = new TestStrategy();
+        const strategy = new TestStrategy(logger);
 
         await expect(
           strategy.run({ mapKey: 'mapTest', fn: mockFn }),
@@ -63,6 +65,8 @@ describe('[base] - strategy', () => {
             message: 'Mapper not implemented!',
           }),
         });
+
+        expect(logger.error).toHaveBeenCalled();
       });
     });
   });

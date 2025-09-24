@@ -1,8 +1,9 @@
+import { TestLogger } from '@shared/testing';
 import { BaseGateway } from './base.gateway';
 
 class TestGateway extends BaseGateway {
-  constructor() {
-    super('[test]');
+  constructor(logger: TestLogger) {
+    super('[test]', logger);
   }
 
   async run<T>(props: { fn: () => Promise<T> }) {
@@ -13,8 +14,10 @@ class TestGateway extends BaseGateway {
 describe('[base] - gateway', () => {
   afterEach(() => jest.clearAllMocks());
 
+  const logger = new TestLogger();
+
   describe('[execute]', () => {
-    const gateway = new TestGateway();
+    const gateway = new TestGateway(logger);
 
     it('[success] - should call `execute` function successfully', async () => {
       const mockFn = jest.fn().mockResolvedValue({ success: true });
@@ -22,6 +25,7 @@ describe('[base] - gateway', () => {
       const response = await gateway.run({ fn: mockFn });
 
       expect(mockFn).toHaveBeenCalled();
+      expect(logger.debug).toHaveBeenCalled();
       expect(response).toStrictEqual({ success: true });
     });
 
@@ -32,6 +36,8 @@ describe('[base] - gateway', () => {
         referrer: '[test][gateway]',
         error: { success: false },
       });
+
+      expect(logger.error).toHaveBeenCalled();
     });
   });
 });

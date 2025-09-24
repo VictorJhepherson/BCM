@@ -1,12 +1,23 @@
 import { NotImplementedException } from '@nestjs/common';
-import { ExecuteProps, MapArg, MapProps, MapReturn } from '@shared/models';
+import {
+  ExecuteProps,
+  ILoggerProvider,
+  MapArg,
+  MapProps,
+  MapReturn,
+} from '@shared/models';
 import { AppError } from '../models';
 
 export abstract class BaseStrategy<M = never> {
+  private readonly referrer: string;
+
   constructor(
     private readonly name: string,
+    private readonly logger: ILoggerProvider,
     private readonly mapper?: M,
-  ) {}
+  ) {
+    this.referrer = `${this.name}[strategy]`;
+  }
 
   protected async execute<T>({ fn }: ExecuteProps<T>): Promise<T>;
   protected async execute<T, K extends keyof M>({
@@ -21,11 +32,19 @@ export abstract class BaseStrategy<M = never> {
     try {
       const response = await fn();
 
-      if (!mapKey) return response;
-      return this.map({ key: mapKey, data: response as MapArg<M[K]> });
+      if (!mapKey) {
+        this.logger.debug(this.referrer, { response });
+        return response;
+      }
+
+      const mapped = this.map({ key: mapKey, data: response as MapArg<M[K]> });
+      this.logger.debug(this.referrer, { response, mapped });
+
+      return mapped;
     } catch (error) {
+      this.logger.error(this.referrer, { error });
       throw AppError.handler({
-        referrer: `${this.name}[strategy]`,
+        referrer: this.referrer,
         error,
       });
     }

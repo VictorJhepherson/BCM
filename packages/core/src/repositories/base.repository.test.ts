@@ -1,15 +1,9 @@
+import { TestLogger } from '@shared/testing';
 import { BaseRepository } from './base.repository';
 
-class TestLogger {
-  info = jest.fn();
-  warn = jest.fn();
-  error = jest.fn();
-  debug = jest.fn();
-}
-
 class TestRepository extends BaseRepository {
-  constructor() {
-    super('[test]', new TestLogger());
+  constructor(logger: TestLogger) {
+    super('[test]', logger);
   }
 
   async run<T>(props: { fn: () => Promise<T> }) {
@@ -20,8 +14,10 @@ class TestRepository extends BaseRepository {
 describe('[base] - repository', () => {
   afterEach(() => jest.clearAllMocks());
 
+  const logger = new TestLogger();
+
   describe('[execute]', () => {
-    const repository = new TestRepository();
+    const repository = new TestRepository(logger);
 
     it('[success] - should call `execute` function successfully', async () => {
       const mockFn = jest.fn().mockResolvedValue({ success: true });
@@ -29,6 +25,7 @@ describe('[base] - repository', () => {
       const response = await repository.run({ fn: mockFn });
 
       expect(mockFn).toHaveBeenCalled();
+      expect(logger.debug).toHaveBeenCalled();
       expect(response).toStrictEqual({ success: true });
     });
 
@@ -39,6 +36,8 @@ describe('[base] - repository', () => {
         referrer: '[test][repository]',
         error: { success: false },
       });
+
+      expect(logger.error).toHaveBeenCalled();
     });
   });
 });

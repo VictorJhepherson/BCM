@@ -1,3 +1,5 @@
+export { TestLogger, TestMapper } from './bases/bases.mocks';
+
 export { mockData } from './data';
 export { mockHelpers } from './helpers';
 
