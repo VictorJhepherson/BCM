@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
-import { Logging } from '@shared/models';
+import { Logging, LoggingLevel } from '@shared/models';
 import { LoggerMockProps, MockMethodFactory } from '@shared/testing';
 import { LoggerProvider } from './logger.provider';
 
@@ -31,9 +31,21 @@ describe('[providers] - LoggerProvider', () => {
   afterEach(() => jest.clearAllMocks());
 
   describe('[enabled]', () => {
-    beforeEach(() =>
-      (context.config.get as jest.Mock).mockReturnValue(Logging.ENABLED),
-    );
+    beforeEach(() => {
+      (context.config.get as jest.Mock).mockImplementation((key: string) => {
+        if (key === 'LOGGING') return Logging.ENABLED;
+        if (key === 'LOGGING_LEVEL') {
+          return [
+            LoggingLevel.INFO,
+            LoggingLevel.WARN,
+            LoggingLevel.ERROR,
+            LoggingLevel.DEBUG,
+          ];
+        }
+
+        return undefined;
+      });
+    });
 
     it('[info] - should log info', () => {
       const spy = jest.spyOn(console, 'info').mockImplementation();
@@ -72,7 +84,19 @@ describe('[providers] - LoggerProvider', () => {
 
   describe('[disabled]', () => {
     beforeEach(() =>
-      (context.config.get as jest.Mock).mockReturnValue(Logging.DISABLED),
+      (context.config.get as jest.Mock).mockImplementation((key: string) => {
+        if (key === 'LOGGING') return Logging.DISABLED;
+        if (key === 'LOGGING_LEVEL') {
+          return [
+            LoggingLevel.INFO,
+            LoggingLevel.WARN,
+            LoggingLevel.ERROR,
+            LoggingLevel.DEBUG,
+          ];
+        }
+
+        return undefined;
+      }),
     );
 
     it('[info] - should not log info', () => {

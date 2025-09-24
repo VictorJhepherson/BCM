@@ -11,6 +11,13 @@ export enum Logging {
   DISABLED = 'DISABLED',
 }
 
+export enum LoggingLevel {
+  INFO = 'INFO',
+  WARN = 'WARN',
+  ERROR = 'ERROR',
+  DEBUG = 'DEBUG',
+}
+
 export type PartialField<T, K extends keyof T> = Omit<T, K> &
   Partial<Pick<T, K>>;
 
