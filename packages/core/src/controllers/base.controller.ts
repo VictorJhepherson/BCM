@@ -14,7 +14,7 @@ export abstract class BaseController {
   protected async execute<T>({ fn }: ExecuteProps<T>): Promise<T> {
     try {
       const response = await fn();
-      this.logger.info(this.referrer, { response });
+      this.logger.debug(this.referrer, { response });
 
       return response;
     } catch (error) {

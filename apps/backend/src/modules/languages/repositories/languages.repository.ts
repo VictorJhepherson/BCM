@@ -10,6 +10,7 @@ import {
   LanguageFilter,
 } from '@shared/models';
 import { DeleteResult, Model } from 'mongoose';
+import { LoggerProvider } from '../../../providers';
 
 @Injectable()
 export class LanguageRepository
@@ -17,10 +18,11 @@ export class LanguageRepository
   implements ILanguageRepository
 {
   constructor(
+    logger: LoggerProvider,
     @InjectModel(LanguageEntity.name)
     private readonly model: Model<LanguageEntity>,
   ) {
-    super('[languages]');
+    super('[languages]', logger);
   }
 
   async findMany(): Promise<Language[]> {

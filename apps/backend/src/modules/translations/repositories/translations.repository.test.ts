@@ -9,6 +9,7 @@ import {
   TranslationMock,
 } from '@shared/testing';
 import { Model } from 'mongoose';
+import { LoggerProvider } from '../../../providers';
 import { TranslationRepository } from './translations.repository';
 
 const { dto, data, filter } = new MockDataFactory<TranslationMock>(
@@ -25,6 +26,16 @@ describe('[repositories] - TranslationRepository', () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
         TranslationRepository,
+        {
+          provide: LoggerProvider,
+          useFactory: () =>
+            new MockMethodFactory<LoggerProvider>()
+              .add('info', jest.fn())
+              .add('warn', jest.fn())
+              .add('error', jest.fn())
+              .add('debug', jest.fn())
+              .build(),
+        },
         {
           provide: getModelToken(TranslationEntity.name),
           useFactory: () =>

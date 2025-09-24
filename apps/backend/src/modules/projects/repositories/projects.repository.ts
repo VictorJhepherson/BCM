@@ -10,6 +10,7 @@ import {
   ProjectFilter,
 } from '@shared/models';
 import { DeleteResult, Model } from 'mongoose';
+import { LoggerProvider } from '../../../providers';
 
 @Injectable()
 export class ProjectRepository
@@ -17,10 +18,11 @@ export class ProjectRepository
   implements IProjectRepository
 {
   constructor(
+    logger: LoggerProvider,
     @InjectModel(ProjectEntity.name)
     private readonly model: Model<ProjectEntity>,
   ) {
-    super('[projects]');
+    super('[projects]', logger);
   }
 
   async findMany(): Promise<Project[]> {

@@ -9,6 +9,7 @@ import {
   mockData,
 } from '@shared/testing';
 import { Model } from 'mongoose';
+import { LoggerProvider } from '../../../providers';
 import { ProjectRepository } from './projects.repository';
 
 const { dto, data, filter } = new MockDataFactory<ProjectMock>(
@@ -25,6 +26,16 @@ describe('[repositories] - ProjectRepository', () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
         ProjectRepository,
+        {
+          provide: LoggerProvider,
+          useFactory: () =>
+            new MockMethodFactory<LoggerProvider>()
+              .add('info', jest.fn())
+              .add('warn', jest.fn())
+              .add('error', jest.fn())
+              .add('debug', jest.fn())
+              .build(),
+        },
         {
           provide: getModelToken(ProjectEntity.name),
           useFactory: () =>

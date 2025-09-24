@@ -1,8 +1,15 @@
 import { BaseRepository } from './base.repository';
 
+class TestLogger {
+  info = jest.fn();
+  warn = jest.fn();
+  error = jest.fn();
+  debug = jest.fn();
+}
+
 class TestRepository extends BaseRepository {
   constructor() {
-    super('[test]');
+    super('[test]', new TestLogger());
   }
 
   async run<T>(props: { fn: () => Promise<T> }) {

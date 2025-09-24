@@ -11,6 +11,7 @@ import {
   TranslationFilter,
 } from '@shared/models';
 import { DeleteResult, Model } from 'mongoose';
+import { LoggerProvider } from '../../../providers';
 
 @Injectable()
 export class TranslationRepository
@@ -18,10 +19,11 @@ export class TranslationRepository
   implements ITranslationRepository
 {
   constructor(
+    logger: LoggerProvider,
     @InjectModel(TranslationEntity.name)
     private readonly model: Model<TranslationEntity>,
   ) {
-    super('[translations]');
+    super('[translations]', logger);
   }
 
   async findMany(

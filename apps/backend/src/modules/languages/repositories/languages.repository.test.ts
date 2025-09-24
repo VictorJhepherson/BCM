@@ -9,6 +9,7 @@ import {
   mockData,
 } from '@shared/testing';
 import { Model } from 'mongoose';
+import { LoggerProvider } from '../../../providers';
 import { LanguageRepository } from './languages.repository';
 
 const { dto, data, filter } = new MockDataFactory<LanguageMock>(
@@ -25,6 +26,16 @@ describe('[repositories] - LanguageRepository', () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
         LanguageRepository,
+        {
+          provide: LoggerProvider,
+          useFactory: () =>
+            new MockMethodFactory<LoggerProvider>()
+              .add('info', jest.fn())
+              .add('warn', jest.fn())
+              .add('error', jest.fn())
+              .add('debug', jest.fn())
+              .build(),
+        },
         {
           provide: getModelToken(LanguageEntity.name),
           useFactory: () =>
