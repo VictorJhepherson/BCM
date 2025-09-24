@@ -6,6 +6,7 @@ import {
   MockMethodFactory,
   TranslationMock,
 } from '@shared/testing';
+import { LoggerProvider } from '../../../providers';
 import { TranslationService } from '../services/translations.service';
 import { TranslationController } from './translations.controller';
 
@@ -25,6 +26,16 @@ describe('[controllers] - TranslationController', () => {
     const moduleRef = await Test.createTestingModule({
       controllers: [TranslationController],
       providers: [
+        {
+          provide: LoggerProvider,
+          useFactory: () =>
+            new MockMethodFactory<LoggerProvider>()
+              .add('info', jest.fn())
+              .add('warn', jest.fn())
+              .add('error', jest.fn())
+              .add('debug', jest.fn())
+              .build(),
+        },
         {
           provide: TranslationService,
           useFactory: () =>

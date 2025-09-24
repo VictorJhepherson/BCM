@@ -6,6 +6,7 @@ import {
   ProjectMock,
   mockData,
 } from '@shared/testing';
+import { LoggerProvider } from '../../../providers';
 import { ProjectService } from '../services/projects.service';
 import { ProjectController } from './projects.controller';
 
@@ -22,6 +23,16 @@ describe('[controllers] - ProjectController', () => {
     const moduleRef = await Test.createTestingModule({
       controllers: [ProjectController],
       providers: [
+        {
+          provide: LoggerProvider,
+          useFactory: () =>
+            new MockMethodFactory<LoggerProvider>()
+              .add('info', jest.fn())
+              .add('warn', jest.fn())
+              .add('error', jest.fn())
+              .add('debug', jest.fn())
+              .build(),
+        },
         {
           provide: ProjectService,
           useFactory: () =>

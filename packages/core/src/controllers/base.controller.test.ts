@@ -1,8 +1,15 @@
 import { BaseController } from './base.controller';
 
+class TestLogger {
+  info = jest.fn();
+  warn = jest.fn();
+  error = jest.fn();
+  debug = jest.fn();
+}
+
 class TestController extends BaseController {
   constructor() {
-    super('[test]');
+    super('[test]', new TestLogger());
   }
 
   async run<T>(props: { fn: () => Promise<T> }) {

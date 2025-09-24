@@ -18,6 +18,7 @@ import {
   Translation,
   TranslationFilter,
 } from '@shared/models';
+import { LoggerProvider } from '../../../providers';
 import { TranslationService } from '../services/translations.service';
 
 @Controller('/translations')
@@ -25,8 +26,11 @@ export class TranslationController
   extends BaseController
   implements ITranslationController
 {
-  constructor(private readonly service: TranslationService) {
-    super('[translations]');
+  constructor(
+    logger: LoggerProvider,
+    private readonly service: TranslationService,
+  ) {
+    super('[translations]', logger);
   }
 
   @Version('1')

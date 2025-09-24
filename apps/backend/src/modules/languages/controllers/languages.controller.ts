@@ -18,6 +18,7 @@ import {
   LanguageFilter,
   MappedLanguage,
 } from '@shared/models';
+import { LoggerProvider } from '../../../providers';
 import { LanguageService } from '../services/languages.service';
 
 @Controller('/languages')
@@ -25,8 +26,11 @@ export class LanguageController
   extends BaseController
   implements ILanguageController
 {
-  constructor(private readonly service: LanguageService) {
-    super('[languages]');
+  constructor(
+    logger: LoggerProvider,
+    private readonly service: LanguageService,
+  ) {
+    super('[languages]', logger);
   }
 
   @Version('1')

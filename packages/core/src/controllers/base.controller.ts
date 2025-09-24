@@ -1,15 +1,26 @@
-import { ExecuteProps } from '@shared/models';
+import { ExecuteProps, ILoggerProvider } from '@shared/models';
 import { AppError } from '../models';
 
 export abstract class BaseController {
-  constructor(private readonly name: string) {}
+  private readonly referrer: string;
+
+  constructor(
+    private readonly name: string,
+    private readonly logger: ILoggerProvider,
+  ) {
+    this.referrer = `${this.name}[controller]`;
+  }
 
   protected async execute<T>({ fn }: ExecuteProps<T>): Promise<T> {
     try {
-      return await fn();
+      const response = await fn();
+      this.logger.info(this.referrer, { response });
+
+      return response;
     } catch (error) {
+      this.logger.error(this.referrer, { error });
       throw AppError.handler({
-        referrer: `${this.name}[controller]`,
+        referrer: this.referrer,
         error,
       });
     }

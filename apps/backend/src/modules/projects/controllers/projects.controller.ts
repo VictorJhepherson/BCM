@@ -18,6 +18,7 @@ import {
   Project,
   ProjectFilter,
 } from '@shared/models';
+import { LoggerProvider } from '../../../providers';
 import { ProjectService } from '../services/projects.service';
 
 @Controller('/projects')
@@ -25,8 +26,11 @@ export class ProjectController
   extends BaseController
   implements IProjectController
 {
-  constructor(private readonly service: ProjectService) {
-    super('[projects]');
+  constructor(
+    logger: LoggerProvider,
+    private readonly service: ProjectService,
+  ) {
+    super('[projects]', logger);
   }
 
   @Version('1')
