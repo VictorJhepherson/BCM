@@ -1,3 +1,4 @@
+import { DeleteResult } from 'mongoose';
 import { AddLanguageDTO, EditLanguageDTO } from './languages.dtos';
 import { Language, LanguageFilter, MappedLanguage } from './languages.types';
 
@@ -6,13 +7,13 @@ export interface ILanguage {
 }
 
 export interface ILanguageRepository {
-  find(): Promise<Language[]>;
+  findMany(): Promise<Language[]>;
   create(dto: AddLanguageDTO): Promise<Language>;
   update(
     filter: LanguageFilter,
     dto: EditLanguageDTO,
   ): Promise<Language | null>;
-  delete(filter: LanguageFilter): Promise<Language | null>;
+  deleteOne(filter: LanguageFilter): Promise<DeleteResult>;
 }
 
 export interface ILanguageService {
@@ -26,10 +27,10 @@ export interface ILanguageController {
   getAll(): Promise<MappedLanguage[]>;
   addLanguage(dto: AddLanguageDTO): Promise<Language>;
   editLanguage(
-    id: LanguageFilter['id'],
+    _id: LanguageFilter['_id'],
     dto: EditLanguageDTO,
   ): Promise<Language>;
-  deleteLanguage(id: LanguageFilter['id']): Promise<void>;
+  deleteLanguage(_id: LanguageFilter['_id']): Promise<void>;
 }
 
 export interface ILanguageMapper {

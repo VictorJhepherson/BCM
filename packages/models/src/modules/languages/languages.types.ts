@@ -5,7 +5,7 @@ import { LanguageEntity } from './languages.schemas';
 export type Language = HydratedDocument<LanguageEntity>;
 
 export type LanguageFilter = {
-  id: Types.ObjectId;
+  _id: Types.ObjectId;
 };
 
 export type MappedLanguage = ILanguage & {

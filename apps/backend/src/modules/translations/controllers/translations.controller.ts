@@ -73,21 +73,21 @@ export class TranslationController
   @Version('1')
   @HttpCode(204)
   @Delete('/:projectId')
-  async removeByProject(
+  async deleteByProject(
     @Param('projectId') projectId: TranslationFilter['projectId'],
   ): Promise<void> {
-    return this.execute(() => this.service.removeByProject({ projectId }));
+    return this.execute(() => this.service.deleteByProject({ projectId }));
   }
 
   @Version('1')
   @HttpCode(204)
   @Delete('/:projectId/:languageId')
-  async removeByLanguage(
+  async deleteByLanguage(
     @Param('projectId') projectId: TranslationFilter['projectId'],
     @Param('languageId') languageId: TranslationFilter['languageId'],
   ): Promise<void> {
     return this.execute(() =>
-      this.service.removeByLanguage({ projectId, languageId }),
+      this.service.deleteByLanguage({ projectId, languageId }),
     );
   }
 }

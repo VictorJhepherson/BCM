@@ -33,10 +33,10 @@ describe('[services] - LanguageService', () => {
           provide: LanguageRepository,
           useFactory: () =>
             new MockMethodFactory<LanguageRepository>()
-              .add('find', jest.fn())
+              .add('findMany', jest.fn())
               .add('create', jest.fn())
               .add('update', jest.fn())
-              .add('delete', jest.fn())
+              .add('deleteOne', jest.fn())
               .build(),
         },
       ],
@@ -50,13 +50,13 @@ describe('[services] - LanguageService', () => {
 
   describe('[getAll]', () => {
     it('[success] - should return all languages', async () => {
-      (context.repository.find as jest.Mock).mockResolvedValue([data]);
+      (context.repository.findMany as jest.Mock).mockResolvedValue([data]);
 
       expect(await context.service.getAll()).toEqual([data]);
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.repository.find as jest.Mock).mockRejectedValue(
+      (context.repository.findMany as jest.Mock).mockRejectedValue(
         new Error('REPOSITORY ERROR'),
       );
 
@@ -66,7 +66,7 @@ describe('[services] - LanguageService', () => {
     });
 
     it('[edge-case] - should return empty array when has no languages', async () => {
-      (context.repository.find as jest.Mock).mockResolvedValue([]);
+      (context.repository.findMany as jest.Mock).mockResolvedValue([]);
 
       expect(await context.service.getAll()).toEqual([]);
     });
@@ -122,13 +122,15 @@ describe('[services] - LanguageService', () => {
 
   describe('[deleteLanguage]', () => {
     it('[success] - should removed a language', async () => {
-      (context.repository.delete as jest.Mock).mockResolvedValue(data);
+      (context.repository.deleteOne as jest.Mock).mockResolvedValue({
+        deletedCount: 1,
+      });
 
       expect(await context.service.deleteLanguage(filter)).toBeFalsy();
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.repository.delete as jest.Mock).mockRejectedValue(
+      (context.repository.deleteOne as jest.Mock).mockRejectedValue(
         new Error('REPOSITORY ERROR'),
       );
 
@@ -138,7 +140,9 @@ describe('[services] - LanguageService', () => {
     });
 
     it('[edge-case] - should failed to remove a language', async () => {
-      (context.repository.delete as jest.Mock).mockResolvedValue(undefined);
+      (context.repository.deleteOne as jest.Mock).mockResolvedValue({
+        deletedCount: 0,
+      });
 
       await expect(context.service.deleteLanguage(filter)).rejects.toThrow(
         `Failed to delete a language for: ${format.base(filter)}`,

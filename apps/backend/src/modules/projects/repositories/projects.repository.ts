@@ -9,7 +9,7 @@ import {
   ProjectEntity,
   ProjectFilter,
 } from '@shared/models';
-import { Model } from 'mongoose';
+import { DeleteResult, Model } from 'mongoose';
 
 @Injectable()
 export class ProjectRepository
@@ -23,7 +23,7 @@ export class ProjectRepository
     super('[projects]');
   }
 
-  async find(): Promise<Project[]> {
+  async findMany(): Promise<Project[]> {
     return this.execute(() => this.model.find().exec());
   }
 
@@ -36,11 +36,11 @@ export class ProjectRepository
     dto: EditProjectDTO,
   ): Promise<Project | null> {
     return this.execute(() =>
-      this.model.findByIdAndUpdate(filter.id, dto, { new: true }).exec(),
+      this.model.findOneAndUpdate(filter, dto, { new: true }).exec(),
     );
   }
 
-  async delete(filter: ProjectFilter): Promise<Project | null> {
-    return this.execute(() => this.model.findByIdAndDelete(filter.id).exec());
+  async deleteOne(filter: ProjectFilter): Promise<DeleteResult> {
+    return this.execute(() => this.model.deleteOne(filter).exec());
   }
 }

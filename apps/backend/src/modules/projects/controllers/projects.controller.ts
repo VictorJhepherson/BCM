@@ -45,18 +45,18 @@ export class ProjectController
 
   @Version('1')
   @HttpCode(200)
-  @Patch('/:id')
+  @Patch('/:_id')
   async editProject(
-    @Param('id') id: ProjectFilter['id'],
+    @Param('_id') _id: ProjectFilter['_id'],
     @Body() dto: EditProjectDTO,
   ): Promise<Project> {
-    return this.execute(() => this.service.editProject({ id }, dto));
+    return this.execute(() => this.service.editProject({ _id }, dto));
   }
 
   @Version('1')
   @HttpCode(204)
-  @Delete('/:id')
-  async deleteProject(@Param('id') id: ProjectFilter['id']): Promise<void> {
-    return this.execute(() => this.service.deleteProject({ id }));
+  @Delete('/:_id')
+  async deleteProject(@Param('_id') _id: ProjectFilter['_id']): Promise<void> {
+    return this.execute(() => this.service.deleteProject({ _id }));
   }
 }

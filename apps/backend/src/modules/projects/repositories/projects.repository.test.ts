@@ -31,8 +31,8 @@ describe('[repositories] - ProjectRepository', () => {
             new MockMethodFactory<Model<ProjectEntity>>()
               .add('find', jest.fn())
               .add('create', jest.fn())
-              .add('findByIdAndUpdate', jest.fn())
-              .add('findByIdAndDelete', jest.fn())
+              .add('deleteOne', jest.fn())
+              .add('findOneAndUpdate', jest.fn())
               .build(),
         },
       ],
@@ -44,13 +44,13 @@ describe('[repositories] - ProjectRepository', () => {
 
   afterEach(() => jest.clearAllMocks());
 
-  describe('[find]', () => {
+  describe('[findMany]', () => {
     it('[success] - should return all projects', async () => {
       (context.model.find as jest.Mock).mockReturnValue({
         exec: jest.fn().mockResolvedValue([data]),
       });
 
-      expect(await context.repository.find()).toEqual([data]);
+      expect(await context.repository.findMany()).toEqual([data]);
     });
 
     it('[failure] - should handle an error', async () => {
@@ -58,7 +58,9 @@ describe('[repositories] - ProjectRepository', () => {
         exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
       });
 
-      await expect(context.repository.find()).rejects.toThrow('MODEL ERROR');
+      await expect(context.repository.findMany()).rejects.toThrow(
+        'MODEL ERROR',
+      );
     });
   });
 
@@ -82,7 +84,7 @@ describe('[repositories] - ProjectRepository', () => {
 
   describe('[update]', () => {
     it('[success] - should edited a project', async () => {
-      (context.model.findByIdAndUpdate as jest.Mock).mockReturnValue({
+      (context.model.findOneAndUpdate as jest.Mock).mockReturnValue({
         exec: jest.fn().mockResolvedValue(data),
       });
 
@@ -90,7 +92,7 @@ describe('[repositories] - ProjectRepository', () => {
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.model.findByIdAndUpdate as jest.Mock).mockReturnValue({
+      (context.model.findOneAndUpdate as jest.Mock).mockReturnValue({
         exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
       });
 
@@ -100,21 +102,23 @@ describe('[repositories] - ProjectRepository', () => {
     });
   });
 
-  describe('[delete]', () => {
+  describe('[deleteOne]', () => {
     it('[success] - should removed a project', async () => {
-      (context.model.findByIdAndDelete as jest.Mock).mockReturnValue({
-        exec: jest.fn().mockResolvedValue(data),
+      (context.model.deleteOne as jest.Mock).mockReturnValue({
+        exec: jest.fn().mockResolvedValue({ deletedCount: 1 }),
       });
 
-      expect(await context.repository.delete(filter)).toEqual(data);
+      expect(await context.repository.deleteOne(filter)).toEqual({
+        deletedCount: 1,
+      });
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.model.findByIdAndDelete as jest.Mock).mockReturnValue({
+      (context.model.deleteOne as jest.Mock).mockReturnValue({
         exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
       });
 
-      await expect(context.repository.delete(filter)).rejects.toThrow(
+      await expect(context.repository.deleteOne(filter)).rejects.toThrow(
         'MODEL ERROR',
       );
     });

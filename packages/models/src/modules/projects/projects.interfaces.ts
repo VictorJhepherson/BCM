@@ -1,3 +1,4 @@
+import { DeleteResult } from 'mongoose';
 import { AddProjectDTO, EditProjectDTO } from './projects.dtos';
 import { MappedProject, Project, ProjectFilter } from './projects.types';
 
@@ -7,10 +8,10 @@ export interface IProject {
 }
 
 export interface IProjectRepository {
-  find(): Promise<Project[]>;
+  findMany(): Promise<Project[]>;
   create(dto: AddProjectDTO): Promise<Project>;
   update(filter: ProjectFilter, dto: EditProjectDTO): Promise<Project | null>;
-  delete(filter: ProjectFilter): Promise<Project | null>;
+  deleteOne(filter: ProjectFilter): Promise<DeleteResult>;
 }
 
 export interface IProjectService {
@@ -23,8 +24,8 @@ export interface IProjectService {
 export interface IProjectController {
   getAll(): Promise<MappedProject[]>;
   addProject(dto: AddProjectDTO): Promise<Project>;
-  editProject(id: ProjectFilter['id'], dto: EditProjectDTO): Promise<Project>;
-  deleteProject(id: ProjectFilter['id']): Promise<void>;
+  editProject(_id: ProjectFilter['_id'], dto: EditProjectDTO): Promise<Project>;
+  deleteProject(_id: ProjectFilter['_id']): Promise<void>;
 }
 
 export interface IProjectMapper {

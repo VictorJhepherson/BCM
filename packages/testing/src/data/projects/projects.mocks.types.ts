@@ -9,7 +9,7 @@ export type ProjectMockDTO = {
 };
 
 export type ProjectMockFilter = {
-  id: Types.ObjectId;
+  _id: Types.ObjectId;
 };
 
 export type ProjectMock = DataMock<

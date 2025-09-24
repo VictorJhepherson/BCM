@@ -85,7 +85,7 @@ describe('[controllers] - LanguageController', () => {
       (context.service.editLanguage as jest.Mock).mockResolvedValue(data);
 
       expect(
-        await context.controller.editLanguage(filter.id, dto.edit),
+        await context.controller.editLanguage(filter._id, dto.edit),
       ).toEqual(data);
     });
 
@@ -95,7 +95,7 @@ describe('[controllers] - LanguageController', () => {
       );
 
       await expect(
-        context.controller.editLanguage(filter.id, dto.edit),
+        context.controller.editLanguage(filter._id, dto.edit),
       ).rejects.toThrow('SERVICE ERROR');
     });
   });
@@ -106,7 +106,7 @@ describe('[controllers] - LanguageController', () => {
         undefined,
       );
 
-      expect(await context.controller.deleteLanguage(filter.id)).toBeFalsy();
+      expect(await context.controller.deleteLanguage(filter._id)).toBeFalsy();
     });
 
     it('[failure] - should handle an error', async () => {
@@ -115,7 +115,7 @@ describe('[controllers] - LanguageController', () => {
       );
 
       await expect(
-        context.controller.deleteLanguage(filter.id),
+        context.controller.deleteLanguage(filter._id),
       ).rejects.toThrow('SERVICE ERROR');
     });
   });

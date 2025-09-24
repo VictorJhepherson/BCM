@@ -33,8 +33,8 @@ describe('[controllers] - TranslationController', () => {
               .add('getByLanguage', jest.fn())
               .add('addTranslation', jest.fn())
               .add('editTranslation', jest.fn())
-              .add('removeByProject', jest.fn())
-              .add('removeByLanguage', jest.fn())
+              .add('deleteByProject', jest.fn())
+              .add('deleteByLanguage', jest.fn())
               .build(),
         },
       ],
@@ -135,36 +135,36 @@ describe('[controllers] - TranslationController', () => {
     });
   });
 
-  describe('[removeByProject]', () => {
+  describe('[deleteByProject]', () => {
     it('[success] - should removed translations by project', async () => {
-      (context.service.removeByProject as jest.Mock).mockResolvedValue(
+      (context.service.deleteByProject as jest.Mock).mockResolvedValue(
         undefined,
       );
 
       expect(
-        await context.controller.removeByProject(filter.projectId),
+        await context.controller.deleteByProject(filter.projectId),
       ).toBeFalsy();
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.service.removeByProject as jest.Mock).mockRejectedValue(
+      (context.service.deleteByProject as jest.Mock).mockRejectedValue(
         new Error('SERVICE ERROR'),
       );
 
       await expect(
-        context.controller.removeByProject(filter.projectId),
+        context.controller.deleteByProject(filter.projectId),
       ).rejects.toThrow('SERVICE ERROR');
     });
   });
 
-  describe('[removeByLanguage]', () => {
+  describe('[deleteByLanguage]', () => {
     it('[success] - should removed translations by language', async () => {
-      (context.service.removeByLanguage as jest.Mock).mockResolvedValue(
+      (context.service.deleteByLanguage as jest.Mock).mockResolvedValue(
         undefined,
       );
 
       expect(
-        await context.controller.removeByLanguage(
+        await context.controller.deleteByLanguage(
           filter.projectId,
           filter.languageId,
         ),
@@ -172,12 +172,12 @@ describe('[controllers] - TranslationController', () => {
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.service.removeByLanguage as jest.Mock).mockRejectedValue(
+      (context.service.deleteByLanguage as jest.Mock).mockRejectedValue(
         new Error('SERVICE ERROR'),
       );
 
       await expect(
-        context.controller.removeByLanguage(
+        context.controller.deleteByLanguage(
           filter.projectId,
           filter.languageId,
         ),

@@ -26,7 +26,7 @@ export class LanguageService
 
   async getAll(): Promise<MappedLanguage[]> {
     return this.execute(async () => {
-      const data = await this.repository.find();
+      const data = await this.repository.findMany();
 
       return this.map({ key: 'mapLanguages', data });
     });
@@ -55,9 +55,9 @@ export class LanguageService
 
   async deleteLanguage(filter: LanguageFilter): Promise<void> {
     return this.execute(async () => {
-      const deleted = await this.repository.delete(filter);
+      const deleted = await this.repository.deleteOne(filter);
 
-      if (!deleted) {
+      if (deleted.deletedCount < 1) {
         throw new NotFoundException({
           message: `Failed to delete a language for: ${format.base(filter)}`,
         });

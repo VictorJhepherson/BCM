@@ -45,18 +45,20 @@ export class LanguageController
 
   @Version('1')
   @HttpCode(200)
-  @Patch('/:id')
+  @Patch('/:_id')
   async editLanguage(
-    @Param('id') id: LanguageFilter['id'],
+    @Param('_id') _id: LanguageFilter['_id'],
     @Body() dto: EditLanguageDTO,
   ): Promise<Language> {
-    return this.execute(() => this.service.editLanguage({ id }, dto));
+    return this.execute(() => this.service.editLanguage({ _id }, dto));
   }
 
   @Version('1')
   @HttpCode(204)
-  @Delete('/:id')
-  async deleteLanguage(@Param('id') id: LanguageFilter['id']): Promise<void> {
-    return this.execute(() => this.service.deleteLanguage({ id }));
+  @Delete('/:_id')
+  async deleteLanguage(
+    @Param('_id') _id: LanguageFilter['_id'],
+  ): Promise<void> {
+    return this.execute(() => this.service.deleteLanguage({ _id }));
   }
 }

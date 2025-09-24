@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import { DeleteResult, Types } from 'mongoose';
 import { AddTranslationDTO, EditTranslationDTO } from './translations.dtos';
 import {
   MappedTranslation,
@@ -15,17 +15,19 @@ export interface ITranslation {
 }
 
 export interface ITranslationRepository {
-  getByProject(
+  findMany(
     filter: Pick<TranslationFilter, 'projectId'>,
   ): Promise<PopulateTranslation[]>;
-  getByLanguage(filter: TranslationFilter): Promise<PopulateTranslation>;
-  addTranslation(dto: AddTranslationDTO): Promise<Translation>;
-  editTranslation(
+  findOne(filter: TranslationFilter): Promise<PopulateTranslation>;
+  create(dto: AddTranslationDTO): Promise<Translation>;
+  update(
     filter: TranslationFilter,
     dto: EditTranslationDTO,
-  ): Promise<Translation>;
-  removeByProject(filter: Pick<TranslationFilter, 'projectId'>): Promise<void>;
-  removeByLanguage(filter: TranslationFilter): Promise<void>;
+  ): Promise<Translation | null>;
+  deleteMany(
+    filter: Pick<TranslationFilter, 'projectId'>,
+  ): Promise<DeleteResult>;
+  deleteOne(filter: TranslationFilter): Promise<DeleteResult>;
 }
 
 export interface ITranslationService {
@@ -38,8 +40,8 @@ export interface ITranslationService {
     filter: TranslationFilter,
     dto: EditTranslationDTO,
   ): Promise<Translation>;
-  removeByProject(filter: Pick<TranslationFilter, 'projectId'>): Promise<void>;
-  removeByLanguage(filter: TranslationFilter): Promise<void>;
+  deleteByProject(filter: Pick<TranslationFilter, 'projectId'>): Promise<void>;
+  deleteByLanguage(filter: TranslationFilter): Promise<void>;
 }
 
 export interface ITranslationController {
@@ -56,8 +58,8 @@ export interface ITranslationController {
     languageId: TranslationFilter['languageId'],
     dto: EditTranslationDTO,
   ): Promise<Translation>;
-  removeByProject(projectId: TranslationFilter['projectId']): Promise<void>;
-  removeByLanguage(
+  deleteByProject(projectId: TranslationFilter['projectId']): Promise<void>;
+  deleteByLanguage(
     projectId: TranslationFilter['projectId'],
     languageId: TranslationFilter['languageId'],
   ): Promise<void>;

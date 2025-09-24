@@ -9,7 +9,7 @@ export type LanguageMockDTO = {
 };
 
 export type LanguageMockFilter = {
-  id: Types.ObjectId;
+  _id: Types.ObjectId;
 };
 
 export type LanguageMock = DataMock<

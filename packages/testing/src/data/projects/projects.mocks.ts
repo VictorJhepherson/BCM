@@ -23,7 +23,7 @@ const data: ProjectMockData = {
 };
 
 const filter: ProjectMockFilter = {
-  id: values.mongo._id,
+  _id: values.mongo._id,
 };
 
 export const project: ProjectMock = {

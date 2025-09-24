@@ -23,7 +23,7 @@ export class ProjectService
 
   async getAll(): Promise<MappedProject[]> {
     return this.execute(async () => {
-      const data = await this.respository.find();
+      const data = await this.respository.findMany();
 
       return this.map({ key: 'mapProjects', data });
     });
@@ -52,9 +52,9 @@ export class ProjectService
 
   async deleteProject(filter: ProjectFilter): Promise<void> {
     return this.execute(async () => {
-      const deleted = await this.respository.delete(filter);
+      const deleted = await this.respository.deleteOne(filter);
 
-      if (!deleted) {
+      if (deleted.deletedCount < 1) {
         throw new NotFoundException({
           message: `Failed to delete a project for: ${format.base(filter)}`,
         });

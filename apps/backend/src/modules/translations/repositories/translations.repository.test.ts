@@ -1,6 +1,5 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
-import { format } from '@shared/helpers';
 import { TranslationEntity } from '@shared/models';
 import {
   mockData,
@@ -47,7 +46,7 @@ describe('[repositories] - TranslationRepository', () => {
 
   afterEach(() => jest.clearAllMocks());
 
-  describe('[getByProject]', () => {
+  describe('[findMany]', () => {
     it('[success] - should return all translations by project', async () => {
       (context.model.find as jest.Mock).mockReturnValue({
         populate: jest.fn().mockReturnValue({
@@ -57,7 +56,7 @@ describe('[repositories] - TranslationRepository', () => {
         }),
       });
 
-      expect(await context.repository.getByProject(filter)).toEqual([data]);
+      expect(await context.repository.findMany(filter)).toEqual([data]);
     });
 
     it('[failure] - should handle an error', async () => {
@@ -69,43 +68,15 @@ describe('[repositories] - TranslationRepository', () => {
         }),
       });
 
-      await expect(context.repository.getByProject(filter)).rejects.toThrow(
+      await expect(context.repository.findMany(filter)).rejects.toThrow(
         'MODEL ERROR',
-      );
-    });
-
-    it('[edge-case] - should failed to get translation by project when is undefined', async () => {
-      (context.model.find as jest.Mock).mockReturnValue({
-        populate: jest.fn().mockReturnValue({
-          lean: jest.fn().mockReturnValue({
-            exec: jest.fn().mockResolvedValue(undefined),
-          }),
-        }),
-      });
-
-      await expect(context.repository.getByProject(filter)).rejects.toThrow(
-        `Unable to find translation(s) by: ${format.base(filter)}`,
-      );
-    });
-
-    it('[edge-case] - should failed to get translation by project when is empty array', async () => {
-      (context.model.find as jest.Mock).mockReturnValue({
-        populate: jest.fn().mockReturnValue({
-          lean: jest.fn().mockReturnValue({
-            exec: jest.fn().mockResolvedValue([]),
-          }),
-        }),
-      });
-
-      await expect(context.repository.getByProject(filter)).rejects.toThrow(
-        `Unable to find translation(s) by: ${format.base(filter)}`,
       );
     });
   });
 
-  describe('[getByLanguage]', () => {
+  describe('[findOne]', () => {
     it('[success] - should return translation by language', async () => {
-      (context.model.findOne as jest.Mock).mockReturnValue({
+      (context.model.find as jest.Mock).mockReturnValue({
         populate: jest.fn().mockReturnValue({
           lean: jest.fn().mockReturnValue({
             exec: jest.fn().mockResolvedValue(data),
@@ -113,11 +84,11 @@ describe('[repositories] - TranslationRepository', () => {
         }),
       });
 
-      expect(await context.repository.getByLanguage(filter)).toEqual(data);
+      expect(await context.repository.findOne(filter)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.model.findOne as jest.Mock).mockReturnValue({
+      (context.model.find as jest.Mock).mockReturnValue({
         populate: jest.fn().mockReturnValue({
           lean: jest.fn().mockReturnValue({
             exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
@@ -125,33 +96,17 @@ describe('[repositories] - TranslationRepository', () => {
         }),
       });
 
-      await expect(context.repository.getByLanguage(filter)).rejects.toThrow(
+      await expect(context.repository.findOne(filter)).rejects.toThrow(
         'MODEL ERROR',
-      );
-    });
-
-    it('[edge-case] - should failed to get translation by language when is undefined', async () => {
-      (context.model.findOne as jest.Mock).mockReturnValue({
-        populate: jest.fn().mockReturnValue({
-          lean: jest.fn().mockReturnValue({
-            exec: jest.fn().mockResolvedValue(undefined),
-          }),
-        }),
-      });
-
-      await expect(context.repository.getByLanguage(filter)).rejects.toThrow(
-        `Unable to find translation by: ${format.base(filter)}`,
       );
     });
   });
 
-  describe('[addTranslation]', () => {
+  describe('[create]', () => {
     it('[success] - should added a translation', async () => {
-      (context.model.create as jest.Mock).mockReturnValue({
-        save: jest.fn().mockResolvedValue(data),
-      });
+      (context.model.create as jest.Mock).mockResolvedValue(data);
 
-      expect(await context.repository.addTranslation(dto.add)).toEqual(data);
+      expect(await context.repository.create(dto.add)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
@@ -159,110 +114,72 @@ describe('[repositories] - TranslationRepository', () => {
         new Error('MODEL ERROR'),
       );
 
-      await expect(context.repository.addTranslation(dto.add)).rejects.toThrow(
+      await expect(context.repository.create(dto.add)).rejects.toThrow(
         'MODEL ERROR',
-      );
-    });
-
-    it('[edge-case] - should failed to add a translation', async () => {
-      (context.model.create as jest.Mock).mockResolvedValue(undefined);
-
-      await expect(context.repository.addTranslation(dto.add)).rejects.toThrow(
-        `Failed to create a translation for: ${format.base(dto.add)}`,
       );
     });
   });
 
-  describe('[editTranslation]', () => {
+  describe('[update]', () => {
     it('[success] - should edited a translation', async () => {
       (context.model.findOneAndUpdate as jest.Mock).mockReturnValue({
-        save: jest.fn().mockResolvedValue(data),
+        exec: jest.fn().mockResolvedValue(data),
       });
 
-      expect(
-        await context.repository.editTranslation(filter, dto.edit),
-      ).toEqual(data);
+      expect(await context.repository.update(filter, dto.edit)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
       (context.model.findOneAndUpdate as jest.Mock).mockReturnValue({
-        save: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
+        exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
       });
 
-      await expect(
-        context.repository.editTranslation(filter, dto.edit),
-      ).rejects.toThrow('MODEL ERROR');
-    });
-
-    it('[edge-case] - should failed to add a translation', async () => {
-      (context.model.findOneAndUpdate as jest.Mock).mockResolvedValue(
-        undefined,
-      );
-
-      await expect(
-        context.repository.editTranslation(filter, dto.edit),
-      ).rejects.toThrow(
-        `Unable to find a translation for: ${format.base(filter)}`,
+      await expect(context.repository.update(filter, dto.edit)).rejects.toThrow(
+        'MODEL ERROR',
       );
     });
   });
 
-  describe('[removeByProject]', () => {
+  describe('[deleteMany]', () => {
     it('[success] - should removed all translations by project', async () => {
-      (context.model.deleteMany as jest.Mock).mockResolvedValue({
-        deletedCount: 1,
+      (context.model.deleteMany as jest.Mock).mockReturnValue({
+        exec: jest.fn().mockResolvedValue({ deletedCount: 1 }),
       });
 
-      expect(await context.repository.removeByProject(filter)).toBeFalsy();
+      expect(await context.repository.deleteMany(filter)).toEqual({
+        deletedCount: 1,
+      });
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.model.deleteMany as jest.Mock).mockRejectedValue(
-        new Error('MODEL ERROR'),
-      );
-
-      await expect(context.repository.removeByProject(filter)).rejects.toThrow(
-        'MODEL ERROR',
-      );
-    });
-
-    it('[edge-case] - should failed to remove all translations by project', async () => {
-      (context.model.deleteMany as jest.Mock).mockResolvedValue({
-        deletedCount: 0,
+      (context.model.deleteMany as jest.Mock).mockReturnValue({
+        exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
       });
 
-      await expect(context.repository.removeByProject(filter)).rejects.toThrow(
-        `Failed to delete translation(s) for: ${format.base(filter)}`,
+      await expect(context.repository.deleteMany(filter)).rejects.toThrow(
+        'MODEL ERROR',
       );
     });
   });
 
-  describe('[removeByLanguage]', () => {
+  describe('[deleteOne]', () => {
     it('[success] - should removed a translation', async () => {
-      (context.model.deleteOne as jest.Mock).mockResolvedValue({
-        deletedCount: 1,
+      (context.model.deleteOne as jest.Mock).mockReturnValue({
+        exec: jest.fn().mockResolvedValue({ deletedCount: 1 }),
       });
 
-      expect(await context.repository.removeByLanguage(filter)).toBeFalsy();
+      expect(await context.repository.deleteOne(filter)).toEqual({
+        deletedCount: 1,
+      });
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.model.deleteOne as jest.Mock).mockRejectedValue(
-        new Error('MODEL ERROR'),
-      );
-
-      await expect(context.repository.removeByLanguage(filter)).rejects.toThrow(
-        'MODEL ERROR',
-      );
-    });
-
-    it('[edge-case] - should failed to remove a translation', async () => {
-      (context.model.deleteOne as jest.Mock).mockResolvedValue({
-        deletedCount: 0,
+      (context.model.deleteOne as jest.Mock).mockReturnValue({
+        exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
       });
 
-      await expect(context.repository.removeByLanguage(filter)).rejects.toThrow(
-        `Failed to delete a translation for: ${format.base(filter)}`,
+      await expect(context.repository.deleteOne(filter)).rejects.toThrow(
+        'MODEL ERROR',
       );
     });
   });

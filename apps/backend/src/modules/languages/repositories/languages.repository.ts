@@ -9,7 +9,7 @@ import {
   LanguageEntity,
   LanguageFilter,
 } from '@shared/models';
-import { Model } from 'mongoose';
+import { DeleteResult, Model } from 'mongoose';
 
 @Injectable()
 export class LanguageRepository
@@ -23,7 +23,7 @@ export class LanguageRepository
     super('[languages]');
   }
 
-  async find(): Promise<Language[]> {
+  async findMany(): Promise<Language[]> {
     return this.execute(() => this.model.find().exec());
   }
 
@@ -36,11 +36,11 @@ export class LanguageRepository
     dto: EditLanguageDTO,
   ): Promise<Language | null> {
     return this.execute(() =>
-      this.model.findByIdAndUpdate(filter.id, dto, { new: true }).exec(),
+      this.model.findOneAndUpdate(filter, dto, { new: true }).exec(),
     );
   }
 
-  async delete(filter: LanguageFilter): Promise<Language | null> {
-    return this.execute(() => this.model.findByIdAndDelete(filter.id).exec());
+  async deleteOne(filter: LanguageFilter): Promise<DeleteResult> {
+    return this.execute(() => this.model.deleteOne(filter).exec());
   }
 }

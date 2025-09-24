@@ -81,9 +81,9 @@ describe('[controllers] - ProjectController', () => {
     it('[success] - should edited a project', async () => {
       (context.service.editProject as jest.Mock).mockResolvedValue(data);
 
-      expect(await context.controller.editProject(filter.id, dto.edit)).toEqual(
-        data,
-      );
+      expect(
+        await context.controller.editProject(filter._id, dto.edit),
+      ).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
@@ -92,7 +92,7 @@ describe('[controllers] - ProjectController', () => {
       );
 
       await expect(
-        context.controller.editProject(filter.id, dto.edit),
+        context.controller.editProject(filter._id, dto.edit),
       ).rejects.toThrow('SERVICE ERROR');
     });
   });
@@ -101,7 +101,7 @@ describe('[controllers] - ProjectController', () => {
     it('[success] - should removed a project', async () => {
       (context.service.deleteProject as jest.Mock).mockResolvedValue(undefined);
 
-      expect(await context.controller.deleteProject(filter.id)).toBeFalsy();
+      expect(await context.controller.deleteProject(filter._id)).toBeFalsy();
     });
 
     it('[failure] - should handle an error', async () => {
@@ -109,9 +109,9 @@ describe('[controllers] - ProjectController', () => {
         new Error('SERVICE ERROR'),
       );
 
-      await expect(context.controller.deleteProject(filter.id)).rejects.toThrow(
-        'SERVICE ERROR',
-      );
+      await expect(
+        context.controller.deleteProject(filter._id),
+      ).rejects.toThrow('SERVICE ERROR');
     });
   });
 });

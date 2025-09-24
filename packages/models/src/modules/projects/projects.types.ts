@@ -5,7 +5,7 @@ import { ProjectEntity } from './projects.schemas';
 export type Project = HydratedDocument<ProjectEntity>;
 
 export type ProjectFilter = {
-  id: Types.ObjectId;
+  _id: Types.ObjectId;
 };
 
 export type MappedProject = IProject & {

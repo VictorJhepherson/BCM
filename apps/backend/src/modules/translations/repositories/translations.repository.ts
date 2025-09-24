@@ -1,11 +1,6 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { BaseRepository } from '@shared/core';
-import { format } from '@shared/helpers';
 import {
   AddTranslationDTO,
   EditTranslationDTO,
@@ -15,7 +10,7 @@ import {
   TranslationEntity,
   TranslationFilter,
 } from '@shared/models';
-import { Model } from 'mongoose';
+import { DeleteResult, Model } from 'mongoose';
 
 @Injectable()
 export class TranslationRepository
@@ -29,100 +24,48 @@ export class TranslationRepository
     super('[translations]');
   }
 
-  async getByProject(
+  async findMany(
     filter: Pick<TranslationFilter, 'projectId'>,
   ): Promise<PopulateTranslation[]> {
-    return this.execute(async () => {
-      const finded = await this.model
+    return this.execute(() =>
+      this.model
         .find(filter)
         .populate({ path: 'languageId', select: 'language' })
         .lean<PopulateTranslation[]>()
-        .exec();
-
-      if (!finded?.length) {
-        throw new NotFoundException({
-          message: `Unable to find translation(s) by: ${format.base(filter)}`,
-        });
-      }
-
-      return finded;
-    });
+        .exec(),
+    );
   }
 
-  async getByLanguage(filter: TranslationFilter): Promise<PopulateTranslation> {
-    return this.execute(async () => {
-      const finded = await this.model
-        .findOne(filter)
+  async findOne(filter: TranslationFilter): Promise<PopulateTranslation> {
+    return this.execute(() =>
+      this.model
+        .find(filter)
         .populate({ path: 'languageId', select: 'language' })
         .lean<PopulateTranslation>()
-        .exec();
-
-      if (!finded) {
-        throw new NotFoundException({
-          message: `Unable to find translation by: ${format.base(filter)}`,
-        });
-      }
-
-      return finded;
-    });
+        .exec(),
+    );
   }
 
-  async addTranslation(dto: AddTranslationDTO): Promise<Translation> {
-    return this.execute(async () => {
-      const added = await this.model.create(dto);
-
-      if (!added) {
-        throw new InternalServerErrorException({
-          message: `Failed to create a translation for: ${format.base(dto)}`,
-        });
-      }
-
-      return added.save();
-    });
+  async create(dto: AddTranslationDTO): Promise<Translation> {
+    return this.execute(() => this.model.create(dto));
   }
 
-  async editTranslation(
+  async update(
     filter: TranslationFilter,
     dto: EditTranslationDTO,
-  ): Promise<Translation> {
-    return this.execute(async () => {
-      const edited = await this.model.findOneAndUpdate(filter, dto, {
-        new: true,
-      });
-
-      if (!edited) {
-        throw new NotFoundException({
-          message: `Unable to find a translation for: ${format.base(filter)}`,
-        });
-      }
-
-      return edited.save();
-    });
+  ): Promise<Translation | null> {
+    return this.execute(() =>
+      this.model.findOneAndUpdate(filter, dto, { new: true }).exec(),
+    );
   }
 
-  async removeByProject(
+  async deleteMany(
     filter: Pick<TranslationFilter, 'projectId'>,
-  ): Promise<void> {
-    return this.execute(async () => {
-      const deleted = await this.model.deleteMany(filter);
-
-      if (deleted.deletedCount < 1) {
-        throw new NotFoundException({
-          message: `Failed to delete translation(s) for: ${format.base(filter)}`,
-        });
-      }
-    });
+  ): Promise<DeleteResult> {
+    return this.execute(() => this.model.deleteMany(filter).exec());
   }
 
-  async removeByLanguage(filter: TranslationFilter): Promise<void> {
-    return this.execute(async () => {
-      const deleted = await this.model.deleteOne(filter);
-
-      if (deleted.deletedCount < 1) {
-        throw new NotFoundException({
-          message: `Failed to delete a translation for: ${format.base(filter)}`,
-        });
-      }
-    });
+  async deleteOne(filter: TranslationFilter): Promise<DeleteResult> {
+    return this.execute(() => this.model.deleteOne(filter).exec());
   }
 }
