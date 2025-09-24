@@ -33,14 +33,18 @@ export class ProjectController
   @HttpCode(200)
   @Get('/')
   async getAll(): Promise<MappedProject[]> {
-    return this.execute(() => this.service.getAll());
+    return this.execute({
+      fn: () => this.service.getAll(),
+    });
   }
 
   @Version('1')
   @HttpCode(201)
   @Post('/')
   async addProject(@Body() dto: AddProjectDTO): Promise<Project> {
-    return this.execute(() => this.service.addProject(dto));
+    return this.execute({
+      fn: () => this.service.addProject(dto),
+    });
   }
 
   @Version('1')
@@ -50,13 +54,17 @@ export class ProjectController
     @Param('_id') _id: ProjectFilter['_id'],
     @Body() dto: EditProjectDTO,
   ): Promise<Project> {
-    return this.execute(() => this.service.editProject({ _id }, dto));
+    return this.execute({
+      fn: () => this.service.editProject({ _id }, dto),
+    });
   }
 
   @Version('1')
   @HttpCode(204)
   @Delete('/:_id')
   async deleteProject(@Param('_id') _id: ProjectFilter['_id']): Promise<void> {
-    return this.execute(() => this.service.deleteProject({ _id }));
+    return this.execute({
+      fn: () => this.service.deleteProject({ _id }),
+    });
   }
 }

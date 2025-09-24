@@ -27,45 +27,55 @@ export class TranslationRepository
   async findMany(
     filter: Pick<TranslationFilter, 'projectId'>,
   ): Promise<PopulateTranslation[]> {
-    return this.execute(() =>
-      this.model
-        .find(filter)
-        .populate({ path: 'languageId', select: 'language' })
-        .lean<PopulateTranslation[]>()
-        .exec(),
-    );
+    return this.execute({
+      fn: () =>
+        this.model
+          .find(filter)
+          .populate({ path: 'languageId', select: 'language' })
+          .lean<PopulateTranslation[]>()
+          .exec(),
+    });
   }
 
-  async findOne(filter: TranslationFilter): Promise<PopulateTranslation> {
-    return this.execute(() =>
-      this.model
-        .find(filter)
-        .populate({ path: 'languageId', select: 'language' })
-        .lean<PopulateTranslation>()
-        .exec(),
-    );
+  async findOne(
+    filter: TranslationFilter,
+  ): Promise<PopulateTranslation | null> {
+    return this.execute({
+      fn: () =>
+        this.model
+          .findOne(filter)
+          .populate({ path: 'languageId', select: 'language' })
+          .lean<PopulateTranslation>()
+          .exec(),
+    });
   }
 
   async create(dto: AddTranslationDTO): Promise<Translation> {
-    return this.execute(() => this.model.create(dto));
+    return this.execute({
+      fn: () => this.model.create(dto),
+    });
   }
 
   async update(
     filter: TranslationFilter,
     dto: EditTranslationDTO,
   ): Promise<Translation | null> {
-    return this.execute(() =>
-      this.model.findOneAndUpdate(filter, dto, { new: true }).exec(),
-    );
+    return this.execute({
+      fn: () => this.model.findOneAndUpdate(filter, dto, { new: true }).exec(),
+    });
   }
 
   async deleteMany(
     filter: Pick<TranslationFilter, 'projectId'>,
   ): Promise<DeleteResult> {
-    return this.execute(() => this.model.deleteMany(filter).exec());
+    return this.execute({
+      fn: () => this.model.deleteMany(filter).exec(),
+    });
   }
 
   async deleteOne(filter: TranslationFilter): Promise<DeleteResult> {
-    return this.execute(() => this.model.deleteOne(filter).exec());
+    return this.execute({
+      fn: () => this.model.deleteOne(filter).exec(),
+    });
   }
 }

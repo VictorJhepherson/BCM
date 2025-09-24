@@ -33,14 +33,18 @@ export class LanguageController
   @HttpCode(200)
   @Get('/')
   async getAll(): Promise<MappedLanguage[]> {
-    return this.execute(() => this.service.getAll());
+    return this.execute({
+      fn: () => this.service.getAll(),
+    });
   }
 
   @Version('1')
   @HttpCode(201)
   @Post('/')
   async addLanguage(@Body() dto: AddLanguageDTO): Promise<Language> {
-    return this.execute(() => this.service.addLanguage(dto));
+    return this.execute({
+      fn: () => this.service.addLanguage(dto),
+    });
   }
 
   @Version('1')
@@ -50,7 +54,9 @@ export class LanguageController
     @Param('_id') _id: LanguageFilter['_id'],
     @Body() dto: EditLanguageDTO,
   ): Promise<Language> {
-    return this.execute(() => this.service.editLanguage({ _id }, dto));
+    return this.execute({
+      fn: () => this.service.editLanguage({ _id }, dto),
+    });
   }
 
   @Version('1')
@@ -59,6 +65,8 @@ export class LanguageController
   async deleteLanguage(
     @Param('_id') _id: LanguageFilter['_id'],
   ): Promise<void> {
-    return this.execute(() => this.service.deleteLanguage({ _id }));
+    return this.execute({
+      fn: () => this.service.deleteLanguage({ _id }),
+    });
   }
 }

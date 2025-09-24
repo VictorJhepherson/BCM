@@ -5,8 +5,8 @@ class TestRepository extends BaseRepository {
     super('[test]');
   }
 
-  async run<T>(fn: () => Promise<T>) {
-    return this.execute(fn);
+  async run<T>(props: { fn: () => Promise<T> }) {
+    return this.execute(props);
   }
 }
 
@@ -19,7 +19,7 @@ describe('[base] - repository', () => {
     it('[success] - should call `execute` function successfully', async () => {
       const mockFn = jest.fn().mockResolvedValue({ success: true });
 
-      const response = await repository.run(mockFn);
+      const response = await repository.run({ fn: mockFn });
 
       expect(mockFn).toHaveBeenCalled();
       expect(response).toStrictEqual({ success: true });
@@ -28,7 +28,7 @@ describe('[base] - repository', () => {
     it('[failed] - should call `execute` function with failure', async () => {
       const mockFn = jest.fn().mockRejectedValue({ success: false });
 
-      await expect(repository.run(mockFn)).rejects.toEqual({
+      await expect(repository.run({ fn: mockFn })).rejects.toEqual({
         referrer: '[test][repository]',
         error: { success: false },
       });

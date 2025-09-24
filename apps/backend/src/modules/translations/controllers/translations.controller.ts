@@ -35,7 +35,9 @@ export class TranslationController
   async getByProject(
     @Param('projectId') projectId: TranslationFilter['projectId'],
   ): Promise<MappedTranslation[]> {
-    return this.execute(() => this.service.getByProject({ projectId }));
+    return this.execute({
+      fn: () => this.service.getByProject({ projectId }),
+    });
   }
 
   @Version('1')
@@ -45,16 +47,18 @@ export class TranslationController
     @Param('projectId') projectId: TranslationFilter['projectId'],
     @Param('languageId') languageId: TranslationFilter['languageId'],
   ): Promise<MappedTranslation> {
-    return this.execute(() =>
-      this.service.getByLanguage({ projectId, languageId }),
-    );
+    return this.execute({
+      fn: () => this.service.getByLanguage({ projectId, languageId }),
+    });
   }
 
   @Version('1')
   @HttpCode(201)
   @Post('/')
   async addTranslation(@Body() dto: AddTranslationDTO): Promise<Translation> {
-    return this.execute(() => this.service.addTranslation(dto));
+    return this.execute({
+      fn: () => this.service.addTranslation(dto),
+    });
   }
 
   @Version('1')
@@ -65,9 +69,9 @@ export class TranslationController
     @Param('languageId') languageId: TranslationFilter['languageId'],
     @Body() dto: EditTranslationDTO,
   ): Promise<Translation> {
-    return this.execute(() =>
-      this.service.editTranslation({ projectId, languageId }, dto),
-    );
+    return this.execute({
+      fn: () => this.service.editTranslation({ projectId, languageId }, dto),
+    });
   }
 
   @Version('1')
@@ -76,7 +80,9 @@ export class TranslationController
   async deleteByProject(
     @Param('projectId') projectId: TranslationFilter['projectId'],
   ): Promise<void> {
-    return this.execute(() => this.service.deleteByProject({ projectId }));
+    return this.execute({
+      fn: () => this.service.deleteByProject({ projectId }),
+    });
   }
 
   @Version('1')
@@ -86,8 +92,8 @@ export class TranslationController
     @Param('projectId') projectId: TranslationFilter['projectId'],
     @Param('languageId') languageId: TranslationFilter['languageId'],
   ): Promise<void> {
-    return this.execute(() =>
-      this.service.deleteByLanguage({ projectId, languageId }),
-    );
+    return this.execute({
+      fn: () => this.service.deleteByLanguage({ projectId, languageId }),
+    });
   }
 }

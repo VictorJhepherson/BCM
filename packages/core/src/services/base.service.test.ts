@@ -1,8 +1,8 @@
 import { BaseService } from './base.service';
 
 class TestMapper {
-  mapTest(x: string) {
-    return x.toLowerCase();
+  mapTest(data: Record<string, string>): string {
+    return Object.values(data)[0] || '';
   }
 }
 
@@ -11,16 +11,12 @@ class TestService extends BaseService<TestMapper> {
     super('[test]', mapper);
   }
 
-  get(x: string) {
-    return this.map({ key: 'mapTest', data: x });
-  }
-
-  async run<T>(fn: () => Promise<T>) {
-    return this.execute(fn);
+  async run<T>(props: { mapKey?: string; fn: () => Promise<T> }) {
+    return this.execute(props);
   }
 }
 
-describe('[base] - service', () => {
+describe('[base] - strategy', () => {
   afterEach(() => jest.clearAllMocks());
 
   describe('[execute]', () => {
@@ -29,33 +25,45 @@ describe('[base] - service', () => {
     it('[success] - should call `execute` function successfully', async () => {
       const mockFn = jest.fn().mockResolvedValue({ success: true });
 
-      const response = await service.run(mockFn);
+      const response = await service.run({ fn: mockFn });
 
       expect(mockFn).toHaveBeenCalled();
       expect(response).toStrictEqual({ success: true });
     });
 
-    it('[failed] - should call `execute` function with failure', async () => {
+    it('[failure] - should call `execute` function with failure', async () => {
       const mockFn = jest.fn().mockRejectedValue({ success: false });
 
-      await expect(service.run(mockFn)).rejects.toEqual({
+      await expect(service.run({ fn: mockFn })).rejects.toEqual({
         referrer: '[test][service]',
         error: { success: false },
       });
     });
-  });
 
-  describe('[map]', () => {
-    it('[success] - should map entity using provided mapper', () => {
-      const service = new TestService(new TestMapper());
+    describe('[map]', () => {
+      const mockFn = jest.fn().mockResolvedValue({ value: 'TEST' });
 
-      expect(service.get('TEST')).toEqual('test');
-    });
+      it('[success] - should map entity using provided mapper', async () => {
+        const service = new TestService(new TestMapper());
 
-    it('[failure] - should throw when mapper is not implemented', () => {
-      const service = new TestService();
+        const response = await service.run({ mapKey: 'mapTest', fn: mockFn });
 
-      expect(() => service.get('TEST')).toThrow('Mapper not implemented!');
+        expect(mockFn).toHaveBeenCalled();
+        expect(response).toEqual('TEST');
+      });
+
+      it('[failure] - should throw when mapper is not implemented', async () => {
+        const service = new TestService();
+
+        await expect(
+          service.run({ mapKey: 'mapTest', fn: mockFn }),
+        ).rejects.toEqual({
+          referrer: '[test][service]',
+          error: expect.objectContaining({
+            message: 'Mapper not implemented!',
+          }),
+        });
+      });
     });
   });
 });

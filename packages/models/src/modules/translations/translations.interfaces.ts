@@ -18,7 +18,7 @@ export interface ITranslationRepository {
   findMany(
     filter: Pick<TranslationFilter, 'projectId'>,
   ): Promise<PopulateTranslation[]>;
-  findOne(filter: TranslationFilter): Promise<PopulateTranslation>;
+  findOne(filter: TranslationFilter): Promise<PopulateTranslation | null>;
   create(dto: AddTranslationDTO): Promise<Translation>;
   update(
     filter: TranslationFilter,
@@ -66,6 +66,6 @@ export interface ITranslationController {
 }
 
 export interface ITranslationMapper {
-  mapTranslation(document: PopulateTranslation): MappedTranslation;
-  mapTranslations(documents: PopulateTranslation[]): MappedTranslation[];
+  mapTranslation(translation: PopulateTranslation): MappedTranslation;
+  mapTranslations(translations: PopulateTranslation[]): MappedTranslation[];
 }

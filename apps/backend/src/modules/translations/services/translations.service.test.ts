@@ -88,6 +88,14 @@ describe('[services] - TranslationService', () => {
         'REPOSITORY ERROR',
       );
     });
+
+    it('[edge-case] - should failed to get a translation by language', async () => {
+      (context.repository.findOne as jest.Mock).mockResolvedValue(undefined);
+
+      await expect(context.service.getByLanguage(filter)).rejects.toThrow(
+        `Unable to find a translation for: ${format.base(filter)}`,
+      );
+    });
   });
 
   describe('[addTranslation]', () => {

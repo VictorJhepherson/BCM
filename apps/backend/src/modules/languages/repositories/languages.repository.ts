@@ -24,23 +24,29 @@ export class LanguageRepository
   }
 
   async findMany(): Promise<Language[]> {
-    return this.execute(() => this.model.find().exec());
+    return this.execute({
+      fn: () => this.model.find().exec(),
+    });
   }
 
   async create(dto: AddLanguageDTO): Promise<Language> {
-    return this.execute(() => this.model.create(dto));
+    return this.execute({
+      fn: () => this.model.create(dto),
+    });
   }
 
   async update(
     filter: LanguageFilter,
     dto: EditLanguageDTO,
   ): Promise<Language | null> {
-    return this.execute(() =>
-      this.model.findOneAndUpdate(filter, dto, { new: true }).exec(),
-    );
+    return this.execute({
+      fn: () => this.model.findOneAndUpdate(filter, dto, { new: true }).exec(),
+    });
   }
 
   async deleteOne(filter: LanguageFilter): Promise<DeleteResult> {
-    return this.execute(() => this.model.deleteOne(filter).exec());
+    return this.execute({
+      fn: () => this.model.deleteOne(filter).exec(),
+    });
   }
 }

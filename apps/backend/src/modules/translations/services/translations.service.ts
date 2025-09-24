@@ -27,65 +27,81 @@ export class TranslationService
   async getByProject(
     filter: Pick<TranslationFilter, 'projectId'>,
   ): Promise<MappedTranslation[]> {
-    return this.execute(async () => {
-      const data = await this.repository.findMany(filter);
-
-      return this.map({ key: 'mapTranslations', data });
+    return this.execute({
+      mapKey: 'mapTranslations',
+      fn: () => this.repository.findMany(filter),
     });
   }
 
   async getByLanguage(filter: TranslationFilter): Promise<MappedTranslation> {
-    return this.execute(async () => {
-      const data = await this.repository.findOne(filter);
+    return this.execute({
+      mapKey: 'mapTranslation',
+      fn: async () => {
+        const finded = await this.repository.findOne(filter);
 
-      return this.map({ key: 'mapTranslation', data });
+        if (!finded) {
+          throw new NotFoundException({
+            message: `Unable to find a translation for: ${format.base(filter)}`,
+          });
+        }
+
+        return finded;
+      },
     });
   }
 
   async addTranslation(dto: AddTranslationDTO): Promise<Translation> {
-    return this.execute(() => this.repository.create(dto));
+    return this.execute({
+      fn: () => this.repository.create(dto),
+    });
   }
 
   async editTranslation(
     filter: TranslationFilter,
     dto: EditTranslationDTO,
   ): Promise<Translation> {
-    return this.execute(async () => {
-      const updated = await this.repository.update(filter, dto);
+    return this.execute({
+      fn: async () => {
+        const updated = await this.repository.update(filter, dto);
 
-      if (!updated) {
-        throw new NotFoundException({
-          message: `Unable to find a translation for: ${format.base(filter)}`,
-        });
-      }
+        if (!updated) {
+          throw new NotFoundException({
+            message: `Unable to find a translation for: ${format.base(filter)}`,
+          });
+        }
 
-      return updated;
+        return updated;
+      },
     });
   }
 
   async deleteByProject(
     filter: Pick<TranslationFilter, 'projectId'>,
   ): Promise<void> {
-    return this.execute(async () => {
-      const deleted = await this.repository.deleteMany(filter);
+    return this.execute({
+      fn: async () => {
+        const deleted = await this.repository.deleteMany(filter);
 
-      if (deleted.deletedCount < 1) {
-        throw new NotFoundException({
-          message: `Failed to delete translation(s) for: ${format.base(filter)}`,
-        });
-      }
+        if (deleted.deletedCount < 1) {
+          throw new NotFoundException({
+            message: `Failed to delete translation(s) for: ${format.base(filter)}`,
+          });
+        }
+      },
     });
   }
 
   async deleteByLanguage(filter: TranslationFilter): Promise<void> {
-    return this.execute(async () => {
-      const deleted = await this.repository.deleteOne(filter);
+    return this.execute({
+      fn: async () => {
+        const deleted = await this.repository.deleteOne(filter);
 
-      if (deleted.deletedCount < 1) {
-        throw new NotFoundException({
-          message: `Failed to delete a translation for: ${format.base(filter)}`,
-        });
-      }
+        if (deleted.deletedCount < 1) {
+          throw new NotFoundException({
+            message: `Failed to delete a translation for: ${format.base(filter)}`,
+          });
+        }
+      },
     });
   }
 }

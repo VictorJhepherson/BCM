@@ -6,16 +6,16 @@ import {
 } from '@shared/models';
 
 export class TranslationMapper implements ITranslationMapper {
-  mapTranslation(document: PopulateTranslation): MappedTranslation {
+  mapTranslation(translation: PopulateTranslation): MappedTranslation {
     return {
-      language: document.languageId.language,
-      translations: document.translations,
+      language: translation.languageId.language,
+      translations: translation.translations,
     };
   }
 
-  mapTranslations(documents: PopulateTranslation[]): MappedTranslation[] {
-    return documents.map((document: PopulateTranslation) =>
-      this.mapTranslation(document),
+  mapTranslations(translations: PopulateTranslation[]): MappedTranslation[] {
+    return translations.map((translation: PopulateTranslation) =>
+      this.mapTranslation(translation),
     );
   }
 }

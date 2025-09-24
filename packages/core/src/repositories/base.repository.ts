@@ -1,10 +1,10 @@
-import { PromiseFn } from '@shared/models';
+import { ExecuteProps } from '@shared/models';
 import { AppError } from '../models';
 
 export abstract class BaseRepository {
   constructor(private readonly name: string) {}
 
-  protected async execute<T>(fn: PromiseFn<T>): Promise<T> {
+  protected async execute<T>({ fn }: ExecuteProps<T>): Promise<T> {
     try {
       return await fn();
     } catch (error) {

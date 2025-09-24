@@ -76,7 +76,7 @@ describe('[repositories] - TranslationRepository', () => {
 
   describe('[findOne]', () => {
     it('[success] - should return translation by language', async () => {
-      (context.model.find as jest.Mock).mockReturnValue({
+      (context.model.findOne as jest.Mock).mockReturnValue({
         populate: jest.fn().mockReturnValue({
           lean: jest.fn().mockReturnValue({
             exec: jest.fn().mockResolvedValue(data),
@@ -88,7 +88,7 @@ describe('[repositories] - TranslationRepository', () => {
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.model.find as jest.Mock).mockReturnValue({
+      (context.model.findOne as jest.Mock).mockReturnValue({
         populate: jest.fn().mockReturnValue({
           lean: jest.fn().mockReturnValue({
             exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
