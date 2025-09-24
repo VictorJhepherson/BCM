@@ -19,3 +19,8 @@ export type ServiceMockProps<S, R> = {
   service: S;
   repository: R;
 };
+
+export type LoggerMockProps<P, C> = {
+  provider: P;
+  config: C;
+};

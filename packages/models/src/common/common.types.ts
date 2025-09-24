@@ -6,6 +6,11 @@ export enum Environment {
   DEBUG = 'DEBUG',
 }
 
+export enum Logging {
+  ENABLED = 'ENABLED',
+  DISABLED = 'DISABLED',
+}
+
 export type PartialField<T, K extends keyof T> = Omit<T, K> &
   Partial<Pick<T, K>>;
 

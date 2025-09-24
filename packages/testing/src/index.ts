@@ -5,6 +5,7 @@ export { mockHelpers } from './helpers';
 
 export type {
   ControllerMockProps,
+  LoggerMockProps,
   MapperMockProps,
   RepositoryMockProps,
   ServiceMockProps,
