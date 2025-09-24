@@ -7,6 +7,7 @@ import {
   ProjectMock,
   ServiceMockProps,
 } from '@shared/testing';
+import { LoggerProvider } from '../../../providers';
 import { ProjectRepository } from '../repositories/projects.repository';
 import { ProjectService } from './projects.service';
 
@@ -29,6 +30,16 @@ describe('[services] - ProjectService', () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
         ProjectService,
+        {
+          provide: LoggerProvider,
+          useFactory: () =>
+            new MockMethodFactory<LoggerProvider>()
+              .add('info', jest.fn())
+              .add('warn', jest.fn())
+              .add('error', jest.fn())
+              .add('debug', jest.fn())
+              .build(),
+        },
         {
           provide: ProjectRepository,
           useFactory: () =>

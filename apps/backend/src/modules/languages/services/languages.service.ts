@@ -9,6 +9,7 @@ import {
   LanguageFilter,
   MappedLanguage,
 } from '@shared/models';
+import { LoggerProvider } from '../../../providers';
 import {
   LanguageMapper,
   LanguageMapperType,
@@ -20,8 +21,11 @@ export class LanguageService
   extends BaseService<LanguageMapperType>
   implements ILanguageService
 {
-  constructor(private readonly repository: LanguageRepository) {
-    super('[languages]', new LanguageMapper());
+  constructor(
+    logger: LoggerProvider,
+    private readonly repository: LanguageRepository,
+  ) {
+    super('[languages]', logger, new LanguageMapper());
   }
 
   async getAll(): Promise<MappedLanguage[]> {

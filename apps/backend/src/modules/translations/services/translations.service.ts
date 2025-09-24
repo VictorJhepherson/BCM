@@ -9,6 +9,7 @@ import {
   Translation,
   TranslationFilter,
 } from '@shared/models';
+import { LoggerProvider } from '../../../providers';
 import {
   TranslationMapper,
   TranslationMapperType,
@@ -20,8 +21,11 @@ export class TranslationService
   extends BaseService<TranslationMapperType>
   implements ITranslationService
 {
-  constructor(private readonly repository: TranslationRepository) {
-    super('[translations]', new TranslationMapper());
+  constructor(
+    logger: LoggerProvider,
+    private readonly repository: TranslationRepository,
+  ) {
+    super('[translations]', logger, new TranslationMapper());
   }
 
   async getByProject(

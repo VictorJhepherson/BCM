@@ -1,5 +1,12 @@
 import { BaseService } from './base.service';
 
+class TestLogger {
+  info = jest.fn();
+  warn = jest.fn();
+  error = jest.fn();
+  debug = jest.fn();
+}
+
 class TestMapper {
   mapTest(data: Record<string, string>): string {
     return Object.values(data)[0] || '';
@@ -8,7 +15,7 @@ class TestMapper {
 
 class TestService extends BaseService<TestMapper> {
   constructor(mapper?: TestMapper) {
-    super('[test]', mapper);
+    super('[test]', new TestLogger(), mapper);
   }
 
   async run<T>(props: { mapKey?: string; fn: () => Promise<T> }) {

@@ -9,6 +9,7 @@ import {
   Project,
   ProjectFilter,
 } from '@shared/models';
+import { LoggerProvider } from '../../../providers';
 import { ProjectMapper, ProjectMapperType } from '../mappers/projects.mapper';
 import { ProjectRepository } from '../repositories/projects.repository';
 
@@ -17,8 +18,11 @@ export class ProjectService
   extends BaseService<ProjectMapperType>
   implements IProjectService
 {
-  constructor(private readonly respository: ProjectRepository) {
-    super('[projects]', new ProjectMapper());
+  constructor(
+    logger: LoggerProvider,
+    private readonly respository: ProjectRepository,
+  ) {
+    super('[projects]', logger, new ProjectMapper());
   }
 
   async getAll(): Promise<MappedProject[]> {
