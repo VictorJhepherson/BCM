@@ -26,7 +26,7 @@ describe('[base] - strategy', () => {
       const response = await strategy.run({ fn: mockFn });
 
       expect(mockFn).toHaveBeenCalled();
-      expect(logger.debug).toHaveBeenCalled();
+      expect(logger.info).toHaveBeenCalled();
       expect(response).toStrictEqual({ success: true });
     });
 
@@ -37,8 +37,6 @@ describe('[base] - strategy', () => {
         referrer: '[test][strategy]',
         error: { success: false },
       });
-
-      expect(logger.error).toHaveBeenCalled();
     });
 
     describe('[map]', () => {
@@ -50,7 +48,7 @@ describe('[base] - strategy', () => {
         const response = await strategy.run({ mapKey: 'mapTest', fn: mockFn });
 
         expect(mockFn).toHaveBeenCalled();
-        expect(logger.debug).toHaveBeenCalled();
+        expect(logger.info).toHaveBeenCalled();
         expect(response).toEqual('TEST');
       });
 
@@ -65,8 +63,6 @@ describe('[base] - strategy', () => {
             message: 'Mapper not implemented!',
           }),
         });
-
-        expect(logger.error).toHaveBeenCalled();
       });
     });
   });

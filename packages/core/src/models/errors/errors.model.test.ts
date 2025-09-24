@@ -1,8 +1,10 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { TestLogger } from '@shared/testing';
 import { AppError } from './errors.model';
 
 describe('[model] - AppError', () => {
   const referrer = '[context][layer]';
+  const logger = new TestLogger();
 
   describe('[constructor]', () => {
     it('[default] - should set properties when error is generic Error', () => {
@@ -46,32 +48,40 @@ describe('[model] - AppError', () => {
     const error = new Error('generic failure');
 
     it('[default] - should throw AppError when receiving a generic Error', () => {
-      const mockFn = () => AppError.handler({ referrer, error });
+      const mockFn = () => AppError.handler({ referrer, logger, error });
 
       expect(mockFn).toThrow(AppError);
       expect(mockFn).toThrow('generic failure');
+
+      expect(logger.error).toHaveBeenCalled();
     });
 
     it('[http-exception] - should throw AppError when receiving an HttpException', () => {
       const mockFn = () =>
         AppError.handler({
           referrer,
+          logger,
           error: new BadRequestException({ message: 'bad request' }),
         });
 
       expect(mockFn).toThrow(AppError);
       expect(mockFn).toThrow('bad request');
+
+      expect(logger.error).toHaveBeenCalled();
     });
 
     it('[app-error] - should throw AppError when receiving an AppError', () => {
       const mockFn = () =>
         AppError.handler({
           referrer,
+          logger,
           error: new AppError({ referrer, error }),
         });
 
       expect(mockFn).toThrow(AppError);
       expect(mockFn).toThrow('generic failure');
+
+      expect(logger.error).toHaveBeenCalled();
     });
   });
 });

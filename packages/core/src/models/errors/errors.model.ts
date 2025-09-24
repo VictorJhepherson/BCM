@@ -1,6 +1,6 @@
 import { HttpException } from '@nestjs/common';
 import { ErrorTypes } from '@shared/models';
-import { AppErrorProps, SetupPayload } from './errors.model.types';
+import { AppErrorProps, SetupPayload, WithLogger } from './errors.model.types';
 
 export class AppError extends Error {
   readonly status: number;
@@ -35,9 +35,15 @@ export class AppError extends Error {
     return { status: 500, message: 'Internal Server Error' };
   }
 
-  static handler({ referrer, error }: AppErrorProps): void {
-    if (error instanceof AppError) throw error;
+  static handler({
+    referrer,
+    logger,
+    error,
+  }: AppErrorProps & WithLogger): void {
+    const appError =
+      error instanceof AppError ? error : new AppError({ referrer, error });
 
-    throw new AppError({ referrer, error });
+    logger.error(referrer, { error: appError });
+    throw appError;
   }
 }

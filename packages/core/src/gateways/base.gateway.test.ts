@@ -25,7 +25,7 @@ describe('[base] - gateway', () => {
       const response = await gateway.run({ fn: mockFn });
 
       expect(mockFn).toHaveBeenCalled();
-      expect(logger.debug).toHaveBeenCalled();
+      expect(logger.info).toHaveBeenCalled();
       expect(response).toStrictEqual({ success: true });
     });
 
@@ -36,8 +36,6 @@ describe('[base] - gateway', () => {
         referrer: '[test][gateway]',
         error: { success: false },
       });
-
-      expect(logger.error).toHaveBeenCalled();
     });
   });
 });

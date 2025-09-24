@@ -13,14 +13,14 @@ export abstract class BaseController {
 
   protected async execute<T>({ fn }: ExecuteProps<T>): Promise<T> {
     try {
-      const response = await fn();
-      this.logger.debug(this.referrer, { response });
+      const value = await fn();
+      this.logger.info(this.referrer, { response: { value } });
 
-      return response;
+      return value;
     } catch (error) {
-      this.logger.error(this.referrer, { error });
       throw AppError.handler({
         referrer: this.referrer,
+        logger: this.logger,
         error,
       });
     }

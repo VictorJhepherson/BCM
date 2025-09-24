@@ -30,21 +30,21 @@ export abstract class BaseService<M = never> {
     fn,
   }: ExecuteProps<T> & { mapKey?: K }): Promise<T | MapReturn<M, K>> {
     try {
-      const response = await fn();
+      const value = await fn();
 
       if (!mapKey) {
-        this.logger.debug(this.referrer, { response });
-        return response;
+        this.logger.info(this.referrer, { response: { value } });
+        return value;
       }
 
-      const mapped = this.map({ key: mapKey, data: response as MapArg<M[K]> });
-      this.logger.debug(this.referrer, { response, mapped });
+      const mapped = this.map({ key: mapKey, data: value as MapArg<M[K]> });
+      this.logger.info(this.referrer, { response: { value, mapped } });
 
       return mapped;
     } catch (error) {
-      this.logger.error(this.referrer, { error });
       throw AppError.handler({
         referrer: this.referrer,
+        logger: this.logger,
         error,
       });
     }

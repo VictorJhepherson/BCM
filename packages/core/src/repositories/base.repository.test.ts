@@ -25,7 +25,7 @@ describe('[base] - repository', () => {
       const response = await repository.run({ fn: mockFn });
 
       expect(mockFn).toHaveBeenCalled();
-      expect(logger.debug).toHaveBeenCalled();
+      expect(logger.info).toHaveBeenCalled();
       expect(response).toStrictEqual({ success: true });
     });
 
@@ -36,8 +36,6 @@ describe('[base] - repository', () => {
         referrer: '[test][repository]',
         error: { success: false },
       });
-
-      expect(logger.error).toHaveBeenCalled();
     });
   });
 });
