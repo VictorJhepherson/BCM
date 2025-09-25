@@ -46,6 +46,12 @@ export class LanguageRepository
     });
   }
 
+  async findOne(ref: ILanguageRef): Promise<Language | null> {
+    return this.execute({
+      fn: () => this.model.findOne(ref).exec(),
+    });
+  }
+
   async create(payload: ILanguage): Promise<Language> {
     return this.execute({
       fn: () => this.model.create(payload),

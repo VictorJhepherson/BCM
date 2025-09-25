@@ -7,6 +7,8 @@ import {
   ILanguageRef,
   ILanguageService,
   Language,
+  LanguagePayload,
+  LanguageRefDTO,
   MappedLanguage,
 } from '@shared/models';
 import { LoggerProvider } from '../../../providers';
@@ -32,6 +34,23 @@ export class LanguageService
     return this.execute({
       mapKey: 'mapLanguages',
       fn: () => this.repository.findMany(filter),
+    });
+  }
+
+  async getById(ref: LanguageRefDTO): Promise<LanguagePayload> {
+    return this.execute({
+      mapKey: 'mapLanguage',
+      fn: async () => {
+        const finded = await this.repository.findOne(ref);
+
+        if (!finded) {
+          throw new NotFoundException({
+            message: `Unable to find an language for: ${format.base(ref)}`,
+          });
+        }
+
+        return finded;
+      },
     });
   }
 

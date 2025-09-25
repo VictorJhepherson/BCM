@@ -21,6 +21,15 @@ describe('[mappers] - LanguageMapper', () => {
     context.mapper = new LanguageMapper();
   });
 
+  describe('[mapLanguage]', () => {
+    it('should map language correctly', () => {
+      expect(context.mapper.mapLanguage(data)).toEqual({
+        id: data._id,
+        name: data.name,
+      });
+    });
+  });
+
   describe('[mapLanguages]', () => {
     it('should map languages correctly', () => {
       expect(

@@ -15,6 +15,7 @@ jest.mock('../repositories/languages.repository');
 jest.mock('../mappers/languages.mapper', () => ({
   ...jest.requireActual('../mappers/languages.mapper'),
   LanguageMapper: jest.fn().mockImplementation(() => ({
+    mapLanguage: jest.fn().mockImplementation((data) => data),
     mapLanguages: jest.fn().mockImplementation((data) => data),
   })),
 }));
@@ -45,6 +46,7 @@ describe('[services] - LanguageService', () => {
           useFactory: () =>
             new MockMethodFactory<LanguageRepository>()
               .add('findMany', jest.fn())
+              .add('findOne', jest.fn())
               .add('create', jest.fn())
               .add('update', jest.fn())
               .add('deleteOne', jest.fn())
@@ -83,8 +85,34 @@ describe('[services] - LanguageService', () => {
     });
   });
 
+  describe('[getById]', () => {
+    it('[success] - should return a language', async () => {
+      (context.repository.findOne as jest.Mock).mockResolvedValue(data);
+
+      expect(await context.service.getById(ref)).toEqual(data);
+    });
+
+    it('[failure] - should handle an error', async () => {
+      (context.repository.findOne as jest.Mock).mockRejectedValue(
+        new Error('REPOSITORY ERROR'),
+      );
+
+      await expect(context.service.getById(ref)).rejects.toThrow(
+        'REPOSITORY ERROR',
+      );
+    });
+
+    it('[edge-case] - should failed to get a language', async () => {
+      (context.repository.findOne as jest.Mock).mockResolvedValue(undefined);
+
+      await expect(context.service.getById(ref)).rejects.toThrow(
+        `Unable to find an language for: ${format.base(ref)}`,
+      );
+    });
+  });
+
   describe('[addLanguage]', () => {
-    it('[success] - should added a language', async () => {
+    it('[success] - should add a language', async () => {
       (context.repository.create as jest.Mock).mockResolvedValue(data);
 
       expect(await context.service.addLanguage(body.add)).toEqual(data);
@@ -102,7 +130,7 @@ describe('[services] - LanguageService', () => {
   });
 
   describe('[editLanguage]', () => {
-    it('[success] - should edited a language', async () => {
+    it('[success] - should edit a language', async () => {
       (context.repository.update as jest.Mock).mockResolvedValue(data);
 
       expect(await context.service.editLanguage(ref, body.edit)).toEqual(data);
@@ -128,7 +156,7 @@ describe('[services] - LanguageService', () => {
   });
 
   describe('[deleteLanguage]', () => {
-    it('[success] - should removed a language', async () => {
+    it('[success] - should delete a language', async () => {
       (context.repository.deleteOne as jest.Mock).mockResolvedValue({
         deletedCount: 1,
       });

@@ -41,6 +41,7 @@ describe('[controllers] - LanguageController', () => {
           useFactory: () =>
             new MockMethodFactory<LanguageService>()
               .add('getAll', jest.fn())
+              .add('getById', jest.fn())
               .add('addLanguage', jest.fn())
               .add('editLanguage', jest.fn())
               .add('deleteLanguage', jest.fn())
@@ -68,6 +69,24 @@ describe('[controllers] - LanguageController', () => {
       );
 
       await expect(context.controller.getAll(filter)).rejects.toThrow(
+        'SERVICE ERROR',
+      );
+    });
+  });
+
+  describe('[getById]', () => {
+    it('[success] - should return all languages', async () => {
+      (context.service.getById as jest.Mock).mockResolvedValue(data);
+
+      expect(await context.controller.getById(ref)).toEqual(data);
+    });
+
+    it('[failure] - should handle an error', async () => {
+      (context.service.getById as jest.Mock).mockRejectedValue(
+        new Error('SERVICE ERROR'),
+      );
+
+      await expect(context.controller.getById(ref)).rejects.toThrow(
         'SERVICE ERROR',
       );
     });

@@ -41,6 +41,7 @@ describe('[repositories] - LanguageRepository', () => {
           useFactory: () =>
             new MockMethodFactory<Model<LanguageEntity>>()
               .add('find', jest.fn())
+              .add('findOne', jest.fn())
               .add('create', jest.fn())
               .add('deleteOne', jest.fn())
               .add('countDocuments', jest.fn())
@@ -95,6 +96,26 @@ describe('[repositories] - LanguageRepository', () => {
       });
 
       await expect(context.repository.findMany(filter)).rejects.toThrow(
+        'MODEL ERROR',
+      );
+    });
+  });
+
+  describe('[findOne]', () => {
+    it('[success] - should return all languages', async () => {
+      (context.model.findOne as jest.Mock).mockReturnValue({
+        exec: jest.fn().mockResolvedValue(data),
+      });
+
+      expect(await context.repository.findOne(ref)).toEqual(data);
+    });
+
+    it('[failure] - should handle an error', async () => {
+      (context.model.findOne as jest.Mock).mockReturnValue({
+        exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
+      });
+
+      await expect(context.repository.findOne(ref)).rejects.toThrow(
         'MODEL ERROR',
       );
     });

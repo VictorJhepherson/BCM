@@ -5,7 +5,7 @@ import { LanguageEntity } from './languages.schemas';
 
 export type Language = HydratedDocument<LanguageEntity>;
 
-type LanguagePayload = ILanguage & {
+export type LanguagePayload = ILanguage & {
   id: Types.ObjectId;
 };
 

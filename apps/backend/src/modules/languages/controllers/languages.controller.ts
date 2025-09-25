@@ -17,6 +17,7 @@ import {
   LanguageAddDTO,
   LanguageEditDTO,
   LanguageFilterDTO,
+  LanguagePayload,
   LanguageRefDTO,
   MappedLanguage,
 } from '@shared/models';
@@ -44,6 +45,15 @@ export class LanguageController
   ): Promise<MappedLanguage> {
     return this.execute({
       fn: () => this.service.getAll(query),
+    });
+  }
+
+  @Version('1')
+  @HttpCode(200)
+  @Get('/:_id')
+  async getById(params: LanguageRefDTO): Promise<LanguagePayload> {
+    return this.execute({
+      fn: () => this.service.getById(params),
     });
   }
 
