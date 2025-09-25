@@ -12,7 +12,7 @@ import { Model } from 'mongoose';
 import { LoggerProvider } from '../../../providers';
 import { TranslationRepository } from './translations.repository';
 
-const { dto, data, filter } = new MockDataFactory<TranslationMock>(
+const { ref, body, data, filter } = new MockDataFactory<TranslationMock>(
   mockData.factory.translation,
 ).build();
 
@@ -44,7 +44,7 @@ describe('[repositories] - TranslationRepository', () => {
               .add('create', jest.fn())
               .add('findOne', jest.fn())
               .add('deleteOne', jest.fn())
-              .add('deleteMany', jest.fn())
+              .add('countDocuments', jest.fn())
               .add('findOneAndUpdate', jest.fn())
               .build(),
         },
@@ -59,22 +59,46 @@ describe('[repositories] - TranslationRepository', () => {
 
   describe('[findMany]', () => {
     it('[success] - should return all translations by project', async () => {
+      (context.model.countDocuments as jest.Mock).mockReturnValue({
+        exec: jest.fn().mockResolvedValue(100),
+      });
+
       (context.model.find as jest.Mock).mockReturnValue({
-        populate: jest.fn().mockReturnValue({
-          lean: jest.fn().mockReturnValue({
-            exec: jest.fn().mockResolvedValue([data]),
+        sort: jest.fn().mockReturnValue({
+          skip: jest.fn().mockReturnValue({
+            limit: jest.fn().mockReturnValue({
+              populate: jest.fn().mockReturnValue({
+                lean: jest.fn().mockReturnValue({
+                  exec: jest.fn().mockResolvedValue([data]),
+                }),
+              }),
+            }),
           }),
         }),
       });
 
-      expect(await context.repository.findMany(filter)).toEqual([data]);
+      expect(await context.repository.findMany(filter)).toEqual({
+        data: [data],
+        sort: mockData.values.filter.sort,
+        pagination: { ...mockData.values.filter.pagination, total: 100 },
+      });
     });
 
     it('[failure] - should handle an error', async () => {
+      (context.model.countDocuments as jest.Mock).mockReturnValue({
+        exec: jest.fn().mockResolvedValue(100),
+      });
+
       (context.model.find as jest.Mock).mockReturnValue({
-        populate: jest.fn().mockReturnValue({
-          lean: jest.fn().mockReturnValue({
-            exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
+        sort: jest.fn().mockReturnValue({
+          skip: jest.fn().mockReturnValue({
+            limit: jest.fn().mockReturnValue({
+              populate: jest.fn().mockReturnValue({
+                lean: jest.fn().mockReturnValue({
+                  exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
+                }),
+              }),
+            }),
           }),
         }),
       });
@@ -95,7 +119,7 @@ describe('[repositories] - TranslationRepository', () => {
         }),
       });
 
-      expect(await context.repository.findOne(filter)).toEqual(data);
+      expect(await context.repository.findOne(ref)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
@@ -107,7 +131,7 @@ describe('[repositories] - TranslationRepository', () => {
         }),
       });
 
-      await expect(context.repository.findOne(filter)).rejects.toThrow(
+      await expect(context.repository.findOne(ref)).rejects.toThrow(
         'MODEL ERROR',
       );
     });
@@ -117,7 +141,7 @@ describe('[repositories] - TranslationRepository', () => {
     it('[success] - should added a translation', async () => {
       (context.model.create as jest.Mock).mockResolvedValue(data);
 
-      expect(await context.repository.create(dto.add)).toEqual(data);
+      expect(await context.repository.create(body.add)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
@@ -125,7 +149,7 @@ describe('[repositories] - TranslationRepository', () => {
         new Error('MODEL ERROR'),
       );
 
-      await expect(context.repository.create(dto.add)).rejects.toThrow(
+      await expect(context.repository.create(body.add)).rejects.toThrow(
         'MODEL ERROR',
       );
     });
@@ -137,7 +161,7 @@ describe('[repositories] - TranslationRepository', () => {
         exec: jest.fn().mockResolvedValue(data),
       });
 
-      expect(await context.repository.update(filter, dto.edit)).toEqual(data);
+      expect(await context.repository.update(ref, body.edit)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
@@ -145,29 +169,7 @@ describe('[repositories] - TranslationRepository', () => {
         exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
       });
 
-      await expect(context.repository.update(filter, dto.edit)).rejects.toThrow(
-        'MODEL ERROR',
-      );
-    });
-  });
-
-  describe('[deleteMany]', () => {
-    it('[success] - should removed all translations by project', async () => {
-      (context.model.deleteMany as jest.Mock).mockReturnValue({
-        exec: jest.fn().mockResolvedValue({ deletedCount: 1 }),
-      });
-
-      expect(await context.repository.deleteMany(filter)).toEqual({
-        deletedCount: 1,
-      });
-    });
-
-    it('[failure] - should handle an error', async () => {
-      (context.model.deleteMany as jest.Mock).mockReturnValue({
-        exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
-      });
-
-      await expect(context.repository.deleteMany(filter)).rejects.toThrow(
+      await expect(context.repository.update(ref, body.edit)).rejects.toThrow(
         'MODEL ERROR',
       );
     });
@@ -179,7 +181,7 @@ describe('[repositories] - TranslationRepository', () => {
         exec: jest.fn().mockResolvedValue({ deletedCount: 1 }),
       });
 
-      expect(await context.repository.deleteOne(filter)).toEqual({
+      expect(await context.repository.deleteOne(ref)).toEqual({
         deletedCount: 1,
       });
     });
@@ -189,7 +191,7 @@ describe('[repositories] - TranslationRepository', () => {
         exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
       });
 
-      await expect(context.repository.deleteOne(filter)).rejects.toThrow(
+      await expect(context.repository.deleteOne(ref)).rejects.toThrow(
         'MODEL ERROR',
       );
     });

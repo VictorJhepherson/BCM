@@ -1,3 +1,4 @@
+//#region ENUMS
 export enum Environment {
   DEV = 'DEV',
   SIT = 'SIT',
@@ -17,12 +18,32 @@ export enum LoggingLevel {
   ERROR = 'ERROR',
   DEBUG = 'DEBUG',
 }
+//#endregion ENUMS
 
+//#region UTILS
+export type SortOrder = 'ASC' | 'DESC';
+
+export type Sort = {
+  by: string;
+  order: SortOrder;
+};
+
+export type Pagination = {
+  page: number;
+  skip: number;
+  limit: number;
+};
+
+export type WithPagination<T> = {
+  data: T[];
+  sort: Sort;
+  pagination: Omit<Pagination, 'skip'> & { total: number };
+};
+//#endregion UTILS
+
+//#region GENERICS
 export type PartialField<T, K extends keyof T> = Omit<T, K> &
   Partial<Pick<T, K>>;
 
 export type PromiseFn<T> = () => Promise<T>;
-
-export type ExecuteProps<T> = {
-  fn: PromiseFn<T>;
-};
+//#endregion GENERICS

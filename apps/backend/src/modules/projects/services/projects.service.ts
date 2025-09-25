@@ -2,12 +2,12 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { BaseService } from '@shared/core';
 import { format } from '@shared/helpers';
 import {
-  AddProjectDTO,
-  EditProjectDTO,
+  IProject,
+  IProjectFilter,
+  IProjectRef,
   IProjectService,
   MappedProject,
   Project,
-  ProjectFilter,
 } from '@shared/models';
 import { LoggerProvider } from '../../../providers';
 import { ProjectMapper, ProjectMapperType } from '../mappers/projects.mapper';
@@ -25,30 +25,30 @@ export class ProjectService
     super('[projects]', logger, new ProjectMapper());
   }
 
-  async getAll(): Promise<MappedProject[]> {
+  async getAll(filter: IProjectFilter): Promise<MappedProject> {
     return this.execute({
       mapKey: 'mapProjects',
-      fn: () => this.respository.findMany(),
+      fn: () => this.respository.findMany(filter),
     });
   }
 
-  async addProject(dto: AddProjectDTO): Promise<Project> {
+  async addProject(payload: IProject): Promise<Project> {
     return this.execute({
-      fn: () => this.respository.create(dto),
+      fn: () => this.respository.create(payload),
     });
   }
 
   async editProject(
-    filter: ProjectFilter,
-    dto: EditProjectDTO,
+    ref: IProjectRef,
+    payload: Partial<IProject>,
   ): Promise<Project> {
     return this.execute({
       fn: async () => {
-        const updated = await this.respository.update(filter, dto);
+        const updated = await this.respository.update(ref, payload);
 
         if (!updated) {
           throw new NotFoundException({
-            message: `Unable to find a project for: ${format.base(filter)}`,
+            message: `Unable to find a project for: ${format.base(ref)}`,
           });
         }
 
@@ -57,14 +57,14 @@ export class ProjectService
     });
   }
 
-  async deleteProject(filter: ProjectFilter): Promise<void> {
+  async deleteProject(ref: IProjectRef): Promise<void> {
     return this.execute({
       fn: async () => {
-        const deleted = await this.respository.deleteOne(filter);
+        const deleted = await this.respository.deleteOne(ref);
 
         if (deleted.deletedCount < 1) {
           throw new NotFoundException({
-            message: `Failed to delete a project for: ${format.base(filter)}`,
+            message: `Failed to delete a project for: ${format.base(ref)}`,
           });
         }
       },

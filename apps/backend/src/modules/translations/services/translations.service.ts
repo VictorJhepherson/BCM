@@ -2,12 +2,13 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { BaseService } from '@shared/core';
 import { format } from '@shared/helpers';
 import {
-  AddTranslationDTO,
-  EditTranslationDTO,
+  ITranslation,
+  ITranslationFilter,
+  ITranslationRef,
   ITranslationService,
   MappedTranslation,
   Translation,
-  TranslationFilter,
+  TranslationPayload,
 } from '@shared/models';
 import { LoggerProvider } from '../../../providers';
 import {
@@ -28,24 +29,22 @@ export class TranslationService
     super('[translations]', logger, new TranslationMapper());
   }
 
-  async getByProject(
-    filter: Pick<TranslationFilter, 'projectId'>,
-  ): Promise<MappedTranslation[]> {
+  async getAll(filter: ITranslationFilter): Promise<MappedTranslation> {
     return this.execute({
       mapKey: 'mapTranslations',
       fn: () => this.repository.findMany(filter),
     });
   }
 
-  async getByLanguage(filter: TranslationFilter): Promise<MappedTranslation> {
+  async getById(ref: ITranslationRef): Promise<TranslationPayload> {
     return this.execute({
       mapKey: 'mapTranslation',
       fn: async () => {
-        const finded = await this.repository.findOne(filter);
+        const finded = await this.repository.findOne(ref);
 
         if (!finded) {
           throw new NotFoundException({
-            message: `Unable to find a translation for: ${format.base(filter)}`,
+            message: `Unable to find a translation for: ${format.base(ref)}`,
           });
         }
 
@@ -54,23 +53,23 @@ export class TranslationService
     });
   }
 
-  async addTranslation(dto: AddTranslationDTO): Promise<Translation> {
+  async addTranslation(payload: ITranslation): Promise<Translation> {
     return this.execute({
-      fn: () => this.repository.create(dto),
+      fn: () => this.repository.create(payload),
     });
   }
 
   async editTranslation(
-    filter: TranslationFilter,
-    dto: EditTranslationDTO,
+    ref: ITranslationRef,
+    payload: Partial<ITranslation>,
   ): Promise<Translation> {
     return this.execute({
       fn: async () => {
-        const updated = await this.repository.update(filter, dto);
+        const updated = await this.repository.update(ref, payload);
 
         if (!updated) {
           throw new NotFoundException({
-            message: `Unable to find a translation for: ${format.base(filter)}`,
+            message: `Unable to find a translation for: ${format.base(ref)}`,
           });
         }
 
@@ -79,30 +78,14 @@ export class TranslationService
     });
   }
 
-  async deleteByProject(
-    filter: Pick<TranslationFilter, 'projectId'>,
-  ): Promise<void> {
+  async deleteTranslation(ref: ITranslationRef): Promise<void> {
     return this.execute({
       fn: async () => {
-        const deleted = await this.repository.deleteMany(filter);
+        const deleted = await this.repository.deleteOne(ref);
 
         if (deleted.deletedCount < 1) {
           throw new NotFoundException({
-            message: `Failed to delete translation(s) for: ${format.base(filter)}`,
-          });
-        }
-      },
-    });
-  }
-
-  async deleteByLanguage(filter: TranslationFilter): Promise<void> {
-    return this.execute({
-      fn: async () => {
-        const deleted = await this.repository.deleteOne(filter);
-
-        if (deleted.deletedCount < 1) {
-          throw new NotFoundException({
-            message: `Failed to delete a translation for: ${format.base(filter)}`,
+            message: `Failed to delete a translation for: ${format.base(ref)}`,
           });
         }
       },

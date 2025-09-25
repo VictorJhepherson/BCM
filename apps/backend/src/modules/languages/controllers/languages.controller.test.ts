@@ -12,7 +12,7 @@ import { LanguageController } from './languages.controller';
 
 jest.mock('../services/languages.service');
 
-const { dto, data, filter } = new MockDataFactory<LanguageMock>(
+const { ref, body, data, filter } = new MockDataFactory<LanguageMock>(
   mockData.factory.language,
 ).build();
 
@@ -59,7 +59,7 @@ describe('[controllers] - LanguageController', () => {
     it('[success] - should return all languages', async () => {
       (context.service.getAll as jest.Mock).mockResolvedValue([data]);
 
-      expect(await context.controller.getAll()).toEqual([data]);
+      expect(await context.controller.getAll(filter)).toEqual([data]);
     });
 
     it('[failure] - should handle an error', async () => {
@@ -67,7 +67,7 @@ describe('[controllers] - LanguageController', () => {
         new Error('SERVICE ERROR'),
       );
 
-      await expect(context.controller.getAll()).rejects.toThrow(
+      await expect(context.controller.getAll(filter)).rejects.toThrow(
         'SERVICE ERROR',
       );
     });
@@ -77,7 +77,7 @@ describe('[controllers] - LanguageController', () => {
     it('[success] - should added a language', async () => {
       (context.service.addLanguage as jest.Mock).mockResolvedValue(data);
 
-      expect(await context.controller.addLanguage(dto.add)).toEqual(data);
+      expect(await context.controller.addLanguage(body.add)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
@@ -85,7 +85,7 @@ describe('[controllers] - LanguageController', () => {
         new Error('SERVICE ERROR'),
       );
 
-      await expect(context.controller.addLanguage(dto.add)).rejects.toThrow(
+      await expect(context.controller.addLanguage(body.add)).rejects.toThrow(
         'SERVICE ERROR',
       );
     });
@@ -95,9 +95,9 @@ describe('[controllers] - LanguageController', () => {
     it('[success] - should edited a language', async () => {
       (context.service.editLanguage as jest.Mock).mockResolvedValue(data);
 
-      expect(
-        await context.controller.editLanguage(filter._id, dto.edit),
-      ).toEqual(data);
+      expect(await context.controller.editLanguage(ref._id, body.edit)).toEqual(
+        data,
+      );
     });
 
     it('[failure] - should handle an error', async () => {
@@ -106,7 +106,7 @@ describe('[controllers] - LanguageController', () => {
       );
 
       await expect(
-        context.controller.editLanguage(filter._id, dto.edit),
+        context.controller.editLanguage(ref._id, body.edit),
       ).rejects.toThrow('SERVICE ERROR');
     });
   });
@@ -117,7 +117,7 @@ describe('[controllers] - LanguageController', () => {
         undefined,
       );
 
-      expect(await context.controller.deleteLanguage(filter._id)).toBeFalsy();
+      expect(await context.controller.deleteLanguage(ref._id)).toBeFalsy();
     });
 
     it('[failure] - should handle an error', async () => {
@@ -125,9 +125,9 @@ describe('[controllers] - LanguageController', () => {
         new Error('SERVICE ERROR'),
       );
 
-      await expect(
-        context.controller.deleteLanguage(filter._id),
-      ).rejects.toThrow('SERVICE ERROR');
+      await expect(context.controller.deleteLanguage(ref._id)).rejects.toThrow(
+        'SERVICE ERROR',
+      );
     });
   });
 });

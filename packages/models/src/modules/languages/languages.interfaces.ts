@@ -1,38 +1,50 @@
-import { DeleteResult } from 'mongoose';
-import { AddLanguageDTO, EditLanguageDTO } from './languages.dtos';
-import { Language, LanguageFilter, MappedLanguage } from './languages.types';
+import { DeleteResult, Types } from 'mongoose';
+import { IPaginationFilter, WithPagination } from '../..';
+import {
+  LanguageAddDTO,
+  LanguageEditDTO,
+  LanguageFilterDTO,
+  LanguageRefDTO,
+} from './languages.dtos';
+import { Language, MappedLanguage } from './languages.types';
 
 export interface ILanguage {
-  language: string;
+  name: string;
 }
 
-export interface ILanguageRepository {
-  findMany(): Promise<Language[]>;
-  create(dto: AddLanguageDTO): Promise<Language>;
-  update(
-    filter: LanguageFilter,
-    dto: EditLanguageDTO,
-  ): Promise<Language | null>;
-  deleteOne(filter: LanguageFilter): Promise<DeleteResult>;
+export interface ILanguageRef {
+  _id: Types.ObjectId;
+}
+
+export interface ILanguageFilter extends IPaginationFilter {}
+
+export interface ILanguageController {
+  getAll(query: LanguageFilterDTO): Promise<MappedLanguage>;
+  addLanguage(body: LanguageAddDTO): Promise<Language>;
+  editLanguage(
+    params: LanguageRefDTO,
+    body: LanguageEditDTO,
+  ): Promise<Language>;
+  deleteLanguage(params: LanguageRefDTO): Promise<void>;
 }
 
 export interface ILanguageService {
-  getAll(): Promise<MappedLanguage[]>;
-  addLanguage(dto: AddLanguageDTO): Promise<Language>;
-  editLanguage(filter: LanguageFilter, dto: EditLanguageDTO): Promise<Language>;
-  deleteLanguage(filter: LanguageFilter): Promise<void>;
+  getAll(filter: ILanguageFilter): Promise<MappedLanguage>;
+  addLanguage(payload: ILanguage): Promise<Language>;
+  editLanguage(
+    ref: ILanguageRef,
+    payload: Partial<ILanguage>,
+  ): Promise<Language>;
+  deleteLanguage(ref: ILanguageRef): Promise<void>;
 }
 
-export interface ILanguageController {
-  getAll(): Promise<MappedLanguage[]>;
-  addLanguage(dto: AddLanguageDTO): Promise<Language>;
-  editLanguage(
-    _id: LanguageFilter['_id'],
-    dto: EditLanguageDTO,
-  ): Promise<Language>;
-  deleteLanguage(_id: LanguageFilter['_id']): Promise<void>;
+export interface ILanguageRepository {
+  findMany(filter: ILanguageFilter): Promise<WithPagination<Language>>;
+  create(payload: ILanguage): Promise<Language>;
+  update(ref: ILanguageRef, payload: ILanguage): Promise<Language | null>;
+  deleteOne(ref: ILanguageRef): Promise<DeleteResult>;
 }
 
 export interface ILanguageMapper {
-  mapLanguages(languages: Language[]): MappedLanguage[];
+  mapLanguages(payload: WithPagination<Language>): MappedLanguage;
 }

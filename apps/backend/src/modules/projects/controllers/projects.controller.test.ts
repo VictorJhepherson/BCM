@@ -12,7 +12,7 @@ import { ProjectController } from './projects.controller';
 
 jest.mock('../services/projects.service');
 
-const { dto, data, filter } = new MockDataFactory<ProjectMock>(
+const { ref, body, data, filter } = new MockDataFactory<ProjectMock>(
   mockData.factory.project,
 ).build();
 
@@ -56,7 +56,7 @@ describe('[controllers] - ProjectController', () => {
     it('[success] - should return all projects', async () => {
       (context.service.getAll as jest.Mock).mockResolvedValue([data]);
 
-      expect(await context.controller.getAll()).toEqual([data]);
+      expect(await context.controller.getAll(filter)).toEqual([data]);
     });
 
     it('[failure] - should handle an error', async () => {
@@ -64,7 +64,7 @@ describe('[controllers] - ProjectController', () => {
         new Error('SERVICE ERROR'),
       );
 
-      await expect(context.controller.getAll()).rejects.toThrow(
+      await expect(context.controller.getAll(filter)).rejects.toThrow(
         'SERVICE ERROR',
       );
     });
@@ -74,7 +74,7 @@ describe('[controllers] - ProjectController', () => {
     it('[success] - should added a project', async () => {
       (context.service.addProject as jest.Mock).mockResolvedValue(data);
 
-      expect(await context.controller.addProject(dto.add)).toEqual(data);
+      expect(await context.controller.addProject(body.add)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
@@ -82,7 +82,7 @@ describe('[controllers] - ProjectController', () => {
         new Error('SERVICE ERROR'),
       );
 
-      await expect(context.controller.addProject(dto.add)).rejects.toThrow(
+      await expect(context.controller.addProject(body.add)).rejects.toThrow(
         'SERVICE ERROR',
       );
     });
@@ -92,9 +92,9 @@ describe('[controllers] - ProjectController', () => {
     it('[success] - should edited a project', async () => {
       (context.service.editProject as jest.Mock).mockResolvedValue(data);
 
-      expect(
-        await context.controller.editProject(filter._id, dto.edit),
-      ).toEqual(data);
+      expect(await context.controller.editProject(ref._id, body.edit)).toEqual(
+        data,
+      );
     });
 
     it('[failure] - should handle an error', async () => {
@@ -103,7 +103,7 @@ describe('[controllers] - ProjectController', () => {
       );
 
       await expect(
-        context.controller.editProject(filter._id, dto.edit),
+        context.controller.editProject(ref._id, body.edit),
       ).rejects.toThrow('SERVICE ERROR');
     });
   });
@@ -112,7 +112,7 @@ describe('[controllers] - ProjectController', () => {
     it('[success] - should removed a project', async () => {
       (context.service.deleteProject as jest.Mock).mockResolvedValue(undefined);
 
-      expect(await context.controller.deleteProject(filter._id)).toBeFalsy();
+      expect(await context.controller.deleteProject(ref._id)).toBeFalsy();
     });
 
     it('[failure] - should handle an error', async () => {
@@ -120,9 +120,9 @@ describe('[controllers] - ProjectController', () => {
         new Error('SERVICE ERROR'),
       );
 
-      await expect(
-        context.controller.deleteProject(filter._id),
-      ).rejects.toThrow('SERVICE ERROR');
+      await expect(context.controller.deleteProject(ref._id)).rejects.toThrow(
+        'SERVICE ERROR',
+      );
     });
   });
 });

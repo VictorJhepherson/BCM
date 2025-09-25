@@ -19,7 +19,7 @@ jest.mock('../mappers/projects.mapper', () => ({
   })),
 }));
 
-const { dto, data, filter } = new MockDataFactory<ProjectMock>(
+const { ref, body, data, filter } = new MockDataFactory<ProjectMock>(
   mockData.factory.project,
 ).build();
 
@@ -63,7 +63,7 @@ describe('[services] - ProjectService', () => {
     it('[success] - should return all projects', async () => {
       (context.repository.findMany as jest.Mock).mockResolvedValue([data]);
 
-      expect(await context.service.getAll()).toEqual([data]);
+      expect(await context.service.getAll(filter)).toEqual([data]);
     });
 
     it('[failure] - should handle an error', async () => {
@@ -71,7 +71,7 @@ describe('[services] - ProjectService', () => {
         new Error('REPOSITORY ERROR'),
       );
 
-      await expect(context.service.getAll()).rejects.toThrow(
+      await expect(context.service.getAll(filter)).rejects.toThrow(
         'REPOSITORY ERROR',
       );
     });
@@ -79,7 +79,7 @@ describe('[services] - ProjectService', () => {
     it('[edge-case] - should return empty array when has no projects', async () => {
       (context.repository.findMany as jest.Mock).mockResolvedValue([]);
 
-      expect(await context.service.getAll()).toEqual([]);
+      expect(await context.service.getAll(filter)).toEqual([]);
     });
   });
 
@@ -87,7 +87,7 @@ describe('[services] - ProjectService', () => {
     it('[success] - should added a project', async () => {
       (context.repository.create as jest.Mock).mockResolvedValue(data);
 
-      expect(await context.service.addProject(dto.add)).toEqual(data);
+      expect(await context.service.addProject(body.add)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
@@ -95,7 +95,7 @@ describe('[services] - ProjectService', () => {
         new Error('REPOSITORY ERROR'),
       );
 
-      await expect(context.service.addProject(dto.add)).rejects.toThrow(
+      await expect(context.service.addProject(body.add)).rejects.toThrow(
         'REPOSITORY ERROR',
       );
     });
@@ -105,7 +105,7 @@ describe('[services] - ProjectService', () => {
     it('[success] - should edited a project', async () => {
       (context.repository.update as jest.Mock).mockResolvedValue(data);
 
-      expect(await context.service.editProject(filter, dto.edit)).toEqual(data);
+      expect(await context.service.editProject(ref, body.edit)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
@@ -113,17 +113,17 @@ describe('[services] - ProjectService', () => {
         new Error('REPOSITORY ERROR'),
       );
 
-      await expect(
-        context.service.editProject(filter, dto.edit),
-      ).rejects.toThrow('REPOSITORY ERROR');
+      await expect(context.service.editProject(ref, body.edit)).rejects.toThrow(
+        'REPOSITORY ERROR',
+      );
     });
 
     it('[edge-case] - should failed to edit a project', async () => {
       (context.repository.update as jest.Mock).mockResolvedValue(undefined);
 
-      await expect(
-        context.service.editProject(filter, dto.edit),
-      ).rejects.toThrow(`Unable to find a project for: ${format.base(filter)}`);
+      await expect(context.service.editProject(ref, body.edit)).rejects.toThrow(
+        `Unable to find a project for: ${format.base(ref)}`,
+      );
     });
   });
 
@@ -133,7 +133,7 @@ describe('[services] - ProjectService', () => {
         deletedCount: 1,
       });
 
-      expect(await context.service.deleteProject(filter)).toBeFalsy();
+      expect(await context.service.deleteProject(ref)).toBeFalsy();
     });
 
     it('[failure] - should handle an error', async () => {
@@ -141,7 +141,7 @@ describe('[services] - ProjectService', () => {
         new Error('REPOSITORY ERROR'),
       );
 
-      await expect(context.service.deleteProject(filter)).rejects.toThrow(
+      await expect(context.service.deleteProject(ref)).rejects.toThrow(
         'REPOSITORY ERROR',
       );
     });
@@ -151,8 +151,8 @@ describe('[services] - ProjectService', () => {
         deletedCount: 0,
       });
 
-      await expect(context.service.deleteProject(filter)).rejects.toThrow(
-        `Failed to delete a project for: ${format.base(filter)}`,
+      await expect(context.service.deleteProject(ref)).rejects.toThrow(
+        `Failed to delete a project for: ${format.base(ref)}`,
       );
     });
   });

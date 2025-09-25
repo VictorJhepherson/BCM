@@ -1,10 +1,16 @@
 import { DeleteResult, Types } from 'mongoose';
-import { AddTranslationDTO, EditTranslationDTO } from './translations.dtos';
+import { IPaginationFilter, WithPagination } from '../..';
+import {
+  TranslationAddDTO,
+  TranslationEditDTO,
+  TranslationFilterDTO,
+  TranslationRefDTO,
+} from './translations.dtos';
 import {
   MappedTranslation,
   PopulateTranslation,
   Translation,
-  TranslationFilter,
+  TranslationPayload,
   TranslationTree,
 } from './translations.types';
 
@@ -14,58 +20,51 @@ export interface ITranslation {
   translations: TranslationTree;
 }
 
-export interface ITranslationRepository {
-  findMany(
-    filter: Pick<TranslationFilter, 'projectId'>,
-  ): Promise<PopulateTranslation[]>;
-  findOne(filter: TranslationFilter): Promise<PopulateTranslation | null>;
-  create(dto: AddTranslationDTO): Promise<Translation>;
-  update(
-    filter: TranslationFilter,
-    dto: EditTranslationDTO,
-  ): Promise<Translation | null>;
-  deleteMany(
-    filter: Pick<TranslationFilter, 'projectId'>,
-  ): Promise<DeleteResult>;
-  deleteOne(filter: TranslationFilter): Promise<DeleteResult>;
+export interface ITranslationRef {
+  projectId: Types.ObjectId;
+  languageId: Types.ObjectId;
+}
+
+export interface ITranslationFilter extends IPaginationFilter {}
+
+export interface ITranslationController {
+  getAll(query: TranslationFilterDTO): Promise<MappedTranslation>;
+  getById(params: TranslationRefDTO): Promise<TranslationPayload>;
+  addTranslation(body: TranslationAddDTO): Promise<Translation>;
+  editTranslation(
+    params: TranslationRefDTO,
+    body: TranslationEditDTO,
+  ): Promise<Translation>;
+  deleteTranslation(params: TranslationRefDTO): Promise<void>;
 }
 
 export interface ITranslationService {
-  getByProject(
-    filter: Pick<TranslationFilter, 'projectId'>,
-  ): Promise<MappedTranslation[]>;
-  getByLanguage(filter: TranslationFilter): Promise<MappedTranslation>;
-  addTranslation(dto: AddTranslationDTO): Promise<Translation>;
+  getAll(filter: ITranslationFilter): Promise<MappedTranslation>;
+  getById(ref: ITranslationRef): Promise<TranslationPayload>;
+  addTranslation(payload: ITranslation): Promise<Translation>;
   editTranslation(
-    filter: TranslationFilter,
-    dto: EditTranslationDTO,
+    ref: ITranslationRef,
+    payload: Partial<ITranslation>,
   ): Promise<Translation>;
-  deleteByProject(filter: Pick<TranslationFilter, 'projectId'>): Promise<void>;
-  deleteByLanguage(filter: TranslationFilter): Promise<void>;
+  deleteTranslation(ref: ITranslationRef): Promise<void>;
 }
 
-export interface ITranslationController {
-  getByProject(
-    projectId: TranslationFilter['projectId'],
-  ): Promise<MappedTranslation[]>;
-  getByLanguage(
-    projectId: TranslationFilter['projectId'],
-    languageId: TranslationFilter['languageId'],
-  ): Promise<MappedTranslation>;
-  addTranslation(dto: AddTranslationDTO): Promise<Translation>;
-  editTranslation(
-    projectId: TranslationFilter['projectId'],
-    languageId: TranslationFilter['languageId'],
-    dto: EditTranslationDTO,
-  ): Promise<Translation>;
-  deleteByProject(projectId: TranslationFilter['projectId']): Promise<void>;
-  deleteByLanguage(
-    projectId: TranslationFilter['projectId'],
-    languageId: TranslationFilter['languageId'],
-  ): Promise<void>;
+export interface ITranslationRepository {
+  findMany(
+    filter: ITranslationFilter,
+  ): Promise<WithPagination<PopulateTranslation>>;
+  findOne(ref: ITranslationRef): Promise<PopulateTranslation | null>;
+  create(payload: ITranslation): Promise<Translation>;
+  update(
+    ref: ITranslationRef,
+    payload: Partial<ITranslation>,
+  ): Promise<Translation | null>;
+  deleteOne(ref: ITranslationRef): Promise<DeleteResult>;
 }
 
 export interface ITranslationMapper {
-  mapTranslation(translation: PopulateTranslation): MappedTranslation;
-  mapTranslations(translations: PopulateTranslation[]): MappedTranslation[];
+  mapTranslation(translation: PopulateTranslation): TranslationPayload;
+  mapTranslations(
+    payload: WithPagination<PopulateTranslation>,
+  ): MappedTranslation;
 }

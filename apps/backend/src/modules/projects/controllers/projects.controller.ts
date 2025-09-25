@@ -7,17 +7,20 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Version,
 } from '@nestjs/common';
 import { BaseController } from '@shared/core';
 import {
-  AddProjectDTO,
-  EditProjectDTO,
   IProjectController,
   MappedProject,
   Project,
-  ProjectFilter,
+  ProjectAddDTO,
+  ProjectEditDTO,
+  ProjectFilterDTO,
+  ProjectRefDTO,
 } from '@shared/models';
+import { PaginationPipe } from '../../../pipes';
 import { LoggerProvider } from '../../../providers';
 import { ProjectService } from '../services/projects.service';
 
@@ -36,18 +39,20 @@ export class ProjectController
   @Version('1')
   @HttpCode(200)
   @Get('/')
-  async getAll(): Promise<MappedProject[]> {
+  async getAll(
+    @Query(PaginationPipe) query: ProjectFilterDTO,
+  ): Promise<MappedProject> {
     return this.execute({
-      fn: () => this.service.getAll(),
+      fn: () => this.service.getAll(query),
     });
   }
 
   @Version('1')
   @HttpCode(201)
   @Post('/')
-  async addProject(@Body() dto: AddProjectDTO): Promise<Project> {
+  async addProject(@Body() body: ProjectAddDTO): Promise<Project> {
     return this.execute({
-      fn: () => this.service.addProject(dto),
+      fn: () => this.service.addProject(body),
     });
   }
 
@@ -55,20 +60,20 @@ export class ProjectController
   @HttpCode(200)
   @Patch('/:_id')
   async editProject(
-    @Param('_id') _id: ProjectFilter['_id'],
-    @Body() dto: EditProjectDTO,
+    @Param() params: ProjectRefDTO,
+    @Body() body: ProjectEditDTO,
   ): Promise<Project> {
     return this.execute({
-      fn: () => this.service.editProject({ _id }, dto),
+      fn: () => this.service.editProject(params, body),
     });
   }
 
   @Version('1')
   @HttpCode(204)
   @Delete('/:_id')
-  async deleteProject(@Param('_id') _id: ProjectFilter['_id']): Promise<void> {
+  async deleteProject(@Param() params: ProjectRefDTO): Promise<void> {
     return this.execute({
-      fn: () => this.service.deleteProject({ _id }),
+      fn: () => this.service.deleteProject(params),
     });
   }
 }
