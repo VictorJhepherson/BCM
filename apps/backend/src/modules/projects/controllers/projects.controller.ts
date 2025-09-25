@@ -18,6 +18,7 @@ import {
   ProjectAddDTO,
   ProjectEditDTO,
   ProjectFilterDTO,
+  ProjectPayload,
   ProjectRefDTO,
 } from '@shared/models';
 import { PaginationPipe } from '../../../pipes';
@@ -44,6 +45,15 @@ export class ProjectController
   ): Promise<MappedProject> {
     return this.execute({
       fn: () => this.service.getAll(query),
+    });
+  }
+
+  @Version('1')
+  @HttpCode(200)
+  @Get('/:_id')
+  async getById(params: ProjectRefDTO): Promise<ProjectPayload> {
+    return this.execute({
+      fn: () => this.service.getById(params),
     });
   }
 

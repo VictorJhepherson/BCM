@@ -65,7 +65,7 @@ describe('[services] - TranslationService', () => {
   afterEach(() => jest.clearAllMocks());
 
   describe('[getAll]', () => {
-    it('[success] - should return all translations', async () => {
+    it('[success] - should get all translations', async () => {
       (context.repository.findMany as jest.Mock).mockResolvedValue([data]);
 
       expect(await context.service.getAll(filter)).toEqual([data]);
@@ -83,7 +83,7 @@ describe('[services] - TranslationService', () => {
   });
 
   describe('[getById]', () => {
-    it('[success] - should return a translation', async () => {
+    it('[success] - should get a translation', async () => {
       (context.repository.findOne as jest.Mock).mockResolvedValue([data]);
 
       expect(await context.service.getById(ref)).toEqual([data]);
@@ -109,7 +109,7 @@ describe('[services] - TranslationService', () => {
   });
 
   describe('[addTranslation]', () => {
-    it('[success] - should added a translation', async () => {
+    it('[success] - should add a translation', async () => {
       (context.repository.create as jest.Mock).mockResolvedValue(data);
 
       expect(await context.service.addTranslation(body.add)).toEqual(data);
@@ -127,7 +127,7 @@ describe('[services] - TranslationService', () => {
   });
 
   describe('[editTranslation]', () => {
-    it('[success] - should edited a translation', async () => {
+    it('[success] - should edit a translation', async () => {
       (context.repository.update as jest.Mock).mockResolvedValue(data);
 
       expect(await context.service.editTranslation(ref, body.edit)).toEqual(
@@ -145,7 +145,7 @@ describe('[services] - TranslationService', () => {
       ).rejects.toThrow('REPOSITORY ERROR');
     });
 
-    it('[edge-case] - should failed to add a translation', async () => {
+    it('[edge-case] - should failed to edit a translation', async () => {
       (context.repository.update as jest.Mock).mockResolvedValue(undefined);
 
       await expect(
@@ -157,7 +157,7 @@ describe('[services] - TranslationService', () => {
   });
 
   describe('[deleteTranslation]', () => {
-    it('[success] - should removed translations by language', async () => {
+    it('[success] - should delete a translation', async () => {
       (context.repository.deleteOne as jest.Mock).mockResolvedValue({
         deletedCount: 1,
       });
@@ -175,7 +175,7 @@ describe('[services] - TranslationService', () => {
       );
     });
 
-    it('[edge-case] - should failed to remove a translation', async () => {
+    it('[edge-case] - should failed to delete a translation', async () => {
       (context.repository.deleteOne as jest.Mock).mockResolvedValue({
         deletedCount: 0,
       });

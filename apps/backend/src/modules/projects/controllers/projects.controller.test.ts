@@ -38,6 +38,7 @@ describe('[controllers] - ProjectController', () => {
           useFactory: () =>
             new MockMethodFactory<ProjectService>()
               .add('getAll', jest.fn())
+              .add('getById', jest.fn())
               .add('addProject', jest.fn())
               .add('editProject', jest.fn())
               .add('deleteProject', jest.fn())
@@ -53,7 +54,7 @@ describe('[controllers] - ProjectController', () => {
   afterEach(() => jest.clearAllMocks());
 
   describe('[getAll]', () => {
-    it('[success] - should return all projects', async () => {
+    it('[success] - should get all projects', async () => {
       (context.service.getAll as jest.Mock).mockResolvedValue([data]);
 
       expect(await context.controller.getAll(filter)).toEqual([data]);
@@ -70,8 +71,26 @@ describe('[controllers] - ProjectController', () => {
     });
   });
 
+  describe('[getById]', () => {
+    it('[success] - should get a project', async () => {
+      (context.service.getById as jest.Mock).mockResolvedValue(data);
+
+      expect(await context.controller.getById(ref)).toEqual(data);
+    });
+
+    it('[failure] - should handle an error', async () => {
+      (context.service.getById as jest.Mock).mockRejectedValue(
+        new Error('SERVICE ERROR'),
+      );
+
+      await expect(context.controller.getById(ref)).rejects.toThrow(
+        'SERVICE ERROR',
+      );
+    });
+  });
+
   describe('[addProject]', () => {
-    it('[success] - should added a project', async () => {
+    it('[success] - should add a project', async () => {
       (context.service.addProject as jest.Mock).mockResolvedValue(data);
 
       expect(await context.controller.addProject(body.add)).toEqual(data);
@@ -89,7 +108,7 @@ describe('[controllers] - ProjectController', () => {
   });
 
   describe('[editProject]', () => {
-    it('[success] - should edited a project', async () => {
+    it('[success] - should edit a project', async () => {
       (context.service.editProject as jest.Mock).mockResolvedValue(data);
 
       expect(await context.controller.editProject(ref._id, body.edit)).toEqual(
@@ -108,8 +127,8 @@ describe('[controllers] - ProjectController', () => {
     });
   });
 
-  describe('[removeProject]', () => {
-    it('[success] - should removed a project', async () => {
+  describe('[deleteProject]', () => {
+    it('[success] - should delete a project', async () => {
       (context.service.deleteProject as jest.Mock).mockResolvedValue(undefined);
 
       expect(await context.controller.deleteProject(ref._id)).toBeFalsy();

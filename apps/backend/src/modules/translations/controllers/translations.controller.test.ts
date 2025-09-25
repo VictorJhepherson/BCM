@@ -57,7 +57,7 @@ describe('[controllers] - TranslationController', () => {
   afterEach(() => jest.clearAllMocks());
 
   describe('[getAll]', () => {
-    it('[success] - should return all translations by project', async () => {
+    it('[success] - should get all translations', async () => {
       (context.service.getAll as jest.Mock).mockResolvedValue([data]);
 
       expect(await context.controller.getAll(filter)).toEqual([data]);
@@ -75,7 +75,7 @@ describe('[controllers] - TranslationController', () => {
   });
 
   describe('[getById]', () => {
-    it('[success] - should return a translation by language', async () => {
+    it('[success] - should get a translation', async () => {
       (context.service.getById as jest.Mock).mockResolvedValue([data]);
 
       expect(await context.controller.getById(ref)).toEqual([data]);
@@ -93,7 +93,7 @@ describe('[controllers] - TranslationController', () => {
   });
 
   describe('[addTranslation]', () => {
-    it('[success] - should added a translation', async () => {
+    it('[success] - should add a translation', async () => {
       (context.service.addTranslation as jest.Mock).mockResolvedValue(data);
 
       expect(await context.controller.addTranslation(body.add)).toEqual(data);
@@ -111,7 +111,7 @@ describe('[controllers] - TranslationController', () => {
   });
 
   describe('[editTranslation]', () => {
-    it('[success] - should edited a translation', async () => {
+    it('[success] - should edit a translation', async () => {
       (context.service.editTranslation as jest.Mock).mockResolvedValue(data);
 
       expect(await context.controller.editTranslation(ref, body.edit)).toEqual(
@@ -131,7 +131,7 @@ describe('[controllers] - TranslationController', () => {
   });
 
   describe('[deleteTranslation]', () => {
-    it('[success] - should removed translations by language', async () => {
+    it('[success] - should delete a translation', async () => {
       (context.service.deleteTranslation as jest.Mock).mockResolvedValue(
         undefined,
       );

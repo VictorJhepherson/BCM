@@ -41,6 +41,7 @@ describe('[repositories] - ProjectRepository', () => {
           useFactory: () =>
             new MockMethodFactory<Model<ProjectEntity>>()
               .add('find', jest.fn())
+              .add('findOne', jest.fn())
               .add('create', jest.fn())
               .add('deleteOne', jest.fn())
               .add('countDocuments', jest.fn())
@@ -57,7 +58,7 @@ describe('[repositories] - ProjectRepository', () => {
   afterEach(() => jest.clearAllMocks());
 
   describe('[findMany]', () => {
-    it('[success] - should return all projects', async () => {
+    it('[success] - should get all projects', async () => {
       (context.model.countDocuments as jest.Mock).mockReturnValue({
         exec: jest.fn().mockResolvedValue(100),
       });
@@ -100,8 +101,28 @@ describe('[repositories] - ProjectRepository', () => {
     });
   });
 
+  describe('[findOne]', () => {
+    it('[success] - should get a project', async () => {
+      (context.model.findOne as jest.Mock).mockReturnValue({
+        exec: jest.fn().mockResolvedValue(data),
+      });
+
+      expect(await context.repository.findOne(ref)).toEqual(data);
+    });
+
+    it('[failure] - should handle an error', async () => {
+      (context.model.findOne as jest.Mock).mockReturnValue({
+        exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
+      });
+
+      await expect(context.repository.findOne(ref)).rejects.toThrow(
+        'MODEL ERROR',
+      );
+    });
+  });
+
   describe('[create]', () => {
-    it('[success] - should added projects', async () => {
+    it('[success] - should add projects', async () => {
       (context.model.create as jest.Mock).mockResolvedValue(data);
 
       expect(await context.repository.create(body.add)).toEqual(data);
@@ -119,7 +140,7 @@ describe('[repositories] - ProjectRepository', () => {
   });
 
   describe('[update]', () => {
-    it('[success] - should edited a project', async () => {
+    it('[success] - should edit a project', async () => {
       (context.model.findOneAndUpdate as jest.Mock).mockReturnValue({
         exec: jest.fn().mockResolvedValue(data),
       });
@@ -139,7 +160,7 @@ describe('[repositories] - ProjectRepository', () => {
   });
 
   describe('[deleteOne]', () => {
-    it('[success] - should removed a project', async () => {
+    it('[success] - should delete a project', async () => {
       (context.model.deleteOne as jest.Mock).mockReturnValue({
         exec: jest.fn().mockResolvedValue({ deletedCount: 1 }),
       });

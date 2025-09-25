@@ -58,7 +58,7 @@ describe('[repositories] - TranslationRepository', () => {
   afterEach(() => jest.clearAllMocks());
 
   describe('[findMany]', () => {
-    it('[success] - should return all translations by project', async () => {
+    it('[success] - should get all translations', async () => {
       (context.model.countDocuments as jest.Mock).mockReturnValue({
         exec: jest.fn().mockResolvedValue(100),
       });
@@ -110,7 +110,7 @@ describe('[repositories] - TranslationRepository', () => {
   });
 
   describe('[findOne]', () => {
-    it('[success] - should return translation by language', async () => {
+    it('[success] - should get a translation', async () => {
       (context.model.findOne as jest.Mock).mockReturnValue({
         populate: jest.fn().mockReturnValue({
           lean: jest.fn().mockReturnValue({
@@ -138,7 +138,7 @@ describe('[repositories] - TranslationRepository', () => {
   });
 
   describe('[create]', () => {
-    it('[success] - should added a translation', async () => {
+    it('[success] - should add a translation', async () => {
       (context.model.create as jest.Mock).mockResolvedValue(data);
 
       expect(await context.repository.create(body.add)).toEqual(data);
@@ -156,7 +156,7 @@ describe('[repositories] - TranslationRepository', () => {
   });
 
   describe('[update]', () => {
-    it('[success] - should edited a translation', async () => {
+    it('[success] - should edit a translation', async () => {
       (context.model.findOneAndUpdate as jest.Mock).mockReturnValue({
         exec: jest.fn().mockResolvedValue(data),
       });
@@ -176,7 +176,7 @@ describe('[repositories] - TranslationRepository', () => {
   });
 
   describe('[deleteOne]', () => {
-    it('[success] - should removed a translation', async () => {
+    it('[success] - should delete a translation', async () => {
       (context.model.deleteOne as jest.Mock).mockReturnValue({
         exec: jest.fn().mockResolvedValue({ deletedCount: 1 }),
       });

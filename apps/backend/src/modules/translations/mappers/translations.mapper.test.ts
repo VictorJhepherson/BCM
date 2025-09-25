@@ -28,7 +28,7 @@ describe('[mappers] - TranslationMapper', () => {
   });
 
   describe('[mapTranslation]', () => {
-    it('should map translation correctly', () => {
+    it('should map a translation correctly', () => {
       expect(context.mapper.mapTranslation(data)).toEqual({
         language: data.languageId.name,
         translations: data.translations,

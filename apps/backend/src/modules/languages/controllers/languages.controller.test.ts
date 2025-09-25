@@ -57,7 +57,7 @@ describe('[controllers] - LanguageController', () => {
   afterEach(() => jest.clearAllMocks());
 
   describe('[getAll]', () => {
-    it('[success] - should return all languages', async () => {
+    it('[success] - should get all languages', async () => {
       (context.service.getAll as jest.Mock).mockResolvedValue([data]);
 
       expect(await context.controller.getAll(filter)).toEqual([data]);
@@ -75,7 +75,7 @@ describe('[controllers] - LanguageController', () => {
   });
 
   describe('[getById]', () => {
-    it('[success] - should return all languages', async () => {
+    it('[success] - should get a language', async () => {
       (context.service.getById as jest.Mock).mockResolvedValue(data);
 
       expect(await context.controller.getById(ref)).toEqual(data);
@@ -93,7 +93,7 @@ describe('[controllers] - LanguageController', () => {
   });
 
   describe('[addLanguage]', () => {
-    it('[success] - should added a language', async () => {
+    it('[success] - should add a language', async () => {
       (context.service.addLanguage as jest.Mock).mockResolvedValue(data);
 
       expect(await context.controller.addLanguage(body.add)).toEqual(data);
@@ -111,7 +111,7 @@ describe('[controllers] - LanguageController', () => {
   });
 
   describe('[editLanguage]', () => {
-    it('[success] - should edited a language', async () => {
+    it('[success] - should edit a language', async () => {
       (context.service.editLanguage as jest.Mock).mockResolvedValue(data);
 
       expect(await context.controller.editLanguage(ref._id, body.edit)).toEqual(
@@ -131,7 +131,7 @@ describe('[controllers] - LanguageController', () => {
   });
 
   describe('[deleteLanguage]', () => {
-    it('[success] - should removed a language', async () => {
+    it('[success] - should delete a language', async () => {
       (context.service.deleteLanguage as jest.Mock).mockResolvedValue(
         undefined,
       );

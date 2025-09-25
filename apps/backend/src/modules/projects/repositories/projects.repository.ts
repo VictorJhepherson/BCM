@@ -46,6 +46,12 @@ export class ProjectRepository
     });
   }
 
+  async findOne(ref: IProjectRef): Promise<Project | null> {
+    return this.execute({
+      fn: () => this.model.findOne(ref).exec(),
+    });
+  }
+
   async create(payload: IProject): Promise<Project> {
     return this.execute({
       fn: () => this.model.create(payload),

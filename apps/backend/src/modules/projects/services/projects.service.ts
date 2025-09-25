@@ -8,6 +8,7 @@ import {
   IProjectService,
   MappedProject,
   Project,
+  ProjectPayload,
 } from '@shared/models';
 import { LoggerProvider } from '../../../providers';
 import { ProjectMapper, ProjectMapperType } from '../mappers/projects.mapper';
@@ -20,7 +21,7 @@ export class ProjectService
 {
   constructor(
     logger: LoggerProvider,
-    private readonly respository: ProjectRepository,
+    private readonly repository: ProjectRepository,
   ) {
     super('[projects]', logger, new ProjectMapper());
   }
@@ -28,13 +29,30 @@ export class ProjectService
   async getAll(filter: IProjectFilter): Promise<MappedProject> {
     return this.execute({
       mapKey: 'mapProjects',
-      fn: () => this.respository.findMany(filter),
+      fn: () => this.repository.findMany(filter),
+    });
+  }
+
+  async getById(ref: IProjectRef): Promise<ProjectPayload> {
+    return this.execute({
+      mapKey: 'mapProject',
+      fn: async () => {
+        const finded = await this.repository.findOne(ref);
+
+        if (!finded) {
+          throw new NotFoundException({
+            message: `Unable to find a project for: ${format.base(ref)}`,
+          });
+        }
+
+        return finded;
+      },
     });
   }
 
   async addProject(payload: IProject): Promise<Project> {
     return this.execute({
-      fn: () => this.respository.create(payload),
+      fn: () => this.repository.create(payload),
     });
   }
 
@@ -44,7 +62,7 @@ export class ProjectService
   ): Promise<Project> {
     return this.execute({
       fn: async () => {
-        const updated = await this.respository.update(ref, payload);
+        const updated = await this.repository.update(ref, payload);
 
         if (!updated) {
           throw new NotFoundException({
@@ -60,7 +78,7 @@ export class ProjectService
   async deleteProject(ref: IProjectRef): Promise<void> {
     return this.execute({
       fn: async () => {
-        const deleted = await this.respository.deleteOne(ref);
+        const deleted = await this.repository.deleteOne(ref);
 
         if (deleted.deletedCount < 1) {
           throw new NotFoundException({

@@ -22,7 +22,7 @@ describe('[mappers] - LanguageMapper', () => {
   });
 
   describe('[mapLanguage]', () => {
-    it('should map language correctly', () => {
+    it('should map a language correctly', () => {
       expect(context.mapper.mapLanguage(data)).toEqual({
         id: data._id,
         name: data.name,

@@ -58,7 +58,7 @@ describe('[repositories] - LanguageRepository', () => {
   afterEach(() => jest.clearAllMocks());
 
   describe('[findMany]', () => {
-    it('[success] - should return all languages', async () => {
+    it('[success] - should get all languages', async () => {
       (context.model.countDocuments as jest.Mock).mockReturnValue({
         exec: jest.fn().mockResolvedValue(100),
       });
@@ -102,7 +102,7 @@ describe('[repositories] - LanguageRepository', () => {
   });
 
   describe('[findOne]', () => {
-    it('[success] - should return all languages', async () => {
+    it('[success] - should get a language', async () => {
       (context.model.findOne as jest.Mock).mockReturnValue({
         exec: jest.fn().mockResolvedValue(data),
       });
@@ -122,7 +122,7 @@ describe('[repositories] - LanguageRepository', () => {
   });
 
   describe('[create]', () => {
-    it('[success] - should added languages', async () => {
+    it('[success] - should add a language', async () => {
       (context.model.create as jest.Mock).mockResolvedValue(data);
 
       expect(await context.repository.create(body.add)).toEqual(data);
@@ -140,7 +140,7 @@ describe('[repositories] - LanguageRepository', () => {
   });
 
   describe('[update]', () => {
-    it('[success] - should edited a language', async () => {
+    it('[success] - should edit a language', async () => {
       (context.model.findOneAndUpdate as jest.Mock).mockReturnValue({
         exec: jest.fn().mockResolvedValue(data),
       });
@@ -160,7 +160,7 @@ describe('[repositories] - LanguageRepository', () => {
   });
 
   describe('[deleteOne]', () => {
-    it('[success] - should removed a language', async () => {
+    it('[success] - should delete a language', async () => {
       (context.model.deleteOne as jest.Mock).mockReturnValue({
         exec: jest.fn().mockResolvedValue({ deletedCount: 1 }),
       });

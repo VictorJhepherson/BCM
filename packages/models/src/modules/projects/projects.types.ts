@@ -5,7 +5,7 @@ import { ProjectEntity } from './projects.schemas';
 
 export type Project = HydratedDocument<ProjectEntity>;
 
-type ProjectPayload = IProject & {
+export type ProjectPayload = IProject & {
   id: Types.ObjectId;
 };
 

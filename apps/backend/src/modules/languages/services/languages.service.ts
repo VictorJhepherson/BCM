@@ -45,7 +45,7 @@ export class LanguageService
 
         if (!finded) {
           throw new NotFoundException({
-            message: `Unable to find an language for: ${format.base(ref)}`,
+            message: `Unable to find a language for: ${format.base(ref)}`,
           });
         }
 

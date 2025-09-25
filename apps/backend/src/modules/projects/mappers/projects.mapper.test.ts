@@ -21,6 +21,16 @@ describe('[mappers] - ProjectMapper', () => {
     context.mapper = new ProjectMapper();
   });
 
+  describe('[mapProject]', () => {
+    it('should map a project correctly', () => {
+      expect(context.mapper.mapProject(data)).toEqual({
+        id: data._id,
+        name: data.name,
+        description: data.description,
+      });
+    });
+  });
+
   describe('[mapProjects]', () => {
     it('should map projects correctly', () => {
       expect(

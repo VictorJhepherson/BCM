@@ -15,6 +15,7 @@ jest.mock('../repositories/projects.repository');
 jest.mock('../mappers/projects.mapper', () => ({
   ...jest.requireActual('../mappers/projects.mapper'),
   ProjectMapper: jest.fn().mockImplementation(() => ({
+    mapProject: jest.fn().mockImplementation((data) => data),
     mapProjects: jest.fn().mockImplementation((data) => data),
   })),
 }));
@@ -45,6 +46,7 @@ describe('[services] - ProjectService', () => {
           useFactory: () =>
             new MockMethodFactory<ProjectRepository>()
               .add('findMany', jest.fn())
+              .add('findOne', jest.fn())
               .add('create', jest.fn())
               .add('update', jest.fn())
               .add('deleteOne', jest.fn())
@@ -60,7 +62,7 @@ describe('[services] - ProjectService', () => {
   afterEach(() => jest.clearAllMocks());
 
   describe('[getAll]', () => {
-    it('[success] - should return all projects', async () => {
+    it('[success] - should get all projects', async () => {
       (context.repository.findMany as jest.Mock).mockResolvedValue([data]);
 
       expect(await context.service.getAll(filter)).toEqual([data]);
@@ -76,15 +78,41 @@ describe('[services] - ProjectService', () => {
       );
     });
 
-    it('[edge-case] - should return empty array when has no projects', async () => {
+    it('[edge-case] - should get an empty array when has no projects', async () => {
       (context.repository.findMany as jest.Mock).mockResolvedValue([]);
 
       expect(await context.service.getAll(filter)).toEqual([]);
     });
   });
 
+  describe('[getById]', () => {
+    it('[success] - should get a project', async () => {
+      (context.repository.findOne as jest.Mock).mockResolvedValue(data);
+
+      expect(await context.service.getById(ref)).toEqual(data);
+    });
+
+    it('[failure] - should handle an error', async () => {
+      (context.repository.findOne as jest.Mock).mockRejectedValue(
+        new Error('REPOSITORY ERROR'),
+      );
+
+      await expect(context.service.getById(ref)).rejects.toThrow(
+        'REPOSITORY ERROR',
+      );
+    });
+
+    it('[edge-case] - should failed to get a project', async () => {
+      (context.repository.findOne as jest.Mock).mockResolvedValue(undefined);
+
+      await expect(context.service.getById(ref)).rejects.toThrow(
+        `Unable to find a project for: ${format.base(ref)}`,
+      );
+    });
+  });
+
   describe('[addProject]', () => {
-    it('[success] - should added a project', async () => {
+    it('[success] - should add a project', async () => {
       (context.repository.create as jest.Mock).mockResolvedValue(data);
 
       expect(await context.service.addProject(body.add)).toEqual(data);
@@ -102,7 +130,7 @@ describe('[services] - ProjectService', () => {
   });
 
   describe('[editProject]', () => {
-    it('[success] - should edited a project', async () => {
+    it('[success] - should edit a project', async () => {
       (context.repository.update as jest.Mock).mockResolvedValue(data);
 
       expect(await context.service.editProject(ref, body.edit)).toEqual(data);
@@ -128,7 +156,7 @@ describe('[services] - ProjectService', () => {
   });
 
   describe('[deleteProject]', () => {
-    it('[success] - should removed a project', async () => {
+    it('[success] - should delete a project', async () => {
       (context.repository.deleteOne as jest.Mock).mockResolvedValue({
         deletedCount: 1,
       });
@@ -146,7 +174,7 @@ describe('[services] - ProjectService', () => {
       );
     });
 
-    it('[edge-case] - should failed to remove a project', async () => {
+    it('[edge-case] - should failed to delete a project', async () => {
       (context.repository.deleteOne as jest.Mock).mockResolvedValue({
         deletedCount: 0,
       });

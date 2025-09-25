@@ -62,7 +62,7 @@ describe('[services] - LanguageService', () => {
   afterEach(() => jest.clearAllMocks());
 
   describe('[getAll]', () => {
-    it('[success] - should return all languages', async () => {
+    it('[success] - should get all languages', async () => {
       (context.repository.findMany as jest.Mock).mockResolvedValue([data]);
 
       expect(await context.service.getAll(filter)).toEqual([data]);
@@ -78,7 +78,7 @@ describe('[services] - LanguageService', () => {
       );
     });
 
-    it('[edge-case] - should return empty array when has no languages', async () => {
+    it('[edge-case] - should get an empty array when has no languages', async () => {
       (context.repository.findMany as jest.Mock).mockResolvedValue([]);
 
       expect(await context.service.getAll(filter)).toEqual([]);
@@ -86,7 +86,7 @@ describe('[services] - LanguageService', () => {
   });
 
   describe('[getById]', () => {
-    it('[success] - should return a language', async () => {
+    it('[success] - should get a language', async () => {
       (context.repository.findOne as jest.Mock).mockResolvedValue(data);
 
       expect(await context.service.getById(ref)).toEqual(data);
@@ -106,7 +106,7 @@ describe('[services] - LanguageService', () => {
       (context.repository.findOne as jest.Mock).mockResolvedValue(undefined);
 
       await expect(context.service.getById(ref)).rejects.toThrow(
-        `Unable to find an language for: ${format.base(ref)}`,
+        `Unable to find a language for: ${format.base(ref)}`,
       );
     });
   });
@@ -174,7 +174,7 @@ describe('[services] - LanguageService', () => {
       );
     });
 
-    it('[edge-case] - should failed to remove a language', async () => {
+    it('[edge-case] - should failed to delete a language', async () => {
       (context.repository.deleteOne as jest.Mock).mockResolvedValue({
         deletedCount: 0,
       });
