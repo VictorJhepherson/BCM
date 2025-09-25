@@ -1,12 +1,24 @@
 import { ILanguage, IProject, ITranslation } from '@shared/models';
 import { Types } from 'mongoose';
-import { ValuesType } from './common.mocks.types';
+import { MockPagination, MockSort, ValuesType } from './common.mocks.types';
 
 const objectId = new Types.ObjectId();
 
 const mongo = {
   _id: objectId,
   id: objectId.toHexString(),
+};
+
+const sort: MockSort = {
+  sortBy: 'createdAt',
+  sortOrder: 'DESC',
+  sort: { by: 'createdAt', order: 'DESC' },
+};
+
+const pagination: MockPagination = {
+  page: 1,
+  limit: 20,
+  pagination: { skip: 0, page: 1, limit: 20 },
 };
 
 const language: ILanguage = {
@@ -29,4 +41,5 @@ export const values: ValuesType = {
   project,
   language,
   translation,
+  filter: { ...sort, ...pagination },
 };

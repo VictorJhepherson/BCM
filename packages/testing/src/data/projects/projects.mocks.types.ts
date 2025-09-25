@@ -2,18 +2,22 @@ import { AddProjectDTO, EditProjectDTO, Project } from '@shared/models';
 import { Types } from 'mongoose';
 import { DataMock } from '../common/common.mocks.types';
 
-export type ProjectMockData = Partial<Project>;
-export type ProjectMockDTO = {
+export type ProjectMockRef = {
+  _id: Types.ObjectId;
+};
+
+export type ProjectMockBody = {
   add: AddProjectDTO;
   edit: EditProjectDTO;
 };
 
-export type ProjectMockFilter = {
-  _id: Types.ObjectId;
-};
+export type ProjectMockData = Partial<Project>;
+
+export type ProjectMockFilter = any;
 
 export type ProjectMock = DataMock<
-  ProjectMockDTO,
+  ProjectMockRef,
+  ProjectMockBody,
   ProjectMockData,
   ProjectMockFilter
 >;

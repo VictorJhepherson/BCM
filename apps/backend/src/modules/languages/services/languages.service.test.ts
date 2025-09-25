@@ -19,7 +19,7 @@ jest.mock('../mappers/languages.mapper', () => ({
   })),
 }));
 
-const { dto, data, filter } = new MockDataFactory<LanguageMock>(
+const { ref, body, data, filter } = new MockDataFactory<LanguageMock>(
   mockData.factory.language,
 ).build();
 
@@ -63,7 +63,7 @@ describe('[services] - LanguageService', () => {
     it('[success] - should return all languages', async () => {
       (context.repository.findMany as jest.Mock).mockResolvedValue([data]);
 
-      expect(await context.service.getAll()).toEqual([data]);
+      expect(await context.service.getAll(filter)).toEqual([data]);
     });
 
     it('[failure] - should handle an error', async () => {
@@ -71,7 +71,7 @@ describe('[services] - LanguageService', () => {
         new Error('REPOSITORY ERROR'),
       );
 
-      await expect(context.service.getAll()).rejects.toThrow(
+      await expect(context.service.getAll(filter)).rejects.toThrow(
         'REPOSITORY ERROR',
       );
     });
@@ -79,7 +79,7 @@ describe('[services] - LanguageService', () => {
     it('[edge-case] - should return empty array when has no languages', async () => {
       (context.repository.findMany as jest.Mock).mockResolvedValue([]);
 
-      expect(await context.service.getAll()).toEqual([]);
+      expect(await context.service.getAll(filter)).toEqual([]);
     });
   });
 
@@ -87,7 +87,7 @@ describe('[services] - LanguageService', () => {
     it('[success] - should added a language', async () => {
       (context.repository.create as jest.Mock).mockResolvedValue(data);
 
-      expect(await context.service.addLanguage(dto.add)).toEqual(data);
+      expect(await context.service.addLanguage(body.add)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
@@ -95,7 +95,7 @@ describe('[services] - LanguageService', () => {
         new Error('REPOSITORY ERROR'),
       );
 
-      await expect(context.service.addLanguage(dto.add)).rejects.toThrow(
+      await expect(context.service.addLanguage(body.add)).rejects.toThrow(
         'REPOSITORY ERROR',
       );
     });
@@ -105,9 +105,7 @@ describe('[services] - LanguageService', () => {
     it('[success] - should edited a language', async () => {
       (context.repository.update as jest.Mock).mockResolvedValue(data);
 
-      expect(await context.service.editLanguage(filter, dto.edit)).toEqual(
-        data,
-      );
+      expect(await context.service.editLanguage(ref, body.edit)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
@@ -116,7 +114,7 @@ describe('[services] - LanguageService', () => {
       );
 
       await expect(
-        context.service.editLanguage(filter, dto.edit),
+        context.service.editLanguage(ref, body.edit),
       ).rejects.toThrow('REPOSITORY ERROR');
     });
 
@@ -124,10 +122,8 @@ describe('[services] - LanguageService', () => {
       (context.repository.update as jest.Mock).mockResolvedValue(undefined);
 
       await expect(
-        context.service.editLanguage(filter, dto.edit),
-      ).rejects.toThrow(
-        `Unable to find a language for: ${format.base(filter)}`,
-      );
+        context.service.editLanguage(ref, body.edit),
+      ).rejects.toThrow(`Unable to find a language for: ${format.base(ref)}`);
     });
   });
 
@@ -137,7 +133,7 @@ describe('[services] - LanguageService', () => {
         deletedCount: 1,
       });
 
-      expect(await context.service.deleteLanguage(filter)).toBeFalsy();
+      expect(await context.service.deleteLanguage(ref)).toBeFalsy();
     });
 
     it('[failure] - should handle an error', async () => {
@@ -145,7 +141,7 @@ describe('[services] - LanguageService', () => {
         new Error('REPOSITORY ERROR'),
       );
 
-      await expect(context.service.deleteLanguage(filter)).rejects.toThrow(
+      await expect(context.service.deleteLanguage(ref)).rejects.toThrow(
         'REPOSITORY ERROR',
       );
     });
@@ -155,8 +151,8 @@ describe('[services] - LanguageService', () => {
         deletedCount: 0,
       });
 
-      await expect(context.service.deleteLanguage(filter)).rejects.toThrow(
-        `Failed to delete a language for: ${format.base(filter)}`,
+      await expect(context.service.deleteLanguage(ref)).rejects.toThrow(
+        `Failed to delete a language for: ${format.base(ref)}`,
       );
     });
   });

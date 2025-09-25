@@ -12,7 +12,7 @@ import { Model } from 'mongoose';
 import { LoggerProvider } from '../../../providers';
 import { LanguageRepository } from './languages.repository';
 
-const { dto, data, filter } = new MockDataFactory<LanguageMock>(
+const { ref, body, data, filter } = new MockDataFactory<LanguageMock>(
   mockData.factory.language,
 ).build();
 
@@ -43,6 +43,7 @@ describe('[repositories] - LanguageRepository', () => {
               .add('find', jest.fn())
               .add('create', jest.fn())
               .add('deleteOne', jest.fn())
+              .add('countDocuments', jest.fn())
               .add('findOneAndUpdate', jest.fn())
               .build(),
         },
@@ -57,19 +58,43 @@ describe('[repositories] - LanguageRepository', () => {
 
   describe('[findMany]', () => {
     it('[success] - should return all languages', async () => {
-      (context.model.find as jest.Mock).mockReturnValue({
-        exec: jest.fn().mockResolvedValue([data]),
+      (context.model.countDocuments as jest.Mock).mockReturnValue({
+        exec: jest.fn().mockResolvedValue(100),
       });
 
-      expect(await context.repository.findMany()).toEqual([data]);
+      (context.model.find as jest.Mock).mockReturnValue({
+        sort: jest.fn().mockReturnValue({
+          skip: jest.fn().mockReturnValue({
+            limit: jest.fn().mockReturnValue({
+              exec: jest.fn().mockResolvedValue([data]),
+            }),
+          }),
+        }),
+      });
+
+      expect(await context.repository.findMany(filter)).toEqual({
+        data: [data],
+        sort: mockData.values.filter.sort,
+        pagination: { ...mockData.values.filter.pagination, total: 100 },
+      });
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.model.find as jest.Mock).mockReturnValue({
-        exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
+      (context.model.countDocuments as jest.Mock).mockReturnValue({
+        exec: jest.fn().mockResolvedValue(100),
       });
 
-      await expect(context.repository.findMany()).rejects.toThrow(
+      (context.model.find as jest.Mock).mockReturnValue({
+        sort: jest.fn().mockReturnValue({
+          skip: jest.fn().mockReturnValue({
+            limit: jest.fn().mockReturnValue({
+              exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
+            }),
+          }),
+        }),
+      });
+
+      await expect(context.repository.findMany(filter)).rejects.toThrow(
         'MODEL ERROR',
       );
     });
@@ -79,7 +104,7 @@ describe('[repositories] - LanguageRepository', () => {
     it('[success] - should added languages', async () => {
       (context.model.create as jest.Mock).mockResolvedValue(data);
 
-      expect(await context.repository.create(dto.add)).toEqual(data);
+      expect(await context.repository.create(body.add)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
@@ -87,7 +112,7 @@ describe('[repositories] - LanguageRepository', () => {
         new Error('MODEL ERROR'),
       );
 
-      await expect(context.repository.create(dto.add)).rejects.toThrow(
+      await expect(context.repository.create(body.add)).rejects.toThrow(
         'MODEL ERROR',
       );
     });
@@ -99,7 +124,7 @@ describe('[repositories] - LanguageRepository', () => {
         exec: jest.fn().mockResolvedValue(data),
       });
 
-      expect(await context.repository.update(filter, dto.edit)).toEqual(data);
+      expect(await context.repository.update(ref, body.edit)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
@@ -107,7 +132,7 @@ describe('[repositories] - LanguageRepository', () => {
         exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
       });
 
-      await expect(context.repository.update(filter, dto.edit)).rejects.toThrow(
+      await expect(context.repository.update(ref, body.edit)).rejects.toThrow(
         'MODEL ERROR',
       );
     });
@@ -119,7 +144,7 @@ describe('[repositories] - LanguageRepository', () => {
         exec: jest.fn().mockResolvedValue({ deletedCount: 1 }),
       });
 
-      expect(await context.repository.deleteOne(filter)).toEqual({
+      expect(await context.repository.deleteOne(ref)).toEqual({
         deletedCount: 1,
       });
     });
@@ -129,7 +154,7 @@ describe('[repositories] - LanguageRepository', () => {
         exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
       });
 
-      await expect(context.repository.deleteOne(filter)).rejects.toThrow(
+      await expect(context.repository.deleteOne(ref)).rejects.toThrow(
         'MODEL ERROR',
       );
     });

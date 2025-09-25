@@ -2,12 +2,18 @@ import { AddTranslationDTO, EditTranslationDTO } from '@shared/models';
 import { values } from '../common/common.mocks';
 import {
   TranslationMock,
+  TranslationMockBody,
   TranslationMockData,
-  TranslationMockDTO,
   TranslationMockFilter,
+  TranslationMockRef,
 } from './translations.mocks.types';
 
-const dto: TranslationMockDTO = {
+const ref: TranslationMockRef = {
+  projectId: values.translation.projectId,
+  languageId: values.translation.languageId,
+};
+
+const body: TranslationMockBody = {
   add: Object.assign(new AddTranslationDTO(), {
     projectId: values.translation.projectId,
     languageId: values.translation.languageId,
@@ -25,12 +31,12 @@ const data: TranslationMockData = {
 };
 
 const filter: TranslationMockFilter = {
-  projectId: values.translation.projectId,
-  languageId: values.translation.languageId,
+  ...values.filter,
 };
 
 export const translation: TranslationMock = {
-  dto,
+  ref,
+  body,
   data,
   filter,
 };
