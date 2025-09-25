@@ -10,7 +10,7 @@ const mongo = {
 };
 
 const language: ILanguage = {
-  language: 'en',
+  name: 'en',
 };
 
 const project: IProject = {

@@ -2,12 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { BaseRepository } from '@shared/core';
 import {
-  AddLanguageDTO,
-  EditLanguageDTO,
+  ILanguage,
+  ILanguageFilter,
+  ILanguageRef,
   ILanguageRepository,
   Language,
   LanguageEntity,
-  LanguageFilter,
+  WithPagination,
 } from '@shared/models';
 import { DeleteResult, Model } from 'mongoose';
 import { LoggerProvider } from '../../../providers';
@@ -25,30 +26,44 @@ export class LanguageRepository
     super('[languages]', logger);
   }
 
-  async findMany(): Promise<Language[]> {
+  async findMany(filter: ILanguageFilter): Promise<WithPagination<Language>> {
+    const { sort, pagination } = filter;
+
     return this.execute({
-      fn: () => this.model.find().exec(),
+      fn: async () => {
+        const [total, data] = await Promise.all([
+          this.model.countDocuments().exec(),
+          this.model
+            .find()
+            .sort({ [sort.by]: sort.order === 'ASC' ? 1 : -1 })
+            .skip(pagination.skip)
+            .limit(pagination.limit)
+            .exec(),
+        ]);
+
+        return { data, sort, pagination: { ...pagination, total } };
+      },
     });
   }
 
-  async create(dto: AddLanguageDTO): Promise<Language> {
+  async create(payload: ILanguage): Promise<Language> {
     return this.execute({
-      fn: () => this.model.create(dto),
+      fn: () => this.model.create(payload),
     });
   }
 
   async update(
-    filter: LanguageFilter,
-    dto: EditLanguageDTO,
+    ref: ILanguageRef,
+    payload: Partial<ILanguage>,
   ): Promise<Language | null> {
     return this.execute({
-      fn: () => this.model.findOneAndUpdate(filter, dto, { new: true }).exec(),
+      fn: () => this.model.findOneAndUpdate(ref, payload, { new: true }).exec(),
     });
   }
 
-  async deleteOne(filter: LanguageFilter): Promise<DeleteResult> {
+  async deleteOne(ref: ILanguageRef): Promise<DeleteResult> {
     return this.execute({
-      fn: () => this.model.deleteOne(filter).exec(),
+      fn: () => this.model.deleteOne(ref).exec(),
     });
   }
 }

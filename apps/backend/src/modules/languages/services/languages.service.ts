@@ -2,11 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { BaseService } from '@shared/core';
 import { format } from '@shared/helpers';
 import {
-  AddLanguageDTO,
-  EditLanguageDTO,
+  ILanguage,
+  ILanguageFilter,
+  ILanguageRef,
   ILanguageService,
   Language,
-  LanguageFilter,
   MappedLanguage,
 } from '@shared/models';
 import { LoggerProvider } from '../../../providers';
@@ -28,30 +28,30 @@ export class LanguageService
     super('[languages]', logger, new LanguageMapper());
   }
 
-  async getAll(): Promise<MappedLanguage[]> {
+  async getAll(filter: ILanguageFilter): Promise<MappedLanguage> {
     return this.execute({
       mapKey: 'mapLanguages',
-      fn: () => this.repository.findMany(),
+      fn: () => this.repository.findMany(filter),
     });
   }
 
-  async addLanguage(dto: AddLanguageDTO): Promise<Language> {
+  async addLanguage(payload: ILanguage): Promise<Language> {
     return this.execute({
-      fn: () => this.repository.create(dto),
+      fn: () => this.repository.create(payload),
     });
   }
 
   async editLanguage(
-    filter: LanguageFilter,
-    dto: EditLanguageDTO,
+    ref: ILanguageRef,
+    payload: Partial<ILanguage>,
   ): Promise<Language> {
     return this.execute({
       fn: async () => {
-        const updated = await this.repository.update(filter, dto);
+        const updated = await this.repository.update(ref, payload);
 
         if (!updated) {
           throw new NotFoundException({
-            message: `Unable to find a language for: ${format.base(filter)}`,
+            message: `Unable to find a language for: ${format.base(ref)}`,
           });
         }
 
@@ -60,14 +60,14 @@ export class LanguageService
     });
   }
 
-  async deleteLanguage(filter: LanguageFilter): Promise<void> {
+  async deleteLanguage(ref: ILanguageRef): Promise<void> {
     return this.execute({
       fn: async () => {
-        const deleted = await this.repository.deleteOne(filter);
+        const deleted = await this.repository.deleteOne(ref);
 
         if (deleted.deletedCount < 1) {
           throw new NotFoundException({
-            message: `Failed to delete a language for: ${format.base(filter)}`,
+            message: `Failed to delete a language for: ${format.base(ref)}`,
           });
         }
       },

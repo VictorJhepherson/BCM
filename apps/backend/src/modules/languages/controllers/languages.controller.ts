@@ -7,17 +7,20 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Version,
 } from '@nestjs/common';
 import { BaseController } from '@shared/core';
 import {
-  AddLanguageDTO,
-  EditLanguageDTO,
   ILanguageController,
   Language,
-  LanguageFilter,
+  LanguageAddDTO,
+  LanguageEditDTO,
+  LanguageFilterDTO,
+  LanguageRefDTO,
   MappedLanguage,
 } from '@shared/models';
+import { FilterPipe } from '../../../pipes';
 import { LoggerProvider } from '../../../providers';
 import { LanguageService } from '../services/languages.service';
 
@@ -36,18 +39,20 @@ export class LanguageController
   @Version('1')
   @HttpCode(200)
   @Get('/')
-  async getAll(): Promise<MappedLanguage[]> {
+  async getAll(
+    @Query(FilterPipe) query: LanguageFilterDTO,
+  ): Promise<MappedLanguage> {
     return this.execute({
-      fn: () => this.service.getAll(),
+      fn: () => this.service.getAll(query),
     });
   }
 
   @Version('1')
   @HttpCode(201)
   @Post('/')
-  async addLanguage(@Body() dto: AddLanguageDTO): Promise<Language> {
+  async addLanguage(@Body() body: LanguageAddDTO): Promise<Language> {
     return this.execute({
-      fn: () => this.service.addLanguage(dto),
+      fn: () => this.service.addLanguage(body),
     });
   }
 
@@ -55,22 +60,20 @@ export class LanguageController
   @HttpCode(200)
   @Patch('/:_id')
   async editLanguage(
-    @Param('_id') _id: LanguageFilter['_id'],
-    @Body() dto: EditLanguageDTO,
+    @Param() params: LanguageRefDTO,
+    @Body() body: LanguageEditDTO,
   ): Promise<Language> {
     return this.execute({
-      fn: () => this.service.editLanguage({ _id }, dto),
+      fn: () => this.service.editLanguage(params, body),
     });
   }
 
   @Version('1')
   @HttpCode(204)
   @Delete('/:_id')
-  async deleteLanguage(
-    @Param('_id') _id: LanguageFilter['_id'],
-  ): Promise<void> {
+  async deleteLanguage(@Param() params: LanguageRefDTO): Promise<void> {
     return this.execute({
-      fn: () => this.service.deleteLanguage({ _id }),
+      fn: () => this.service.deleteLanguage(params),
     });
   }
 }
