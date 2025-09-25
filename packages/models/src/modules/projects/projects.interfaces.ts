@@ -1,33 +1,45 @@
-import { DeleteResult } from 'mongoose';
-import { AddProjectDTO, EditProjectDTO } from './projects.dtos';
-import { MappedProject, Project, ProjectFilter } from './projects.types';
+import { DeleteResult, Types } from 'mongoose';
+import { IPaginationFilter, WithPagination } from '../..';
+import {
+  ProjectAddDTO,
+  ProjectEditDTO,
+  ProjectFilterDTO,
+  ProjectRefDTO,
+} from './projects.dtos';
+import { MappedProject, Project } from './projects.types';
 
 export interface IProject {
   name: string;
   description: string;
 }
 
-export interface IProjectRepository {
-  findMany(): Promise<Project[]>;
-  create(dto: AddProjectDTO): Promise<Project>;
-  update(filter: ProjectFilter, dto: EditProjectDTO): Promise<Project | null>;
-  deleteOne(filter: ProjectFilter): Promise<DeleteResult>;
+export interface IProjectRef {
+  _id: Types.ObjectId;
+}
+
+export interface IProjectFilter extends IPaginationFilter {}
+
+export interface IProjectController {
+  getAll(query: ProjectFilterDTO): Promise<MappedProject>;
+  addProject(body: ProjectAddDTO): Promise<Project>;
+  editProject(params: ProjectRefDTO, body: ProjectEditDTO): Promise<Project>;
+  deleteProject(params: ProjectRefDTO): Promise<void>;
 }
 
 export interface IProjectService {
-  getAll(): Promise<MappedProject[]>;
-  addProject(dto: AddProjectDTO): Promise<Project>;
-  editProject(filter: ProjectFilter, dto: EditProjectDTO): Promise<Project>;
-  deleteProject(filter: ProjectFilter): Promise<void>;
+  getAll(filter: IProjectFilter): Promise<MappedProject>;
+  addProject(body: IProject): Promise<Project>;
+  editProject(ref: IProjectRef, body: Partial<IProject>): Promise<Project>;
+  deleteProject(ref: IProjectRef): Promise<void>;
 }
 
-export interface IProjectController {
-  getAll(): Promise<MappedProject[]>;
-  addProject(dto: AddProjectDTO): Promise<Project>;
-  editProject(_id: ProjectFilter['_id'], dto: EditProjectDTO): Promise<Project>;
-  deleteProject(_id: ProjectFilter['_id']): Promise<void>;
+export interface IProjectRepository {
+  findMany(fitler: IProjectFilter): Promise<WithPagination<Project>>;
+  create(body: IProject): Promise<Project>;
+  update(ref: IProjectRef, body: IProject): Promise<Project | null>;
+  deleteOne(ref: IProjectRef): Promise<DeleteResult>;
 }
 
 export interface IProjectMapper {
-  mapProjects(projects: Project[]): MappedProject[];
+  mapProjects(payload: WithPagination<Project>): MappedProject;
 }

@@ -1,4 +1,4 @@
-import { AddProjectDTO, EditProjectDTO } from '@shared/models';
+import { ProjectAddDTO, ProjectEditDTO } from '@shared/models';
 import { values } from '../common/common.mocks';
 import {
   ProjectMock,
@@ -13,11 +13,11 @@ const ref: ProjectMockRef = {
 };
 
 const body: ProjectMockBody = {
-  add: Object.assign(new AddProjectDTO(), {
+  add: Object.assign(new ProjectAddDTO(), {
     name: values.project.name,
     description: values.project.description,
   }),
-  edit: Object.assign(new EditProjectDTO(), {
+  edit: Object.assign(new ProjectEditDTO(), {
     description: 'project-description-edited',
   }),
 };
