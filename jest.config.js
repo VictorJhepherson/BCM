@@ -18,6 +18,12 @@ module.exports = {
     '^.+\\.(ts|tsx)$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  collectCoverageFrom: [
+    '!**/*.d.ts',
+    '!**/main.ts',
+    '!**/index.ts',
+    '!**/*.module.ts',
+  ],
   testPathIgnorePatterns: [
     'index\\.ts$',
     '\\.dtos\\.ts$',

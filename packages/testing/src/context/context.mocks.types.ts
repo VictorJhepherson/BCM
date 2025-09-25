@@ -24,3 +24,7 @@ export type LoggerMockProps<P, C> = {
   provider: P;
   config: C;
 };
+
+export type PipeMockProps<P> = {
+  pipe: P;
+};

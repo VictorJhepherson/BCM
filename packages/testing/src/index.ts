@@ -7,6 +7,7 @@ export type {
   ControllerMockProps,
   LoggerMockProps,
   MapperMockProps,
+  PipeMockProps,
   RepositoryMockProps,
   ServiceMockProps,
 } from './context/context.mocks.types';
