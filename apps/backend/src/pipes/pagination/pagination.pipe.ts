@@ -3,7 +3,7 @@ import { PaginationDTO } from '@shared/models';
 import { plainToInstance } from 'class-transformer';
 
 @Injectable()
-export class FilterPipe implements PipeTransform {
+export class PaginationPipe implements PipeTransform {
   transform(value: any) {
     const filter = plainToInstance(PaginationDTO, value);
     const exclusions = ['page', 'limit', 'sortBy', 'sortOrder'];

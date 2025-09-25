@@ -2,13 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { BaseRepository } from '@shared/core';
 import {
-  AddTranslationDTO,
-  EditTranslationDTO,
+  ITranslation,
+  ITranslationFilter,
+  ITranslationRef,
   ITranslationRepository,
   PopulateTranslation,
   Translation,
   TranslationEntity,
-  TranslationFilter,
+  WithPagination,
 } from '@shared/models';
 import { DeleteResult, Model } from 'mongoose';
 import { LoggerProvider } from '../../../providers';
@@ -27,57 +28,58 @@ export class TranslationRepository
   }
 
   async findMany(
-    filter: Pick<TranslationFilter, 'projectId'>,
-  ): Promise<PopulateTranslation[]> {
+    filter: ITranslationFilter,
+  ): Promise<WithPagination<PopulateTranslation>> {
+    const { sort, pagination } = filter;
+
     return this.execute({
-      fn: () =>
-        this.model
-          .find(filter)
-          .populate({ path: 'languageId', select: 'language' })
-          .lean<PopulateTranslation[]>()
-          .exec(),
+      fn: async () => {
+        const [total, data] = await Promise.all([
+          this.model.countDocuments().exec(),
+          this.model
+            .find()
+            .sort({ [sort.by]: sort.order === 'ASC' ? 1 : -1 })
+            .skip(pagination.skip)
+            .limit(pagination.limit)
+            .populate({ path: 'languageId', select: 'name' })
+            .lean<PopulateTranslation[]>()
+            .exec(),
+        ]);
+
+        return { data, sort, pagination: { ...pagination, total } };
+      },
     });
   }
 
-  async findOne(
-    filter: TranslationFilter,
-  ): Promise<PopulateTranslation | null> {
+  async findOne(ref: ITranslationRef): Promise<PopulateTranslation | null> {
     return this.execute({
       fn: () =>
         this.model
-          .findOne(filter)
-          .populate({ path: 'languageId', select: 'language' })
+          .findOne(ref)
+          .populate({ path: 'languageId', select: 'name' })
           .lean<PopulateTranslation>()
           .exec(),
     });
   }
 
-  async create(dto: AddTranslationDTO): Promise<Translation> {
+  async create(payload: ITranslation): Promise<Translation> {
     return this.execute({
-      fn: () => this.model.create(dto),
+      fn: () => this.model.create(payload),
     });
   }
 
   async update(
-    filter: TranslationFilter,
-    dto: EditTranslationDTO,
+    ref: ITranslationRef,
+    payload: Partial<ITranslation>,
   ): Promise<Translation | null> {
     return this.execute({
-      fn: () => this.model.findOneAndUpdate(filter, dto, { new: true }).exec(),
+      fn: () => this.model.findOneAndUpdate(ref, payload, { new: true }).exec(),
     });
   }
 
-  async deleteMany(
-    filter: Pick<TranslationFilter, 'projectId'>,
-  ): Promise<DeleteResult> {
+  async deleteOne(ref: ITranslationRef): Promise<DeleteResult> {
     return this.execute({
-      fn: () => this.model.deleteMany(filter).exec(),
-    });
-  }
-
-  async deleteOne(filter: TranslationFilter): Promise<DeleteResult> {
-    return this.execute({
-      fn: () => this.model.deleteOne(filter).exec(),
+      fn: () => this.model.deleteOne(ref).exec(),
     });
   }
 }

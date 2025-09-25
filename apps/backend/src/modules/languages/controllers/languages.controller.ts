@@ -20,7 +20,7 @@ import {
   LanguageRefDTO,
   MappedLanguage,
 } from '@shared/models';
-import { FilterPipe } from '../../../pipes';
+import { PaginationPipe } from '../../../pipes';
 import { LoggerProvider } from '../../../providers';
 import { LanguageService } from '../services/languages.service';
 
@@ -40,7 +40,7 @@ export class LanguageController
   @HttpCode(200)
   @Get('/')
   async getAll(
-    @Query(FilterPipe) query: LanguageFilterDTO,
+    @Query(PaginationPipe) query: LanguageFilterDTO,
   ): Promise<MappedLanguage> {
     return this.execute({
       fn: () => this.service.getAll(query),

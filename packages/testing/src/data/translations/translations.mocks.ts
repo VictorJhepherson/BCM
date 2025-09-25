@@ -1,4 +1,4 @@
-import { AddTranslationDTO, EditTranslationDTO } from '@shared/models';
+import { TranslationAddDTO, TranslationEditDTO } from '@shared/models';
 import { values } from '../common/common.mocks';
 import {
   TranslationMock,
@@ -14,12 +14,12 @@ const ref: TranslationMockRef = {
 };
 
 const body: TranslationMockBody = {
-  add: Object.assign(new AddTranslationDTO(), {
+  add: Object.assign(new TranslationAddDTO(), {
     projectId: values.translation.projectId,
     languageId: values.translation.languageId,
     translations: values.translation.translations,
   }),
-  edit: Object.assign(new EditTranslationDTO(), {
+  edit: Object.assign(new TranslationEditDTO(), {
     translations: { welcome: 'Hello World!!!' },
   }),
 };

@@ -1,1 +1,1 @@
-export { FilterPipe } from './filter/filter.pipe';
+export { PaginationPipe } from './pagination/pagination.pipe';

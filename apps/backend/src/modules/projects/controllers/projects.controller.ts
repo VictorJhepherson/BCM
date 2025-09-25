@@ -20,7 +20,7 @@ import {
   ProjectFilterDTO,
   ProjectRefDTO,
 } from '@shared/models';
-import { FilterPipe } from '../../../pipes';
+import { PaginationPipe } from '../../../pipes';
 import { LoggerProvider } from '../../../providers';
 import { ProjectService } from '../services/projects.service';
 
@@ -40,7 +40,7 @@ export class ProjectController
   @HttpCode(200)
   @Get('/')
   async getAll(
-    @Query(FilterPipe) query: ProjectFilterDTO,
+    @Query(PaginationPipe) query: ProjectFilterDTO,
   ): Promise<MappedProject> {
     return this.execute({
       fn: () => this.service.getAll(query),

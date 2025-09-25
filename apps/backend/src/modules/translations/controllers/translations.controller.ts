@@ -7,17 +7,21 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Version,
 } from '@nestjs/common';
 import { BaseController } from '@shared/core';
 import {
-  AddTranslationDTO,
-  EditTranslationDTO,
   ITranslationController,
   MappedTranslation,
   Translation,
-  TranslationFilter,
+  TranslationAddDTO,
+  TranslationEditDTO,
+  TranslationFilterDTO,
+  TranslationPayload,
+  TranslationRefDTO,
 } from '@shared/models';
+import { PaginationPipe } from '../../../pipes';
 import { LoggerProvider } from '../../../providers';
 import { TranslationService } from '../services/translations.service';
 
@@ -35,69 +39,53 @@ export class TranslationController
 
   @Version('1')
   @HttpCode(200)
-  @Get('/:projectId')
-  async getByProject(
-    @Param('projectId') projectId: TranslationFilter['projectId'],
-  ): Promise<MappedTranslation[]> {
+  @Get('/')
+  async getAll(
+    @Query(PaginationPipe) query: TranslationFilterDTO,
+  ): Promise<MappedTranslation> {
     return this.execute({
-      fn: () => this.service.getByProject({ projectId }),
+      fn: () => this.service.getAll(query),
     });
   }
 
   @Version('1')
   @HttpCode(200)
-  @Get('/:projectId/:languageId')
-  async getByLanguage(
-    @Param('projectId') projectId: TranslationFilter['projectId'],
-    @Param('languageId') languageId: TranslationFilter['languageId'],
-  ): Promise<MappedTranslation> {
+  @Get('/projects/:projectId/languages/:languageId')
+  async getById(
+    @Param() params: TranslationRefDTO,
+  ): Promise<TranslationPayload> {
     return this.execute({
-      fn: () => this.service.getByLanguage({ projectId, languageId }),
+      fn: () => this.service.getById(params),
     });
   }
 
   @Version('1')
   @HttpCode(201)
   @Post('/')
-  async addTranslation(@Body() dto: AddTranslationDTO): Promise<Translation> {
+  async addTranslation(@Body() body: TranslationAddDTO): Promise<Translation> {
     return this.execute({
-      fn: () => this.service.addTranslation(dto),
+      fn: () => this.service.addTranslation(body),
     });
   }
 
   @Version('1')
   @HttpCode(200)
-  @Patch('/:projectId/:languageId')
+  @Patch('/projects/:projectId/languages/:languageId')
   async editTranslation(
-    @Param('projectId') projectId: TranslationFilter['projectId'],
-    @Param('languageId') languageId: TranslationFilter['languageId'],
-    @Body() dto: EditTranslationDTO,
+    @Param() params: TranslationRefDTO,
+    @Body() body: TranslationEditDTO,
   ): Promise<Translation> {
     return this.execute({
-      fn: () => this.service.editTranslation({ projectId, languageId }, dto),
+      fn: () => this.service.editTranslation(params, body),
     });
   }
 
   @Version('1')
   @HttpCode(204)
-  @Delete('/:projectId')
-  async deleteByProject(
-    @Param('projectId') projectId: TranslationFilter['projectId'],
-  ): Promise<void> {
+  @Delete('/projects/:projectId/languages/:languageId')
+  async deleteTranslation(@Param() params: TranslationRefDTO): Promise<void> {
     return this.execute({
-      fn: () => this.service.deleteByProject({ projectId }),
-    });
-  }
-
-  @Version('1')
-  @HttpCode(204)
-  @Delete('/:projectId/:languageId')
-  async deleteByLanguage(
-    @Param('projectId') projectId: TranslationFilter['projectId'],
-    @Param('languageId') languageId: TranslationFilter['languageId'],
-  ): Promise<void> {
-    return this.execute({
-      fn: () => this.service.deleteByLanguage({ projectId, languageId }),
+      fn: () => this.service.deleteTranslation(params),
     });
   }
 }
