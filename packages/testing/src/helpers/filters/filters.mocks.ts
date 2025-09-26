@@ -1,21 +1,18 @@
-import { ArgumentsHost } from '@nestjs/common';
-import { FilterMock, Options } from './filters.mocks.types';
+import { getArgumentsHost } from '../common/common.mocks';
+import { Options } from '../common/common.mocks.types';
+import { FilterMock } from './filters.mocks.types';
 
 const getMocks = ({
-  request = { method: 'get', url: '/test' },
-  response,
+  req = { method: 'get', url: '/test' },
+  res,
 }: Options = {}): FilterMock => {
   const mockJson = jest.fn();
   const mockStatus = jest.fn().mockReturnValue({ json: mockJson });
 
-  const mockHost = {
-    switchToHttp: jest.fn().mockReturnValue({
-      getRequest: jest.fn().mockReturnValue(request),
-      getResponse: jest
-        .fn()
-        .mockReturnValue({ status: mockStatus, ...response }),
-    }),
-  } as unknown as ArgumentsHost;
+  const mockHost = getArgumentsHost({
+    req,
+    res: { status: mockStatus, ...res },
+  });
 
   return { mockHost, mockStatus, mockJson };
 };

@@ -1,22 +1,14 @@
-import { ExecutionContext } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
-import { UserPayload } from '@shared/models';
-import { GuardMockProps, MockMethodFactory } from '@shared/testing';
+import {
+  GuardMockProps,
+  mockHelpers,
+  MockMethodFactory,
+} from '@shared/testing';
 import { GROUPS_KEY, SCOPES_KEY } from '../../decorators';
 import { LoggerProvider } from '../../providers';
 import { PermissionGuard } from './permissions.guard';
-
-const getContext = (user: Partial<UserPayload> | undefined) =>
-  ({
-    getHandler: () => jest.fn(),
-    switchToHttp: () => ({
-      getNext: jest.fn(),
-      getResponse: jest.fn(),
-      getRequest: () => ({ user }),
-    }),
-  }) as unknown as ExecutionContext;
 
 describe('[guards] - PermissionGuard', () => {
   const context = {} as GuardMockProps<
@@ -67,13 +59,23 @@ describe('[guards] - PermissionGuard', () => {
   it('[by-pass] - should return true when environment is DEV', () => {
     (context.services.config.get as jest.Mock).mockReturnValue('DEV');
 
-    expect(context.guard.canActivate(getContext({}))).toBe(true);
+    const { mockContext } = mockHelpers.guards.getMocks({
+      req: { user: {} },
+    });
+
+    expect(context.guard.canActivate(mockContext)).toBe(true);
   });
 
   it('[no-user] - should handle an error when user is not defined', () => {
     (context.services.config.get as jest.Mock).mockReturnValue('PROD');
 
-    expect(() => context.guard.canActivate(getContext(undefined))).toThrow(
+    const { mockContext } = mockHelpers.guards.getMocks({
+      req: { user: undefined },
+    });
+
+    mockContext.switchToHttp();
+
+    expect(() => context.guard.canActivate(mockContext)).toThrow(
       'User not found!',
     );
   });
@@ -82,7 +84,11 @@ describe('[guards] - PermissionGuard', () => {
     (context.services.config.get as jest.Mock).mockReturnValue('PROD');
     (context.services.reflector.get as jest.Mock).mockReturnValue([]);
 
-    expect(context.guard.canActivate(getContext({}))).toBe(true);
+    const { mockContext } = mockHelpers.guards.getMocks({
+      req: { user: {} },
+    });
+
+    expect(context.guard.canActivate(mockContext)).toBe(true);
   });
 
   it('[not-include] - should handle an error when group or scope are not found in user payload', () => {
@@ -96,11 +102,13 @@ describe('[guards] - PermissionGuard', () => {
       },
     );
 
-    expect(() =>
-      context.guard.canActivate(
-        getContext({ groups: ['VIEWER'], scopes: ['TRANSLATIONS'] }),
-      ),
-    ).toThrow('User does not have the required groups: ADMIN');
+    const { mockContext } = mockHelpers.guards.getMocks({
+      req: { user: { groups: ['VIEWER'], scopes: ['TRANSLATIONS'] } },
+    });
+
+    expect(() => context.guard.canActivate(mockContext)).toThrow(
+      'User does not have the required groups: ADMIN',
+    );
   });
 
   it('[not-include] - should handle an error when group or scope is not present', () => {
@@ -114,9 +122,13 @@ describe('[guards] - PermissionGuard', () => {
       },
     );
 
-    expect(() =>
-      context.guard.canActivate(getContext({ groups: ['VIEWER'] })),
-    ).toThrow('User does not have the required scopes: TRANSLATIONS');
+    const { mockContext } = mockHelpers.guards.getMocks({
+      req: { user: { groups: ['VIEWER'] } },
+    });
+
+    expect(() => context.guard.canActivate(mockContext)).toThrow(
+      'User does not have the required scopes: TRANSLATIONS',
+    );
   });
 
   it('[success] - should return true when user has permissions', () => {
@@ -130,10 +142,10 @@ describe('[guards] - PermissionGuard', () => {
       },
     );
 
-    expect(
-      context.guard.canActivate(
-        getContext({ groups: ['VIEWER'], scopes: ['PROJECTS'] }),
-      ),
-    ).toBe(true);
+    const { mockContext } = mockHelpers.guards.getMocks({
+      req: { user: { groups: ['VIEWER'], scopes: ['PROJECTS'] } },
+    });
+
+    expect(context.guard.canActivate(mockContext)).toBe(true);
   });
 });
