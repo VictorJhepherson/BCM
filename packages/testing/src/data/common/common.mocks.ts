@@ -39,6 +39,7 @@ const project: IProject = {
 const translation: ITranslation = {
   projectId: mongo._id,
   languageId: mongo._id,
+  active: true,
   translations: { welcome: 'Hello World!' },
 };
 

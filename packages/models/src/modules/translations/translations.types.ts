@@ -1,5 +1,5 @@
 import { HydratedDocument, Types } from 'mongoose';
-import { WithPagination } from '../..';
+import { MongoPayload, WithPagination } from '../..';
 import { TranslationEntity } from './translations.schemas';
 
 export type Translation = HydratedDocument<TranslationEntity>;
@@ -11,7 +11,8 @@ export type TranslationTree = {
   [key: string]: string | TranslationTree;
 };
 
-export type TranslationPayload = {
+export type TranslationPayload = MongoPayload & {
+  active: boolean;
   language: string;
   translations: TranslationTree;
 };

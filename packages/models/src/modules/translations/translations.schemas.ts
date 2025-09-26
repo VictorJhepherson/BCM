@@ -7,13 +7,16 @@ import { type TranslationTree } from './translations.types';
 @Schema({ collection: 'translations', timestamps: true, versionKey: false })
 export class TranslationEntity implements ITranslation {
   @Prop({ type: Types.ObjectId, ref: ProjectEntity.name, required: true })
-  projectId: Types.ObjectId;
+  readonly projectId: Types.ObjectId;
 
   @Prop({ type: Types.ObjectId, ref: LanguageEntity.name, required: true })
-  languageId: Types.ObjectId;
+  readonly languageId: Types.ObjectId;
+
+  @Prop({ required: true })
+  readonly active: boolean;
 
   @Prop({ type: Object, required: true })
-  translations: TranslationTree;
+  readonly translations: TranslationTree;
 }
 
 export const TranslationSchema =

@@ -17,6 +17,7 @@ const body: TranslationMockBody = {
   add: Object.assign(new TranslationAddDTO(), {
     projectId: values.translation.projectId,
     languageId: values.translation.languageId,
+    active: values.translation.active,
     translations: values.translation.translations,
   }),
   edit: Object.assign(new TranslationEditDTO(), {
@@ -25,8 +26,11 @@ const body: TranslationMockBody = {
 };
 
 const data: TranslationMockData = {
+  _id: values.mongo._id,
+  get: values.mongo.get,
   projectId: values.translation.projectId,
   languageId: values.translation.languageId,
+  active: values.translation.active,
   translations: values.translation.translations,
 };
 

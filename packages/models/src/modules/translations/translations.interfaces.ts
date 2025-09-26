@@ -17,6 +17,7 @@ import {
 export interface ITranslation {
   projectId: Types.ObjectId;
   languageId: Types.ObjectId;
+  active: boolean;
   translations: TranslationTree;
 }
 

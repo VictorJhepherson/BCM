@@ -30,8 +30,12 @@ describe('[mappers] - TranslationMapper', () => {
   describe('[mapTranslation]', () => {
     it('should map a translation correctly', () => {
       expect(context.mapper.mapTranslation(data)).toEqual({
+        id: data._id,
+        active: data.active,
         language: data.languageId.name,
         translations: data.translations,
+        createdAt: data.get('createdAt'),
+        updatedAt: data.get('updatedAt'),
       });
     });
   });
@@ -46,7 +50,14 @@ describe('[mappers] - TranslationMapper', () => {
         }),
       ).toEqual({
         data: expect.arrayContaining([
-          { language: data.languageId.name, translations: data.translations },
+          {
+            id: data._id,
+            active: data.active,
+            language: data.languageId.name,
+            translations: data.translations,
+            createdAt: data.get('createdAt'),
+            updatedAt: data.get('updatedAt'),
+          },
         ]),
         sort: { by: sort.by, order: sort.order },
         pagination: {

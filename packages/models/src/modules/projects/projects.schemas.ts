@@ -5,13 +5,13 @@ import { IProject } from './projects.interfaces';
 @Schema({ collection: 'projects', timestamps: true, versionKey: false })
 export class ProjectEntity implements IProject {
   @Prop({ unique: true, required: true, match: RegexProjects.NAME })
-  name: string;
+  readonly name: string;
 
   @Prop({ required: true })
-  active: boolean;
+  readonly active: boolean;
 
   @Prop({ required: true, match: RegexProjects.DESCRIPTION })
-  description: string;
+  readonly description: string;
 }
 
 export const ProjectSchema = SchemaFactory.createForClass(ProjectEntity);

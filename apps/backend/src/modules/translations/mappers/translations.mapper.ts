@@ -10,8 +10,12 @@ import {
 export class TranslationMapper implements ITranslationMapper {
   mapTranslation(translation: PopulateTranslation): TranslationPayload {
     return {
+      id: translation._id,
+      active: translation.active,
       language: translation.languageId.name,
       translations: translation.translations,
+      createdAt: translation.get('createdAt'),
+      updatedAt: translation.get('updatedAt'),
     };
   }
 
