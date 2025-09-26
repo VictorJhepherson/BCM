@@ -25,6 +25,7 @@ module.exports = {
     '!**/*.module.ts',
   ],
   testPathIgnorePatterns: [
+    '\\.d\\.ts$',
     'index\\.ts$',
     '\\.dtos\\.ts$',
     '\\.mocks\\.ts$',

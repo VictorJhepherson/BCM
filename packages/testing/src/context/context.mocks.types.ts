@@ -1,6 +1,6 @@
-type ProvidersType = Record<string, any>;
+type OthersType = Record<string, any>;
 
-export type ControllerMockProps<C, S, P extends ProvidersType = never> = {
+export type ControllerMockProps<C, S, P extends OthersType = never> = {
   service: S;
   providers: P;
   controller: C;
@@ -27,4 +27,9 @@ export type LoggerMockProps<P, C> = {
 
 export type PipeMockProps<P> = {
   pipe: P;
+};
+
+export type MiddlewareMockProps<M, S extends OthersType = never> = {
+  middleware: M;
+  services: S;
 };

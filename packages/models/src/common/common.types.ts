@@ -4,7 +4,6 @@ export enum Environment {
   SIT = 'SIT',
   UAT = 'UAT',
   PROD = 'PROD',
-  DEBUG = 'DEBUG',
 }
 
 export enum Logging {
@@ -38,6 +37,13 @@ export type WithPagination<T> = {
   data: T[];
   sort: Sort;
   pagination: Omit<Pagination, 'skip'> & { total: number };
+};
+
+export type UserPayload = {
+  name: string;
+  userId: string;
+  groups: string[];
+  scopes: string[];
 };
 //#endregion UTILS
 

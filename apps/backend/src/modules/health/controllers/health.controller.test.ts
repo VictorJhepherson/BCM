@@ -45,7 +45,7 @@ describe('[controllers] - HealthController', () => {
     it('[success] - should return app healthy', async () => {
       (context.service.check as jest.Mock).mockImplementationOnce(
         async (indicators) => {
-          const results = await Promise.all(indicators.map((fn) => fn()));
+          const results = await Promise.all(indicators.map((fn: any) => fn()));
 
           return {
             status: 'ok',

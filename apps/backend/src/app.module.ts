@@ -1,12 +1,15 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
+import { AuthMiddleware } from './middlewares';
 import {
   HealthModule,
   LanguageModule,
   ProjectModule,
   TranslationModule,
 } from './modules';
+import { LoggerProvider } from './providers';
 
 @Module({
   imports: [
@@ -14,9 +17,16 @@ import {
       isGlobal: true,
       envFilePath: [`.env.${process.env.NODE_ENV}`],
     }),
-    MongooseModule.forRootAsync({
-      imports: [ConfigModule],
+    JwtModule.registerAsync({
       inject: [ConfigService],
+      imports: [ConfigModule],
+      useFactory: (config: ConfigService) => ({
+        secret: config.get<string>('JWT_SECRET'),
+      }),
+    }),
+    MongooseModule.forRootAsync({
+      inject: [ConfigService],
+      imports: [ConfigModule],
       useFactory: (config: ConfigService) => ({
         uri: config.get<string>('MONGO_URI'),
       }),
@@ -26,7 +36,10 @@ import {
     LanguageModule,
     TranslationModule,
   ],
-  providers: [],
-  controllers: [],
+  providers: [LoggerProvider],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AuthMiddleware).forRoutes('*');
+  }
+}

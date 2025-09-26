@@ -7,6 +7,7 @@ export type {
   ControllerMockProps,
   LoggerMockProps,
   MapperMockProps,
+  MiddlewareMockProps,
   PipeMockProps,
   RepositoryMockProps,
   ServiceMockProps,
