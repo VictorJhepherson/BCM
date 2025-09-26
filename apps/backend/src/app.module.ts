@@ -2,6 +2,7 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
+import { PermissionGuard } from './guards';
 import { AuthMiddleware } from './middlewares';
 import {
   HealthModule,
@@ -36,7 +37,8 @@ import { LoggerProvider } from './providers';
     LanguageModule,
     TranslationModule,
   ],
-  providers: [LoggerProvider],
+  exports: [PermissionGuard],
+  providers: [LoggerProvider, PermissionGuard],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

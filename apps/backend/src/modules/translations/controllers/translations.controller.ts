@@ -21,6 +21,7 @@ import {
   TranslationPayload,
   TranslationRefDTO,
 } from '@shared/models';
+import { Groups, Scopes } from '../../../decorators';
 import { PaginationPipe } from '../../../pipes';
 import { LoggerProvider } from '../../../providers';
 import { TranslationService } from '../services/translations.service';
@@ -37,9 +38,11 @@ export class TranslationController
     super('[translations]', logger);
   }
 
+  @Get('/')
   @Version('1')
   @HttpCode(200)
-  @Get('/')
+  @Scopes(['TRANSLATIONS'])
+  @Groups(['VIEWER', 'EDITOR', 'ADMIN'])
   async getAll(
     @Query(PaginationPipe) query: TranslationFilterDTO,
   ): Promise<MappedTranslation> {
@@ -48,9 +51,11 @@ export class TranslationController
     });
   }
 
+  @Get('/projects/:projectId/languages/:languageId')
   @Version('1')
   @HttpCode(200)
-  @Get('/projects/:projectId/languages/:languageId')
+  @Scopes(['TRANSLATIONS'])
+  @Groups(['VIEWER', 'EDITOR', 'ADMIN'])
   async getById(
     @Param() params: TranslationRefDTO,
   ): Promise<TranslationPayload> {
@@ -59,18 +64,22 @@ export class TranslationController
     });
   }
 
+  @Post('/')
   @Version('1')
   @HttpCode(201)
-  @Post('/')
+  @Scopes(['TRANSLATIONS'])
+  @Groups(['EDITOR', 'ADMIN'])
   async addTranslation(@Body() body: TranslationAddDTO): Promise<Translation> {
     return this.execute({
       fn: () => this.service.addTranslation(body),
     });
   }
 
+  @Patch('/projects/:projectId/languages/:languageId')
   @Version('1')
   @HttpCode(200)
-  @Patch('/projects/:projectId/languages/:languageId')
+  @Scopes(['TRANSLATIONS'])
+  @Groups(['EDITOR', 'ADMIN'])
   async editTranslation(
     @Param() params: TranslationRefDTO,
     @Body() body: TranslationEditDTO,
@@ -80,9 +89,11 @@ export class TranslationController
     });
   }
 
+  @Delete('/projects/:projectId/languages/:languageId')
   @Version('1')
   @HttpCode(204)
-  @Delete('/projects/:projectId/languages/:languageId')
+  @Scopes(['TRANSLATIONS'])
+  @Groups(['EDITOR', 'ADMIN'])
   async deleteTranslation(@Param() params: TranslationRefDTO): Promise<void> {
     return this.execute({
       fn: () => this.service.deleteTranslation(params),

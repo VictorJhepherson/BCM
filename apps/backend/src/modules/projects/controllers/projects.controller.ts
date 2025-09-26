@@ -21,6 +21,7 @@ import {
   ProjectPayload,
   ProjectRefDTO,
 } from '@shared/models';
+import { Groups, Scopes } from '../../../decorators';
 import { PaginationPipe } from '../../../pipes';
 import { LoggerProvider } from '../../../providers';
 import { ProjectService } from '../services/projects.service';
@@ -37,9 +38,11 @@ export class ProjectController
     super('[projects]', logger);
   }
 
+  @Get('/')
   @Version('1')
   @HttpCode(200)
-  @Get('/')
+  @Scopes(['PROJECTS'])
+  @Groups(['VIEWER', 'EDITOR', 'ADMIN'])
   async getAll(
     @Query(PaginationPipe) query: ProjectFilterDTO,
   ): Promise<MappedProject> {
@@ -48,27 +51,33 @@ export class ProjectController
     });
   }
 
+  @Get('/:_id')
   @Version('1')
   @HttpCode(200)
-  @Get('/:_id')
+  @Scopes(['PROJECTS'])
+  @Groups(['VIEWER', 'EDITOR', 'ADMIN'])
   async getById(params: ProjectRefDTO): Promise<ProjectPayload> {
     return this.execute({
       fn: () => this.service.getById(params),
     });
   }
 
+  @Post('/')
   @Version('1')
   @HttpCode(201)
-  @Post('/')
+  @Scopes(['PROJECTS'])
+  @Groups(['EDITOR', 'ADMIN'])
   async addProject(@Body() body: ProjectAddDTO): Promise<Project> {
     return this.execute({
       fn: () => this.service.addProject(body),
     });
   }
 
+  @Patch('/:_id')
   @Version('1')
   @HttpCode(200)
-  @Patch('/:_id')
+  @Scopes(['PROJECTS'])
+  @Groups(['EDITOR', 'ADMIN'])
   async editProject(
     @Param() params: ProjectRefDTO,
     @Body() body: ProjectEditDTO,
@@ -78,9 +87,11 @@ export class ProjectController
     });
   }
 
+  @Delete('/:_id')
   @Version('1')
   @HttpCode(204)
-  @Delete('/:_id')
+  @Scopes(['PROJECTS'])
+  @Groups(['EDITOR', 'ADMIN'])
   async deleteProject(@Param() params: ProjectRefDTO): Promise<void> {
     return this.execute({
       fn: () => this.service.deleteProject(params),

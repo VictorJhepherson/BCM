@@ -1,3 +1,5 @@
+import { GROUPS, SCOPES } from './common.constants';
+
 //#region ENUMS
 export enum Environment {
   DEV = 'DEV',
@@ -20,6 +22,9 @@ export enum LoggingLevel {
 //#endregion ENUMS
 
 //#region UTILS
+export type Group = (typeof GROUPS)[number];
+export type Scope = (typeof SCOPES)[number];
+
 export type SortOrder = 'ASC' | 'DESC';
 
 export type Sort = {

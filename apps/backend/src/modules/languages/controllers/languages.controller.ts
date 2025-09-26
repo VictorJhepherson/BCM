@@ -21,6 +21,7 @@ import {
   LanguageRefDTO,
   MappedLanguage,
 } from '@shared/models';
+import { Groups, Scopes } from '../../../decorators';
 import { PaginationPipe } from '../../../pipes';
 import { LoggerProvider } from '../../../providers';
 import { LanguageService } from '../services/languages.service';
@@ -37,9 +38,11 @@ export class LanguageController
     super('[languages]', logger);
   }
 
+  @Get('/')
   @Version('1')
   @HttpCode(200)
-  @Get('/')
+  @Scopes(['LANGUAGES'])
+  @Groups(['VIEWER', 'EDITOR', 'ADMIN'])
   async getAll(
     @Query(PaginationPipe) query: LanguageFilterDTO,
   ): Promise<MappedLanguage> {
@@ -48,27 +51,33 @@ export class LanguageController
     });
   }
 
+  @Get('/:_id')
   @Version('1')
   @HttpCode(200)
-  @Get('/:_id')
+  @Scopes(['LANGUAGES'])
+  @Groups(['VIEWER', 'EDITOR', 'ADMIN'])
   async getById(params: LanguageRefDTO): Promise<LanguagePayload> {
     return this.execute({
       fn: () => this.service.getById(params),
     });
   }
 
+  @Post('/')
   @Version('1')
   @HttpCode(201)
-  @Post('/')
+  @Scopes(['LANGUAGES'])
+  @Groups(['EDITOR', 'ADMIN'])
   async addLanguage(@Body() body: LanguageAddDTO): Promise<Language> {
     return this.execute({
       fn: () => this.service.addLanguage(body),
     });
   }
 
+  @Patch('/:_id')
   @Version('1')
   @HttpCode(200)
-  @Patch('/:_id')
+  @Scopes(['LANGUAGES'])
+  @Groups(['EDITOR', 'ADMIN'])
   async editLanguage(
     @Param() params: LanguageRefDTO,
     @Body() body: LanguageEditDTO,
@@ -78,9 +87,11 @@ export class LanguageController
     });
   }
 
+  @Delete('/:_id')
   @Version('1')
   @HttpCode(204)
-  @Delete('/:_id')
+  @Scopes(['LANGUAGES'])
+  @Groups(['EDITOR', 'ADMIN'])
   async deleteLanguage(@Param() params: LanguageRefDTO): Promise<void> {
     return this.execute({
       fn: () => this.service.deleteLanguage(params),

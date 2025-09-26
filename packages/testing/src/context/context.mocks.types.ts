@@ -33,3 +33,8 @@ export type MiddlewareMockProps<M, S extends OthersType = never> = {
   middleware: M;
   services: S;
 };
+
+export type GuardMockProps<G, S extends OthersType = never> = {
+  guard: G;
+  services: S;
+};
