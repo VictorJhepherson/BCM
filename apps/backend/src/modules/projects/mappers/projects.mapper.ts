@@ -12,7 +12,10 @@ export class ProjectMapper implements IProjectMapper {
     return {
       id: project._id,
       name: project.name,
+      active: project.active,
       description: project.description,
+      createdAt: project.get('createdAt'),
+      updatedAt: project.get('updatedAt'),
     };
   }
 

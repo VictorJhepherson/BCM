@@ -10,6 +10,7 @@ import { MappedProject, Project, ProjectPayload } from './projects.types';
 
 export interface IProject {
   name: string;
+  active: boolean;
   description: string;
 }
 

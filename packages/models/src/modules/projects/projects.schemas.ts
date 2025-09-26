@@ -7,6 +7,9 @@ export class ProjectEntity implements IProject {
   @Prop({ unique: true, required: true, match: RegexProjects.NAME })
   name: string;
 
+  @Prop({ required: true })
+  active: boolean;
+
   @Prop({ required: true, match: RegexProjects.DESCRIPTION })
   description: string;
 }

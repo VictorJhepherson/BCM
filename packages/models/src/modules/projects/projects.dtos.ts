@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsMongoId,
   IsNotEmpty,
   IsOptional,
@@ -14,7 +15,7 @@ import { IProject, IProjectRef } from './projects.interfaces';
 export class ProjectRefDTO implements IProjectRef {
   @IsMongoId({ message: ValidatorMessages.isMongoId })
   @IsNotEmpty({ message: ValidatorMessages.isNotEmpty })
-  _id: Types.ObjectId;
+  readonly _id: Types.ObjectId;
 }
 
 export class ProjectFilterDTO extends PaginationDTO {}
@@ -23,22 +24,30 @@ export class ProjectAddDTO implements IProject {
   @IsString({ message: ValidatorMessages.isString })
   @IsNotEmpty({ message: ValidatorMessages.isNotEmpty })
   @Matches(RegexProjects.NAME, { message: ValidatorMessages.isMatches })
-  name: string;
+  readonly name: string;
+
+  @IsBoolean({ message: ValidatorMessages.isBoolean })
+  @IsNotEmpty({ message: ValidatorMessages.isNotEmpty })
+  readonly active: boolean;
 
   @IsString({ message: ValidatorMessages.isString })
   @IsNotEmpty({ message: ValidatorMessages.isNotEmpty })
   @Matches(RegexProjects.DESCRIPTION, { message: ValidatorMessages.isMatches })
-  description: string;
+  readonly description: string;
 }
 
 export class ProjectEditDTO implements Partial<IProject> {
   @IsString({ message: ValidatorMessages.isString })
   @IsOptional({ message: ValidatorMessages.isOptional })
   @Matches(RegexProjects.NAME, { message: ValidatorMessages.isMatches })
-  name?: string;
+  readonly name?: string;
+
+  @IsBoolean({ message: ValidatorMessages.isBoolean })
+  @IsOptional({ message: ValidatorMessages.isOptional })
+  readonly active?: boolean;
 
   @IsString({ message: ValidatorMessages.isString })
   @IsOptional({ message: ValidatorMessages.isOptional })
   @Matches(RegexProjects.DESCRIPTION, { message: ValidatorMessages.isMatches })
-  description?: string;
+  readonly description?: string;
 }

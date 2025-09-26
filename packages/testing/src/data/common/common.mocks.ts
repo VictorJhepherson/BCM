@@ -32,6 +32,7 @@ const language: ILanguage = {
 
 const project: IProject = {
   name: 'project-name',
+  active: true,
   description: 'project-description',
 };
 

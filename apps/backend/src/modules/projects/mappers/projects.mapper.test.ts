@@ -26,7 +26,10 @@ describe('[mappers] - ProjectMapper', () => {
       expect(context.mapper.mapProject(data)).toEqual({
         id: data._id,
         name: data.name,
+        active: data.active,
         description: data.description,
+        createdAt: data.get('createdAt'),
+        updatedAt: data.get('updatedAt'),
       });
     });
   });
@@ -41,7 +44,14 @@ describe('[mappers] - ProjectMapper', () => {
         }),
       ).toEqual({
         data: expect.arrayContaining([
-          { id: data._id, name: data.name, description: data.description },
+          {
+            id: data._id,
+            name: data.name,
+            active: data.active,
+            description: data.description,
+            createdAt: data.get('createdAt'),
+            updatedAt: data.get('updatedAt'),
+          },
         ]),
         sort: { by: sort.by, order: sort.order },
         pagination: {
