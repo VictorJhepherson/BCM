@@ -12,6 +12,9 @@ export class LanguageMapper implements ILanguageMapper {
     return {
       id: language._id,
       name: language.name,
+      active: language.active,
+      createdAt: language.get('createdAt'),
+      updatedAt: language.get('updatedAt'),
     };
   }
 

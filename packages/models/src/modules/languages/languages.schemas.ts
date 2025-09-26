@@ -6,6 +6,9 @@ import { ILanguage } from './languages.interfaces';
 export class LanguageEntity implements ILanguage {
   @Prop({ unique: true, required: true, match: RegexLanguages.LANGUAGE })
   name: string;
+
+  @Prop({ required: true })
+  active: boolean;
 }
 
 export const LanguageSchema = SchemaFactory.createForClass(LanguageEntity);

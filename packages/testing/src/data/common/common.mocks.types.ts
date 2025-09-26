@@ -10,6 +10,7 @@ import { Types } from 'mongoose';
 type MongoType = {
   id: string;
   _id: Types.ObjectId;
+  get: (key: string) => any;
 };
 
 export type MockSort = Pick<IPagination, 'sortBy' | 'sortOrder'> &

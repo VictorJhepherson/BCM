@@ -15,14 +15,18 @@ const ref: LanguageMockRef = {
 const body: LanguageMockBody = {
   add: Object.assign(new LanguageAddDTO(), {
     name: values.language.name,
+    active: values.language.active,
   }),
   edit: Object.assign(new LanguageEditDTO(), {
-    name: 'pt',
+    active: false,
   }),
 };
 
 const data: LanguageMockData = {
+  _id: values.mongo._id,
+  get: values.mongo.get,
   name: values.language.name,
+  active: values.language.active,
 };
 
 const filter: LanguageMockFilter = {

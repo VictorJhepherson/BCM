@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsMongoId,
   IsNotEmpty,
   IsOptional,
@@ -24,6 +25,10 @@ export class LanguageAddDTO implements ILanguage {
   @IsNotEmpty({ message: ValidatorMessages.isNotEmpty })
   @Matches(RegexLanguages.LANGUAGE, { message: ValidatorMessages.isMatches })
   readonly name: string;
+
+  @IsBoolean({ message: ValidatorMessages.isBoolean })
+  @IsNotEmpty({ message: ValidatorMessages.isNotEmpty })
+  readonly active: boolean;
 }
 
 export class LanguageEditDTO implements Partial<ILanguage> {
@@ -31,4 +36,8 @@ export class LanguageEditDTO implements Partial<ILanguage> {
   @IsOptional({ message: ValidatorMessages.isOptional })
   @Matches(RegexLanguages.LANGUAGE, { message: ValidatorMessages.isMatches })
   readonly name?: string;
+
+  @IsBoolean({ message: ValidatorMessages.isBoolean })
+  @IsOptional({ message: ValidatorMessages.isOptional })
+  readonly active?: boolean;
 }

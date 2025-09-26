@@ -29,6 +29,10 @@ export class ValidatorMessages {
     return `The field ${property} should be a Object`;
   }
 
+  static isBoolean({ property }: ValidationArguments): string {
+    return `The field ${property} should be a Boolean`;
+  }
+
   static isMatches({ property, constraints }: ValidationArguments): string {
     return `The field ${property} should match the pattern: ${constraints[0]}`;
   }

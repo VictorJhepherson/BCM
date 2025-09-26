@@ -10,6 +10,7 @@ import { Language, LanguagePayload, MappedLanguage } from './languages.types';
 
 export interface ILanguage {
   name: string;
+  active: boolean;
 }
 
 export interface ILanguageRef {

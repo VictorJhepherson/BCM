@@ -26,6 +26,9 @@ describe('[mappers] - LanguageMapper', () => {
       expect(context.mapper.mapLanguage(data)).toEqual({
         id: data._id,
         name: data.name,
+        active: data.active,
+        createdAt: data.get('createdAt'),
+        updatedAt: data.get('updatedAt'),
       });
     });
   });
@@ -39,7 +42,15 @@ describe('[mappers] - LanguageMapper', () => {
           pagination: { ...pagination, total: 100 },
         }),
       ).toEqual({
-        data: expect.arrayContaining([{ id: data._id, name: data.name }]),
+        data: expect.arrayContaining([
+          {
+            id: data._id,
+            name: data.name,
+            active: data.active,
+            createdAt: data.get('createdAt'),
+            updatedAt: data.get('updatedAt'),
+          },
+        ]),
         sort: { by: sort.by, order: sort.order },
         pagination: {
           page: pagination.page,

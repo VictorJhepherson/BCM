@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 import { GROUPS, SCOPES } from './common.constants';
 
 //#region ENUMS
@@ -49,6 +50,12 @@ export type UserPayload = {
   userId: string;
   groups: string[];
   scopes: string[];
+};
+
+export type MongoPayload = {
+  id: Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
 };
 //#endregion UTILS
 
