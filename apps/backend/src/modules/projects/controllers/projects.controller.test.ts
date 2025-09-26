@@ -10,8 +10,6 @@ import { LoggerProvider } from '../../../providers';
 import { ProjectService } from '../services/projects.service';
 import { ProjectController } from './projects.controller';
 
-jest.mock('../services/projects.service');
-
 const { ref, body, data, filter } = new MockDataFactory<ProjectMock>(
   mockData.factory.project,
 ).build();

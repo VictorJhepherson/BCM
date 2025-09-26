@@ -11,7 +11,6 @@ import { LoggerProvider } from '../../../providers';
 import { TranslationRepository } from '../repositories/translations.repository';
 import { TranslationService } from './translations.service';
 
-jest.mock('../repositories/translations.repository');
 jest.mock('../mappers/translations.mapper', () => ({
   ...jest.requireActual('../mappers/translations.mapper'),
   TranslationMapper: jest.fn().mockImplementation(() => ({

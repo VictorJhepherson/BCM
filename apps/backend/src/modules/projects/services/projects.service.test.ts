@@ -11,7 +11,6 @@ import { LoggerProvider } from '../../../providers';
 import { ProjectRepository } from '../repositories/projects.repository';
 import { ProjectService } from './projects.service';
 
-jest.mock('../repositories/projects.repository');
 jest.mock('../mappers/projects.mapper', () => ({
   ...jest.requireActual('../mappers/projects.mapper'),
   ProjectMapper: jest.fn().mockImplementation(() => ({

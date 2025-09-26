@@ -10,8 +10,6 @@ import { LoggerProvider } from '../../../providers';
 import { TranslationService } from '../services/translations.service';
 import { TranslationController } from './translations.controller';
 
-jest.mock('../services/translations.service');
-
 const { ref, body, data, filter } = new MockDataFactory<TranslationMock>(
   mockData.factory.translation,
 ).build();
