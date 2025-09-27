@@ -1,4 +1,3 @@
-import { LanguageAddDTO, LanguageEditDTO } from '@shared/models';
 import { values } from '../common/common.mocks';
 import {
   LanguageMock,
@@ -13,13 +12,13 @@ const ref: LanguageMockRef = {
 };
 
 const body: LanguageMockBody = {
-  add: Object.assign(new LanguageAddDTO(), {
-    name: values.language.name,
+  add: {
     active: values.language.active,
-  }),
-  edit: Object.assign(new LanguageEditDTO(), {
+    name: values.language.name,
+  },
+  edit: {
     active: false,
-  }),
+  },
 };
 
 const data: LanguageMockData = {

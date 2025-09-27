@@ -1,24 +1,22 @@
 import {
+  ILanguage,
+  ILanguageFilter,
+  ILanguageRef,
+  IPagination,
   Language,
-  LanguageAddDTO,
-  LanguageEditDTO,
-  LanguageFilterDTO,
 } from '@shared/models';
-import { Types } from 'mongoose';
 import { DataMock } from '../common/common.mocks.types';
 
-export type LanguageMockRef = {
-  _id: Types.ObjectId;
-};
+export type LanguageMockRef = ILanguageRef;
 
 export type LanguageMockBody = {
-  add: LanguageAddDTO;
-  edit: LanguageEditDTO;
+  add: ILanguage;
+  edit: Partial<ILanguage>;
 };
 
 export type LanguageMockData = Partial<Language>;
 
-export type LanguageMockFilter = LanguageFilterDTO;
+export type LanguageMockFilter = ILanguageFilter & IPagination;
 
 export type LanguageMock = DataMock<
   LanguageMockRef,

@@ -12,7 +12,7 @@ export class TranslationMapper implements ITranslationMapper {
     return {
       id: translation._id,
       active: translation.active,
-      language: translation.languageId.name,
+      language: translation.language.name,
       translations: translation.translations,
       createdAt: translation.get('createdAt'),
       updatedAt: translation.get('updatedAt'),

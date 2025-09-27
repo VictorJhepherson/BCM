@@ -1,4 +1,3 @@
-import { TranslationAddDTO, TranslationEditDTO } from '@shared/models';
 import { values } from '../common/common.mocks';
 import {
   TranslationMock,
@@ -9,28 +8,28 @@ import {
 } from './translations.mocks.types';
 
 const ref: TranslationMockRef = {
-  projectId: values.translation.projectId,
-  languageId: values.translation.languageId,
+  project: values.translation.project,
+  language: values.translation.language,
 };
 
 const body: TranslationMockBody = {
-  add: Object.assign(new TranslationAddDTO(), {
-    projectId: values.translation.projectId,
-    languageId: values.translation.languageId,
+  add: {
     active: values.translation.active,
+    project: values.translation.project,
+    language: values.translation.language,
     translations: values.translation.translations,
-  }),
-  edit: Object.assign(new TranslationEditDTO(), {
+  },
+  edit: {
     translations: { welcome: 'Hello World!!!' },
-  }),
+  },
 };
 
 const data: TranslationMockData = {
   _id: values.mongo._id,
   get: values.mongo.get,
-  projectId: values.translation.projectId,
-  languageId: values.translation.languageId,
   active: values.translation.active,
+  project: values.translation.project,
+  language: values.translation.language,
   translations: values.translation.translations,
 };
 

@@ -51,7 +51,7 @@ export class TranslationController
     });
   }
 
-  @Get('/projects/:projectId/languages/:languageId')
+  @Get('/projects/:project/languages/:language')
   @Version('1')
   @HttpCode(200)
   @Scopes(['TRANSLATIONS'])
@@ -75,7 +75,7 @@ export class TranslationController
     });
   }
 
-  @Patch('/projects/:projectId/languages/:languageId')
+  @Patch('/projects/:project/languages/:language')
   @Version('1')
   @HttpCode(200)
   @Scopes(['TRANSLATIONS'])
@@ -89,7 +89,7 @@ export class TranslationController
     });
   }
 
-  @Delete('/projects/:projectId/languages/:languageId')
+  @Delete('/projects/:project/languages/:language')
   @Version('1')
   @HttpCode(204)
   @Scopes(['TRANSLATIONS'])

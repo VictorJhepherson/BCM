@@ -1,24 +1,22 @@
 import {
+  IPagination,
+  IProject,
+  IProjectFilter,
+  IProjectRef,
   Project,
-  ProjectAddDTO,
-  ProjectEditDTO,
-  ProjectFilterDTO,
 } from '@shared/models';
-import { Types } from 'mongoose';
 import { DataMock } from '../common/common.mocks.types';
 
-export type ProjectMockRef = {
-  _id: Types.ObjectId;
-};
+export type ProjectMockRef = IProjectRef;
 
 export type ProjectMockBody = {
-  add: ProjectAddDTO;
-  edit: ProjectEditDTO;
+  add: IProject;
+  edit: Partial<IProject>;
 };
 
 export type ProjectMockData = Partial<Project>;
 
-export type ProjectMockFilter = ProjectFilterDTO;
+export type ProjectMockFilter = IProjectFilter & IPagination;
 
 export type ProjectMock = DataMock<
   ProjectMockRef,

@@ -15,15 +15,15 @@ import {
 } from './translations.types';
 
 export interface ITranslation {
-  projectId: Types.ObjectId;
-  languageId: Types.ObjectId;
   active: boolean;
+  project: Types.ObjectId;
+  language: Types.ObjectId;
   translations: TranslationTree;
 }
 
 export interface ITranslationRef {
-  projectId: Types.ObjectId;
-  languageId: Types.ObjectId;
+  project: Types.ObjectId;
+  language: Types.ObjectId;
 }
 
 export interface ITranslationFilter extends IPaginationFilter {}

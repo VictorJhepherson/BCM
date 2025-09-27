@@ -26,20 +26,20 @@ const pagination: MockPagination = {
 };
 
 const language: ILanguage = {
-  name: 'en',
   active: true,
+  name: 'en',
 };
 
 const project: IProject = {
-  name: 'project-name',
   active: true,
+  name: 'project-name',
   description: 'project-description',
 };
 
 const translation: ITranslation = {
-  projectId: mongo._id,
-  languageId: mongo._id,
   active: true,
+  project: mongo._id,
+  language: mongo._id,
   translations: { welcome: 'Hello World!' },
 };
 

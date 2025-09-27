@@ -14,7 +14,7 @@ const { data } = new MockDataFactory<TranslationMock>(
   mockData.factory.translation,
 )
   .select<'data', PopulateTranslation>('data')
-  .add('languageId', {
+  .add('language', {
     _id: mockData.values.mongo._id,
     name: mockData.values.language.name,
   })
@@ -32,7 +32,7 @@ describe('[mappers] - TranslationMapper', () => {
       expect(context.mapper.mapTranslation(data)).toEqual({
         id: data._id,
         active: data.active,
-        language: data.languageId.name,
+        language: data.language.name,
         translations: data.translations,
         createdAt: data.get('createdAt'),
         updatedAt: data.get('updatedAt'),
@@ -53,7 +53,7 @@ describe('[mappers] - TranslationMapper', () => {
           {
             id: data._id,
             active: data.active,
-            language: data.languageId.name,
+            language: data.language.name,
             translations: data.translations,
             createdAt: data.get('createdAt'),
             updatedAt: data.get('updatedAt'),

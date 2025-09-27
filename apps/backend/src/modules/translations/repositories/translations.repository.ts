@@ -41,7 +41,7 @@ export class TranslationRepository
             .sort({ [sort.by]: sort.order === 'ASC' ? 1 : -1 })
             .skip(pagination.skip)
             .limit(pagination.limit)
-            .populate({ path: 'languageId', select: 'name' })
+            .populate({ path: 'language', select: 'name' })
             .lean<PopulateTranslation[]>()
             .exec(),
         ]);
@@ -56,7 +56,7 @@ export class TranslationRepository
       fn: () =>
         this.model
           .findOne(ref)
-          .populate({ path: 'languageId', select: 'name' })
+          .populate({ path: 'language', select: 'name' })
           .lean<PopulateTranslation>()
           .exec(),
     });
