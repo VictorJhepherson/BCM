@@ -15,6 +15,7 @@ import {
   ILanguageController,
   Language,
   LanguageAddDTO,
+  LanguageArchiveDTO,
   LanguageEditDTO,
   LanguageFilterDTO,
   LanguagePayload,
@@ -87,11 +88,25 @@ export class LanguageController
     });
   }
 
+  @Patch('/archive/:_id')
+  @Version('1')
+  @HttpCode(200)
+  @Scopes(['LANGUAGES'])
+  @Groups(['EDITOR', 'ADMIN'])
+  async archiveLanguage(
+    @Param() params: LanguageRefDTO,
+    @Body() body: LanguageArchiveDTO,
+  ): Promise<Language> {
+    return this.execute({
+      fn: () => this.service.archiveLanguage(params, body),
+    });
+  }
+
   @Delete('/:_id')
   @Version('1')
   @HttpCode(204)
   @Scopes(['LANGUAGES'])
-  @Groups(['EDITOR', 'ADMIN'])
+  @Groups(['ADMIN'])
   async deleteLanguage(@Param() params: LanguageRefDTO): Promise<void> {
     return this.execute({
       fn: () => this.service.deleteLanguage(params),

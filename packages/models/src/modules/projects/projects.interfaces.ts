@@ -37,10 +37,10 @@ export interface IProjectService {
 }
 
 export interface IProjectRepository {
-  findMany(filter: IProjectFilter): Promise<WithPagination<Project>>;
   findOne(ref: IProjectRef): Promise<Project | null>;
-  create(body: IProject): Promise<Project>;
-  update(ref: IProjectRef, body: IProject): Promise<Project | null>;
+  findMany(filter: IProjectFilter): Promise<WithPagination<Project>>;
+  createOne(body: IProject): Promise<Project>;
+  updateOne(ref: IProjectRef, body: IProject): Promise<Project | null>;
   deleteOne(ref: IProjectRef): Promise<DeleteResult>;
 }
 

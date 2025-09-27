@@ -1,4 +1,5 @@
-import { TestLogger, TestMapper } from '@shared/testing';
+import { mockHelpers, TestLogger, TestMapper } from '@shared/testing';
+import { ClientSession, Connection } from 'mongoose';
 import { BaseStrategy } from './base.strategy';
 
 class TestStrategy extends BaseStrategy<TestMapper> {
@@ -8,6 +9,13 @@ class TestStrategy extends BaseStrategy<TestMapper> {
 
   async run<T>(props: { mapKey?: string; fn: () => Promise<T> }) {
     return this.execute(props);
+  }
+
+  async with<T>(props: {
+    connection: Connection;
+    fn: (session: ClientSession) => Promise<T>;
+  }) {
+    return this.withTransaction(props);
   }
 }
 
@@ -63,6 +71,36 @@ describe('[base] - strategy', () => {
             message: 'Mapper not implemented!',
           }),
         });
+      });
+    });
+  });
+
+  describe('[withTransaction]', () => {
+    const strategy = new TestStrategy(logger);
+
+    it('[success] - should call `withTransaction` function successfully', async () => {
+      const mockFn = jest.fn().mockResolvedValue({ success: true });
+      const { mockConnection } = mockHelpers.mongo.getMocks();
+
+      const response = await strategy.with({
+        connection: mockConnection,
+        fn: mockFn,
+      });
+
+      expect(mockFn).toHaveBeenCalled();
+      expect(logger.info).toHaveBeenCalled();
+      expect(response).toStrictEqual({ success: true });
+    });
+
+    it('[failure] - should call `withTransaction` function with failure', async () => {
+      const mockFn = jest.fn().mockRejectedValue({ success: false });
+      const { mockConnection } = mockHelpers.mongo.getMocks();
+
+      await expect(
+        strategy.with({ connection: mockConnection, fn: mockFn }),
+      ).rejects.toEqual({
+        referrer: '[test][strategy]',
+        error: { success: false },
       });
     });
   });

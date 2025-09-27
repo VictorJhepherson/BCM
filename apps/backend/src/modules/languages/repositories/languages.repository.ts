@@ -6,6 +6,7 @@ import {
   ILanguageFilter,
   ILanguageRef,
   ILanguageRepository,
+  IQueryOptions,
   Language,
   LanguageEntity,
   WithPagination,
@@ -24,6 +25,12 @@ export class LanguageRepository
     private readonly model: Model<LanguageEntity>,
   ) {
     super('[languages]', logger);
+  }
+
+  async findOne(ref: ILanguageRef): Promise<Language | null> {
+    return this.execute({
+      fn: () => this.model.findOne(ref).exec(),
+    });
   }
 
   async findMany(filter: ILanguageFilter): Promise<WithPagination<Language>> {
@@ -46,30 +53,31 @@ export class LanguageRepository
     });
   }
 
-  async findOne(ref: ILanguageRef): Promise<Language | null> {
-    return this.execute({
-      fn: () => this.model.findOne(ref).exec(),
-    });
-  }
-
-  async create(payload: ILanguage): Promise<Language> {
+  async createOne(payload: ILanguage): Promise<Language> {
     return this.execute({
       fn: () => this.model.create(payload),
     });
   }
 
-  async update(
+  async updateOne(
     ref: ILanguageRef,
     payload: Partial<ILanguage>,
+    options?: IQueryOptions,
   ): Promise<Language | null> {
     return this.execute({
-      fn: () => this.model.findOneAndUpdate(ref, payload, { new: true }).exec(),
+      fn: () =>
+        this.model
+          .findOneAndUpdate(ref, payload, { new: true, ...options })
+          .exec(),
     });
   }
 
-  async deleteOne(ref: ILanguageRef): Promise<DeleteResult> {
+  async deleteOne(
+    ref: ILanguageRef,
+    options?: IQueryOptions,
+  ): Promise<DeleteResult> {
     return this.execute({
-      fn: () => this.model.deleteOne(ref).exec(),
+      fn: () => this.model.deleteOne(ref, options).exec(),
     });
   }
 }

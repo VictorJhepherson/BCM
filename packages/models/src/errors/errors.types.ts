@@ -5,6 +5,7 @@ import {
   NotFoundException,
   ServiceUnavailableException,
   UnauthorizedException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 
 export type ErrorTypes =
@@ -14,5 +15,6 @@ export type ErrorTypes =
   | UnauthorizedException
   | ForbiddenException
   | NotFoundException
+  | UnprocessableEntityException
   | InternalServerErrorException
   | ServiceUnavailableException;

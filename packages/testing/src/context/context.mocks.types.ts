@@ -15,9 +15,9 @@ export type RepositoryMockProps<R, M> = {
   model: M;
 };
 
-export type ServiceMockProps<S, R> = {
+export type ServiceMockProps<S, O extends OthersType = never> = {
   service: S;
-  repository: R;
+  others: O;
 };
 
 export type LoggerMockProps<P, C> = {

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { BaseRepository } from '@shared/core';
 import {
+  IQueryOptions,
   ITranslation,
   ITranslationFilter,
   ITranslationRef,
@@ -11,7 +12,7 @@ import {
   TranslationEntity,
   WithPagination,
 } from '@shared/models';
-import { DeleteResult, Model } from 'mongoose';
+import { DeleteResult, Model, UpdateResult } from 'mongoose';
 import { LoggerProvider } from '../../../providers';
 
 @Injectable()
@@ -25,6 +26,17 @@ export class TranslationRepository
     private readonly model: Model<TranslationEntity>,
   ) {
     super('[translations]', logger);
+  }
+
+  async findOne(ref: ITranslationRef): Promise<PopulateTranslation | null> {
+    return this.execute({
+      fn: () =>
+        this.model
+          .findOne(ref)
+          .populate({ path: 'language', select: 'name' })
+          .lean<PopulateTranslation>()
+          .exec(),
+    });
   }
 
   async findMany(
@@ -51,24 +63,13 @@ export class TranslationRepository
     });
   }
 
-  async findOne(ref: ITranslationRef): Promise<PopulateTranslation | null> {
-    return this.execute({
-      fn: () =>
-        this.model
-          .findOne(ref)
-          .populate({ path: 'language', select: 'name' })
-          .lean<PopulateTranslation>()
-          .exec(),
-    });
-  }
-
-  async create(payload: ITranslation): Promise<Translation> {
+  async createOne(payload: ITranslation): Promise<Translation> {
     return this.execute({
       fn: () => this.model.create(payload),
     });
   }
 
-  async update(
+  async updateOne(
     ref: ITranslationRef,
     payload: Partial<ITranslation>,
   ): Promise<Translation | null> {
@@ -77,9 +78,28 @@ export class TranslationRepository
     });
   }
 
+  async updateMany(
+    ref: Partial<ITranslationRef>,
+    payload: Partial<ITranslation>,
+    options?: IQueryOptions,
+  ): Promise<UpdateResult> {
+    return this.execute({
+      fn: () => this.model.updateMany(ref, payload, options).exec(),
+    });
+  }
+
   async deleteOne(ref: ITranslationRef): Promise<DeleteResult> {
     return this.execute({
       fn: () => this.model.deleteOne(ref).exec(),
+    });
+  }
+
+  async deleteMany(
+    ref: Partial<ITranslationRef>,
+    options?: IQueryOptions,
+  ): Promise<DeleteResult> {
+    return this.execute({
+      fn: () => this.model.deleteMany(ref, options).exec(),
     });
   }
 }

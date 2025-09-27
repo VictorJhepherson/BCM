@@ -24,7 +24,12 @@ const { ref, body, data, filter } = new MockDataFactory<ProjectMock>(
 ).build();
 
 describe('[services] - ProjectService', () => {
-  const context = {} as ServiceMockProps<ProjectService, ProjectRepository>;
+  const context = {} as ServiceMockProps<
+    ProjectService,
+    {
+      repository: ProjectRepository;
+    }
+  >;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -46,29 +51,33 @@ describe('[services] - ProjectService', () => {
             new MockMethodFactory<ProjectRepository>()
               .add('findMany', jest.fn())
               .add('findOne', jest.fn())
-              .add('create', jest.fn())
-              .add('update', jest.fn())
+              .add('createOne', jest.fn())
+              .add('updateOne', jest.fn())
               .add('deleteOne', jest.fn())
               .build(),
         },
       ],
     }).compile();
 
-    context.repository = moduleRef.get(ProjectRepository);
     context.service = moduleRef.get(ProjectService);
+    context.others = {
+      repository: moduleRef.get(ProjectRepository),
+    };
   });
 
   afterEach(() => jest.clearAllMocks());
 
   describe('[getAll]', () => {
     it('[success] - should get all projects', async () => {
-      (context.repository.findMany as jest.Mock).mockResolvedValue([data]);
+      (context.others.repository.findMany as jest.Mock).mockResolvedValue([
+        data,
+      ]);
 
       expect(await context.service.getAll(filter)).toEqual([data]);
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.repository.findMany as jest.Mock).mockRejectedValue(
+      (context.others.repository.findMany as jest.Mock).mockRejectedValue(
         new Error('REPOSITORY ERROR'),
       );
 
@@ -78,7 +87,7 @@ describe('[services] - ProjectService', () => {
     });
 
     it('[edge-case] - should get an empty array when has no projects', async () => {
-      (context.repository.findMany as jest.Mock).mockResolvedValue([]);
+      (context.others.repository.findMany as jest.Mock).mockResolvedValue([]);
 
       expect(await context.service.getAll(filter)).toEqual([]);
     });
@@ -86,13 +95,13 @@ describe('[services] - ProjectService', () => {
 
   describe('[getById]', () => {
     it('[success] - should get a project', async () => {
-      (context.repository.findOne as jest.Mock).mockResolvedValue(data);
+      (context.others.repository.findOne as jest.Mock).mockResolvedValue(data);
 
       expect(await context.service.getById(ref)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.repository.findOne as jest.Mock).mockRejectedValue(
+      (context.others.repository.findOne as jest.Mock).mockRejectedValue(
         new Error('REPOSITORY ERROR'),
       );
 
@@ -102,7 +111,9 @@ describe('[services] - ProjectService', () => {
     });
 
     it('[edge-case] - should failed to get a project', async () => {
-      (context.repository.findOne as jest.Mock).mockResolvedValue(undefined);
+      (context.others.repository.findOne as jest.Mock).mockResolvedValue(
+        undefined,
+      );
 
       await expect(context.service.getById(ref)).rejects.toThrow(
         `Unable to find a project for: ${format.base(ref)}`,
@@ -112,13 +123,15 @@ describe('[services] - ProjectService', () => {
 
   describe('[addProject]', () => {
     it('[success] - should add a project', async () => {
-      (context.repository.create as jest.Mock).mockResolvedValue(data);
+      (context.others.repository.createOne as jest.Mock).mockResolvedValue(
+        data,
+      );
 
       expect(await context.service.addProject(body.add)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.repository.create as jest.Mock).mockRejectedValue(
+      (context.others.repository.createOne as jest.Mock).mockRejectedValue(
         new Error('REPOSITORY ERROR'),
       );
 
@@ -130,13 +143,15 @@ describe('[services] - ProjectService', () => {
 
   describe('[editProject]', () => {
     it('[success] - should edit a project', async () => {
-      (context.repository.update as jest.Mock).mockResolvedValue(data);
+      (context.others.repository.updateOne as jest.Mock).mockResolvedValue(
+        data,
+      );
 
       expect(await context.service.editProject(ref, body.edit)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.repository.update as jest.Mock).mockRejectedValue(
+      (context.others.repository.updateOne as jest.Mock).mockRejectedValue(
         new Error('REPOSITORY ERROR'),
       );
 
@@ -146,7 +161,9 @@ describe('[services] - ProjectService', () => {
     });
 
     it('[edge-case] - should failed to edit a project', async () => {
-      (context.repository.update as jest.Mock).mockResolvedValue(undefined);
+      (context.others.repository.updateOne as jest.Mock).mockResolvedValue(
+        undefined,
+      );
 
       await expect(context.service.editProject(ref, body.edit)).rejects.toThrow(
         `Unable to find a project for: ${format.base(ref)}`,
@@ -156,7 +173,7 @@ describe('[services] - ProjectService', () => {
 
   describe('[deleteProject]', () => {
     it('[success] - should delete a project', async () => {
-      (context.repository.deleteOne as jest.Mock).mockResolvedValue({
+      (context.others.repository.deleteOne as jest.Mock).mockResolvedValue({
         deletedCount: 1,
       });
 
@@ -164,7 +181,7 @@ describe('[services] - ProjectService', () => {
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.repository.deleteOne as jest.Mock).mockRejectedValue(
+      (context.others.repository.deleteOne as jest.Mock).mockRejectedValue(
         new Error('REPOSITORY ERROR'),
       );
 
@@ -174,7 +191,7 @@ describe('[services] - ProjectService', () => {
     });
 
     it('[edge-case] - should failed to delete a project', async () => {
-      (context.repository.deleteOne as jest.Mock).mockResolvedValue({
+      (context.others.repository.deleteOne as jest.Mock).mockResolvedValue({
         deletedCount: 0,
       });
 

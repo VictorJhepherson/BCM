@@ -17,6 +17,9 @@ const body: LanguageMockBody = {
     name: values.language.name,
   },
   edit: {
+    name: 'pt',
+  },
+  archive: {
     active: false,
   },
 };

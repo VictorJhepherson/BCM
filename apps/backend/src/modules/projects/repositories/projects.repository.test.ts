@@ -121,11 +121,11 @@ describe('[repositories] - ProjectRepository', () => {
     });
   });
 
-  describe('[create]', () => {
+  describe('[createOne]', () => {
     it('[success] - should add projects', async () => {
       (context.model.create as jest.Mock).mockResolvedValue(data);
 
-      expect(await context.repository.create(body.add)).toEqual(data);
+      expect(await context.repository.createOne(body.add)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
@@ -133,19 +133,19 @@ describe('[repositories] - ProjectRepository', () => {
         new Error('MODEL ERROR'),
       );
 
-      await expect(context.repository.create(body.add)).rejects.toThrow(
+      await expect(context.repository.createOne(body.add)).rejects.toThrow(
         'MODEL ERROR',
       );
     });
   });
 
-  describe('[update]', () => {
+  describe('[updateOne]', () => {
     it('[success] - should edit a project', async () => {
       (context.model.findOneAndUpdate as jest.Mock).mockReturnValue({
         exec: jest.fn().mockResolvedValue(data),
       });
 
-      expect(await context.repository.update(ref, body.edit)).toEqual(data);
+      expect(await context.repository.updateOne(ref, body.edit)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
@@ -153,9 +153,9 @@ describe('[repositories] - ProjectRepository', () => {
         exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
       });
 
-      await expect(context.repository.update(ref, body.edit)).rejects.toThrow(
-        'MODEL ERROR',
-      );
+      await expect(
+        context.repository.updateOne(ref, body.edit),
+      ).rejects.toThrow('MODEL ERROR');
     });
   });
 

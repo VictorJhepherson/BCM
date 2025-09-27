@@ -5,6 +5,7 @@ import {
   MapArg,
   MapProps,
   MapReturn,
+  WithTransaction,
 } from '@shared/models';
 import { AppError } from '../models';
 
@@ -47,6 +48,31 @@ export abstract class BaseStrategy<M = never> {
         logger: this.logger,
         error,
       });
+    }
+  }
+
+  protected async withTransaction<T>({
+    fn,
+    connection,
+  }: WithTransaction<T>): Promise<T> {
+    const session = await connection.startSession();
+    session.startTransaction();
+
+    try {
+      const value = await fn(session);
+      await session.commitTransaction();
+
+      this.logger.info(this.referrer, { response: { value } });
+      return value;
+    } catch (error) {
+      await session.abortTransaction();
+      throw AppError.handler({
+        referrer: this.referrer,
+        logger: this.logger,
+        error,
+      });
+    } finally {
+      await session.endSession();
     }
   }
 

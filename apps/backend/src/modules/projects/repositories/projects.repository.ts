@@ -26,6 +26,12 @@ export class ProjectRepository
     super('[projects]', logger);
   }
 
+  async findOne(ref: IProjectRef): Promise<Project | null> {
+    return this.execute({
+      fn: () => this.model.findOne(ref).exec(),
+    });
+  }
+
   async findMany(filter: IProjectFilter): Promise<WithPagination<Project>> {
     const { sort, pagination } = filter;
 
@@ -46,19 +52,13 @@ export class ProjectRepository
     });
   }
 
-  async findOne(ref: IProjectRef): Promise<Project | null> {
-    return this.execute({
-      fn: () => this.model.findOne(ref).exec(),
-    });
-  }
-
-  async create(payload: IProject): Promise<Project> {
+  async createOne(payload: IProject): Promise<Project> {
     return this.execute({
       fn: () => this.model.create(payload),
     });
   }
 
-  async update(
+  async updateOne(
     ref: IProjectRef,
     payload: Partial<IProject>,
   ): Promise<Project | null> {

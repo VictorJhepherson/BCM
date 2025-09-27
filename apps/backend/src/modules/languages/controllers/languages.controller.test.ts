@@ -42,6 +42,7 @@ describe('[controllers] - LanguageController', () => {
               .add('getById', jest.fn())
               .add('addLanguage', jest.fn())
               .add('editLanguage', jest.fn())
+              .add('archiveLanguage', jest.fn())
               .add('deleteLanguage', jest.fn())
               .build(),
         },
@@ -124,6 +125,26 @@ describe('[controllers] - LanguageController', () => {
 
       await expect(
         context.controller.editLanguage(ref._id, body.edit),
+      ).rejects.toThrow('SERVICE ERROR');
+    });
+  });
+
+  describe('[archiveLanguage]', () => {
+    it('[success] - should archive a language', async () => {
+      (context.service.archiveLanguage as jest.Mock).mockResolvedValue(data);
+
+      expect(
+        await context.controller.archiveLanguage(ref._id, body.archive),
+      ).toEqual(data);
+    });
+
+    it('[failure] - should handle an error', async () => {
+      (context.service.archiveLanguage as jest.Mock).mockRejectedValue(
+        new Error('SERVICE ERROR'),
+      );
+
+      await expect(
+        context.controller.archiveLanguage(ref._id, body.archive),
       ).rejects.toThrow('SERVICE ERROR');
     });
   });

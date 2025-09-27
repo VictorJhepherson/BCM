@@ -1,4 +1,5 @@
 import { ArgumentsHost, ExecutionContext } from '@nestjs/common';
+import { ClientSession, Connection } from 'mongoose';
 import { Options } from './common.mocks.types';
 
 export const getArgumentsHost = <T = ArgumentsHost>({
@@ -23,5 +24,16 @@ export const getExecutionContext = <T = ExecutionContext>({
   return {
     ...argsHost,
     getHandler: jest.fn(),
+  } as T;
+};
+
+export const getConnection = <T = Connection>(): T => {
+  return {
+    startSession: jest.fn().mockResolvedValue({
+      endSession: jest.fn(),
+      abortTransaction: jest.fn(),
+      startTransaction: jest.fn(),
+      commitTransaction: jest.fn(),
+    } as unknown as ClientSession),
   } as T;
 };

@@ -41,3 +41,9 @@ export class LanguageEditDTO implements Partial<ILanguage> {
   @IsOptional({ message: ValidatorMessages.isOptional })
   readonly active?: boolean;
 }
+
+export class LanguageArchiveDTO extends LanguageEditDTO {
+  @IsBoolean({ message: ValidatorMessages.isBoolean })
+  @IsNotEmpty({ message: ValidatorMessages.isNotEmpty })
+  declare readonly active: boolean;
+}

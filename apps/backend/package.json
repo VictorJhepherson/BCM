@@ -9,7 +9,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:mongo": "docker compose up --build -d",
+    "start:mongo": "docker compose up --build --wait -d",
     "start:dev": "NODE_ENV=dev nest start --watch",
     "start:prod": "node dist/main",
     "start:back:dev": "npm run start:mongo && npm run start:dev",

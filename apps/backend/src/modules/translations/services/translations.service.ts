@@ -55,7 +55,7 @@ export class TranslationService
 
   async addTranslation(payload: ITranslation): Promise<Translation> {
     return this.execute({
-      fn: () => this.repository.create(payload),
+      fn: () => this.repository.createOne(payload),
     });
   }
 
@@ -65,7 +65,7 @@ export class TranslationService
   ): Promise<Translation> {
     return this.execute({
       fn: async () => {
-        const updated = await this.repository.update(ref, payload);
+        const updated = await this.repository.updateOne(ref, payload);
 
         if (!updated) {
           throw new NotFoundException({

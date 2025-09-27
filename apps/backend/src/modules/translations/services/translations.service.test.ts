@@ -26,7 +26,9 @@ const { ref, body, data, filter } = new MockDataFactory<TranslationMock>(
 describe('[services] - TranslationService', () => {
   const context = {} as ServiceMockProps<
     TranslationService,
-    TranslationRepository
+    {
+      repository: TranslationRepository;
+    }
   >;
 
   beforeEach(async () => {
@@ -49,29 +51,33 @@ describe('[services] - TranslationService', () => {
             new MockMethodFactory<TranslationRepository>()
               .add('findMany', jest.fn())
               .add('findOne', jest.fn())
-              .add('create', jest.fn())
-              .add('update', jest.fn())
+              .add('createOne', jest.fn())
+              .add('updateOne', jest.fn())
               .add('deleteOne', jest.fn())
               .build(),
         },
       ],
     }).compile();
 
-    context.repository = moduleRef.get(TranslationRepository);
     context.service = moduleRef.get(TranslationService);
+    context.others = {
+      repository: moduleRef.get(TranslationRepository),
+    };
   });
 
   afterEach(() => jest.clearAllMocks());
 
   describe('[getAll]', () => {
     it('[success] - should get all translations', async () => {
-      (context.repository.findMany as jest.Mock).mockResolvedValue([data]);
+      (context.others.repository.findMany as jest.Mock).mockResolvedValue([
+        data,
+      ]);
 
       expect(await context.service.getAll(filter)).toEqual([data]);
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.repository.findMany as jest.Mock).mockRejectedValue(
+      (context.others.repository.findMany as jest.Mock).mockRejectedValue(
         new Error('REPOSITORY ERROR'),
       );
 
@@ -83,13 +89,15 @@ describe('[services] - TranslationService', () => {
 
   describe('[getById]', () => {
     it('[success] - should get a translation', async () => {
-      (context.repository.findOne as jest.Mock).mockResolvedValue([data]);
+      (context.others.repository.findOne as jest.Mock).mockResolvedValue([
+        data,
+      ]);
 
       expect(await context.service.getById(ref)).toEqual([data]);
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.repository.findOne as jest.Mock).mockRejectedValue(
+      (context.others.repository.findOne as jest.Mock).mockRejectedValue(
         new Error('REPOSITORY ERROR'),
       );
 
@@ -99,7 +107,9 @@ describe('[services] - TranslationService', () => {
     });
 
     it('[edge-case] - should failed to get a translation', async () => {
-      (context.repository.findOne as jest.Mock).mockResolvedValue(undefined);
+      (context.others.repository.findOne as jest.Mock).mockResolvedValue(
+        undefined,
+      );
 
       await expect(context.service.getById(ref)).rejects.toThrow(
         `Unable to find a translation for: ${format.base(ref)}`,
@@ -109,13 +119,15 @@ describe('[services] - TranslationService', () => {
 
   describe('[addTranslation]', () => {
     it('[success] - should add a translation', async () => {
-      (context.repository.create as jest.Mock).mockResolvedValue(data);
+      (context.others.repository.createOne as jest.Mock).mockResolvedValue(
+        data,
+      );
 
       expect(await context.service.addTranslation(body.add)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.repository.create as jest.Mock).mockRejectedValue(
+      (context.others.repository.createOne as jest.Mock).mockRejectedValue(
         new Error('REPOSITORY ERROR'),
       );
 
@@ -127,7 +139,9 @@ describe('[services] - TranslationService', () => {
 
   describe('[editTranslation]', () => {
     it('[success] - should edit a translation', async () => {
-      (context.repository.update as jest.Mock).mockResolvedValue(data);
+      (context.others.repository.updateOne as jest.Mock).mockResolvedValue(
+        data,
+      );
 
       expect(await context.service.editTranslation(ref, body.edit)).toEqual(
         data,
@@ -135,7 +149,7 @@ describe('[services] - TranslationService', () => {
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.repository.update as jest.Mock).mockRejectedValue(
+      (context.others.repository.updateOne as jest.Mock).mockRejectedValue(
         new Error('REPOSITORY ERROR'),
       );
 
@@ -145,7 +159,9 @@ describe('[services] - TranslationService', () => {
     });
 
     it('[edge-case] - should failed to edit a translation', async () => {
-      (context.repository.update as jest.Mock).mockResolvedValue(undefined);
+      (context.others.repository.updateOne as jest.Mock).mockResolvedValue(
+        undefined,
+      );
 
       await expect(
         context.service.editTranslation(ref, body.edit),
@@ -157,7 +173,7 @@ describe('[services] - TranslationService', () => {
 
   describe('[deleteTranslation]', () => {
     it('[success] - should delete a translation', async () => {
-      (context.repository.deleteOne as jest.Mock).mockResolvedValue({
+      (context.others.repository.deleteOne as jest.Mock).mockResolvedValue({
         deletedCount: 1,
       });
 
@@ -165,7 +181,7 @@ describe('[services] - TranslationService', () => {
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.repository.deleteOne as jest.Mock).mockRejectedValue(
+      (context.others.repository.deleteOne as jest.Mock).mockRejectedValue(
         new Error('REPOSITORY ERROR'),
       );
 
@@ -175,7 +191,7 @@ describe('[services] - TranslationService', () => {
     });
 
     it('[edge-case] - should failed to delete a translation', async () => {
-      (context.repository.deleteOne as jest.Mock).mockResolvedValue({
+      (context.others.repository.deleteOne as jest.Mock).mockResolvedValue({
         deletedCount: 0,
       });
 

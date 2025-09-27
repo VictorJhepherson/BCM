@@ -8,8 +8,8 @@ import {
   ILanguageService,
   Language,
   LanguagePayload,
-  LanguageRefDTO,
   MappedLanguage,
+  RequiredField,
 } from '@shared/models';
 import { LoggerProvider } from '../../../providers';
 import {
@@ -17,6 +17,7 @@ import {
   LanguageMapperType,
 } from '../mappers/languages.mapper';
 import { LanguageRepository } from '../repositories/languages.repository';
+import { LanguageStrategy } from '../strategies/languages.strategy';
 
 @Injectable()
 export class LanguageService
@@ -25,6 +26,7 @@ export class LanguageService
 {
   constructor(
     logger: LoggerProvider,
+    private readonly strategy: LanguageStrategy,
     private readonly repository: LanguageRepository,
   ) {
     super('[languages]', logger, new LanguageMapper());
@@ -37,7 +39,7 @@ export class LanguageService
     });
   }
 
-  async getById(ref: LanguageRefDTO): Promise<LanguagePayload> {
+  async getById(ref: ILanguageRef): Promise<LanguagePayload> {
     return this.execute({
       mapKey: 'mapLanguage',
       fn: async () => {
@@ -56,7 +58,7 @@ export class LanguageService
 
   async addLanguage(payload: ILanguage): Promise<Language> {
     return this.execute({
-      fn: () => this.repository.create(payload),
+      fn: () => this.repository.createOne(payload),
     });
   }
 
@@ -66,7 +68,7 @@ export class LanguageService
   ): Promise<Language> {
     return this.execute({
       fn: async () => {
-        const updated = await this.repository.update(ref, payload);
+        const updated = await this.repository.updateOne(ref, payload);
 
         if (!updated) {
           throw new NotFoundException({
@@ -79,17 +81,18 @@ export class LanguageService
     });
   }
 
+  async archiveLanguage(
+    ref: ILanguageRef,
+    payload: RequiredField<Partial<ILanguage>, 'active'>,
+  ): Promise<Language> {
+    return this.execute({
+      fn: () => this.strategy.softDelete(ref, payload),
+    });
+  }
+
   async deleteLanguage(ref: ILanguageRef): Promise<void> {
     return this.execute({
-      fn: async () => {
-        const deleted = await this.repository.deleteOne(ref);
-
-        if (deleted.deletedCount < 1) {
-          throw new NotFoundException({
-            message: `Failed to delete a language for: ${format.base(ref)}`,
-          });
-        }
-      },
+      fn: () => this.strategy.hardDelete(ref),
     });
   }
 }
