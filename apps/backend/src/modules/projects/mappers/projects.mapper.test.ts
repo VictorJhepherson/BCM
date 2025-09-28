@@ -1,7 +1,7 @@
 import { Project } from '@shared/models';
 import {
-  MapperMockProps,
   MockDataFactory,
+  MockPropsOf,
   ProjectMock,
   mockData,
 } from '@shared/testing';
@@ -15,7 +15,7 @@ const { data } = new MockDataFactory<ProjectMock>(mockData.factory.project)
   .build();
 
 describe('[mappers] - ProjectMapper', () => {
-  const context = {} as MapperMockProps<ProjectMapper>;
+  const context = {} as MockPropsOf<'mapper', ProjectMapper>;
 
   beforeEach(() => {
     context.mapper = new ProjectMapper();

@@ -1,8 +1,8 @@
 import { PopulateTranslation } from '@shared/models';
 import {
-  MapperMockProps,
   mockData,
   MockDataFactory,
+  MockPropsOf,
   TranslationMock,
 } from '@shared/testing';
 import { TranslationMapper } from './translations.mapper';
@@ -21,7 +21,7 @@ const { data } = new MockDataFactory<TranslationMock>(
   .build();
 
 describe('[mappers] - TranslationMapper', () => {
-  const context = {} as MapperMockProps<TranslationMapper>;
+  const context = {} as MockPropsOf<'mapper', TranslationMapper>;
 
   beforeEach(() => {
     context.mapper = new TranslationMapper();

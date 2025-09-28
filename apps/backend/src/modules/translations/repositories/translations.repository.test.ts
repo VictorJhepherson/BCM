@@ -5,7 +5,7 @@ import {
   mockData,
   MockDataFactory,
   MockMethodFactory,
-  RepositoryMockProps,
+  MockPropsOf,
   TranslationMock,
 } from '@shared/testing';
 import { Model } from 'mongoose';
@@ -17,9 +17,12 @@ const { ref, body, data, filter } = new MockDataFactory<TranslationMock>(
 ).build();
 
 describe('[repositories] - TranslationRepository', () => {
-  const context = {} as RepositoryMockProps<
+  const context = {} as MockPropsOf<
+    'repository',
     TranslationRepository,
-    Model<TranslationEntity>
+    {
+      model: Model<TranslationEntity>;
+    }
   >;
 
   beforeEach(async () => {
@@ -53,19 +56,49 @@ describe('[repositories] - TranslationRepository', () => {
       ],
     }).compile();
 
-    context.model = moduleRef.get(getModelToken(TranslationEntity.name));
     context.repository = moduleRef.get(TranslationRepository);
+    context.others = {
+      model: moduleRef.get(getModelToken(TranslationEntity.name)),
+    };
   });
 
   afterEach(() => jest.clearAllMocks());
 
+  describe('[findOne]', () => {
+    it('[success] - should get a translation', async () => {
+      (context.others.model.findOne as jest.Mock).mockReturnValue({
+        populate: jest.fn().mockReturnValue({
+          lean: jest.fn().mockReturnValue({
+            exec: jest.fn().mockResolvedValue(data),
+          }),
+        }),
+      });
+
+      expect(await context.repository.findOne(ref)).toEqual(data);
+    });
+
+    it('[failure] - should handle an error', async () => {
+      (context.others.model.findOne as jest.Mock).mockReturnValue({
+        populate: jest.fn().mockReturnValue({
+          lean: jest.fn().mockReturnValue({
+            exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
+          }),
+        }),
+      });
+
+      await expect(context.repository.findOne(ref)).rejects.toThrow(
+        'MODEL ERROR',
+      );
+    });
+  });
+
   describe('[findMany]', () => {
     it('[success] - should get all translations', async () => {
-      (context.model.countDocuments as jest.Mock).mockReturnValue({
+      (context.others.model.countDocuments as jest.Mock).mockReturnValue({
         exec: jest.fn().mockResolvedValue(100),
       });
 
-      (context.model.find as jest.Mock).mockReturnValue({
+      (context.others.model.find as jest.Mock).mockReturnValue({
         sort: jest.fn().mockReturnValue({
           skip: jest.fn().mockReturnValue({
             limit: jest.fn().mockReturnValue({
@@ -87,11 +120,11 @@ describe('[repositories] - TranslationRepository', () => {
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.model.countDocuments as jest.Mock).mockReturnValue({
+      (context.others.model.countDocuments as jest.Mock).mockReturnValue({
         exec: jest.fn().mockResolvedValue(100),
       });
 
-      (context.model.find as jest.Mock).mockReturnValue({
+      (context.others.model.find as jest.Mock).mockReturnValue({
         sort: jest.fn().mockReturnValue({
           skip: jest.fn().mockReturnValue({
             limit: jest.fn().mockReturnValue({
@@ -111,43 +144,15 @@ describe('[repositories] - TranslationRepository', () => {
     });
   });
 
-  describe('[findOne]', () => {
-    it('[success] - should get a translation', async () => {
-      (context.model.findOne as jest.Mock).mockReturnValue({
-        populate: jest.fn().mockReturnValue({
-          lean: jest.fn().mockReturnValue({
-            exec: jest.fn().mockResolvedValue(data),
-          }),
-        }),
-      });
-
-      expect(await context.repository.findOne(ref)).toEqual(data);
-    });
-
-    it('[failure] - should handle an error', async () => {
-      (context.model.findOne as jest.Mock).mockReturnValue({
-        populate: jest.fn().mockReturnValue({
-          lean: jest.fn().mockReturnValue({
-            exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
-          }),
-        }),
-      });
-
-      await expect(context.repository.findOne(ref)).rejects.toThrow(
-        'MODEL ERROR',
-      );
-    });
-  });
-
   describe('[createOne]', () => {
     it('[success] - should add a translation', async () => {
-      (context.model.create as jest.Mock).mockResolvedValue(data);
+      (context.others.model.create as jest.Mock).mockResolvedValue(data);
 
       expect(await context.repository.createOne(body.add)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.model.create as jest.Mock).mockRejectedValue(
+      (context.others.model.create as jest.Mock).mockRejectedValue(
         new Error('MODEL ERROR'),
       );
 
@@ -159,7 +164,7 @@ describe('[repositories] - TranslationRepository', () => {
 
   describe('[updateOne]', () => {
     it('[success] - should edit a translation', async () => {
-      (context.model.findOneAndUpdate as jest.Mock).mockReturnValue({
+      (context.others.model.findOneAndUpdate as jest.Mock).mockReturnValue({
         exec: jest.fn().mockResolvedValue(data),
       });
 
@@ -167,7 +172,7 @@ describe('[repositories] - TranslationRepository', () => {
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.model.findOneAndUpdate as jest.Mock).mockReturnValue({
+      (context.others.model.findOneAndUpdate as jest.Mock).mockReturnValue({
         exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
       });
 
@@ -179,7 +184,7 @@ describe('[repositories] - TranslationRepository', () => {
 
   describe('[updateMany]', () => {
     it('[success] - should edit a translation', async () => {
-      (context.model.updateMany as jest.Mock).mockReturnValue({
+      (context.others.model.updateMany as jest.Mock).mockReturnValue({
         exec: jest.fn().mockResolvedValue(data),
       });
 
@@ -187,7 +192,7 @@ describe('[repositories] - TranslationRepository', () => {
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.model.updateMany as jest.Mock).mockReturnValue({
+      (context.others.model.updateMany as jest.Mock).mockReturnValue({
         exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
       });
 
@@ -199,7 +204,7 @@ describe('[repositories] - TranslationRepository', () => {
 
   describe('[deleteOne]', () => {
     it('[success] - should delete a translation', async () => {
-      (context.model.deleteOne as jest.Mock).mockReturnValue({
+      (context.others.model.deleteOne as jest.Mock).mockReturnValue({
         exec: jest.fn().mockResolvedValue({ deletedCount: 1 }),
       });
 
@@ -209,7 +214,7 @@ describe('[repositories] - TranslationRepository', () => {
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.model.deleteOne as jest.Mock).mockReturnValue({
+      (context.others.model.deleteOne as jest.Mock).mockReturnValue({
         exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
       });
 
@@ -221,7 +226,7 @@ describe('[repositories] - TranslationRepository', () => {
 
   describe('[deleteMany]', () => {
     it('[success] - should delete a translation', async () => {
-      (context.model.deleteMany as jest.Mock).mockReturnValue({
+      (context.others.model.deleteMany as jest.Mock).mockReturnValue({
         exec: jest.fn().mockResolvedValue({ deletedCount: 1 }),
       });
 
@@ -231,7 +236,7 @@ describe('[repositories] - TranslationRepository', () => {
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.model.deleteMany as jest.Mock).mockReturnValue({
+      (context.others.model.deleteMany as jest.Mock).mockReturnValue({
         exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
       });
 

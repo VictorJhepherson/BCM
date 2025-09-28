@@ -4,8 +4,8 @@ import { ProjectEntity } from '@shared/models';
 import {
   MockDataFactory,
   MockMethodFactory,
+  MockPropsOf,
   ProjectMock,
-  RepositoryMockProps,
   mockData,
 } from '@shared/testing';
 import { Model } from 'mongoose';
@@ -17,9 +17,12 @@ const { ref, body, data, filter } = new MockDataFactory<ProjectMock>(
 ).build();
 
 describe('[repositories] - ProjectRepository', () => {
-  const context = {} as RepositoryMockProps<
+  const context = {} as MockPropsOf<
+    'repository',
     ProjectRepository,
-    Model<ProjectEntity>
+    {
+      model: Model<ProjectEntity>;
+    }
   >;
 
   beforeEach(async () => {
@@ -51,19 +54,41 @@ describe('[repositories] - ProjectRepository', () => {
       ],
     }).compile();
 
-    context.model = moduleRef.get(getModelToken(ProjectEntity.name));
     context.repository = moduleRef.get(ProjectRepository);
+    context.others = {
+      model: moduleRef.get(getModelToken(ProjectEntity.name)),
+    };
   });
 
   afterEach(() => jest.clearAllMocks());
 
+  describe('[findOne]', () => {
+    it('[success] - should get a project', async () => {
+      (context.others.model.findOne as jest.Mock).mockReturnValue({
+        exec: jest.fn().mockResolvedValue(data),
+      });
+
+      expect(await context.repository.findOne(ref)).toEqual(data);
+    });
+
+    it('[failure] - should handle an error', async () => {
+      (context.others.model.findOne as jest.Mock).mockReturnValue({
+        exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
+      });
+
+      await expect(context.repository.findOne(ref)).rejects.toThrow(
+        'MODEL ERROR',
+      );
+    });
+  });
+
   describe('[findMany]', () => {
     it('[success] - should get all projects', async () => {
-      (context.model.countDocuments as jest.Mock).mockReturnValue({
+      (context.others.model.countDocuments as jest.Mock).mockReturnValue({
         exec: jest.fn().mockResolvedValue(100),
       });
 
-      (context.model.find as jest.Mock).mockReturnValue({
+      (context.others.model.find as jest.Mock).mockReturnValue({
         sort: jest.fn().mockReturnValue({
           skip: jest.fn().mockReturnValue({
             limit: jest.fn().mockReturnValue({
@@ -81,11 +106,11 @@ describe('[repositories] - ProjectRepository', () => {
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.model.countDocuments as jest.Mock).mockReturnValue({
+      (context.others.model.countDocuments as jest.Mock).mockReturnValue({
         exec: jest.fn().mockResolvedValue(100),
       });
 
-      (context.model.find as jest.Mock).mockReturnValue({
+      (context.others.model.find as jest.Mock).mockReturnValue({
         sort: jest.fn().mockReturnValue({
           skip: jest.fn().mockReturnValue({
             limit: jest.fn().mockReturnValue({
@@ -101,35 +126,15 @@ describe('[repositories] - ProjectRepository', () => {
     });
   });
 
-  describe('[findOne]', () => {
-    it('[success] - should get a project', async () => {
-      (context.model.findOne as jest.Mock).mockReturnValue({
-        exec: jest.fn().mockResolvedValue(data),
-      });
-
-      expect(await context.repository.findOne(ref)).toEqual(data);
-    });
-
-    it('[failure] - should handle an error', async () => {
-      (context.model.findOne as jest.Mock).mockReturnValue({
-        exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
-      });
-
-      await expect(context.repository.findOne(ref)).rejects.toThrow(
-        'MODEL ERROR',
-      );
-    });
-  });
-
   describe('[createOne]', () => {
     it('[success] - should add projects', async () => {
-      (context.model.create as jest.Mock).mockResolvedValue(data);
+      (context.others.model.create as jest.Mock).mockResolvedValue(data);
 
       expect(await context.repository.createOne(body.add)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.model.create as jest.Mock).mockRejectedValue(
+      (context.others.model.create as jest.Mock).mockRejectedValue(
         new Error('MODEL ERROR'),
       );
 
@@ -141,7 +146,7 @@ describe('[repositories] - ProjectRepository', () => {
 
   describe('[updateOne]', () => {
     it('[success] - should edit a project', async () => {
-      (context.model.findOneAndUpdate as jest.Mock).mockReturnValue({
+      (context.others.model.findOneAndUpdate as jest.Mock).mockReturnValue({
         exec: jest.fn().mockResolvedValue(data),
       });
 
@@ -149,7 +154,7 @@ describe('[repositories] - ProjectRepository', () => {
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.model.findOneAndUpdate as jest.Mock).mockReturnValue({
+      (context.others.model.findOneAndUpdate as jest.Mock).mockReturnValue({
         exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
       });
 
@@ -161,7 +166,7 @@ describe('[repositories] - ProjectRepository', () => {
 
   describe('[deleteOne]', () => {
     it('[success] - should delete a project', async () => {
-      (context.model.deleteOne as jest.Mock).mockReturnValue({
+      (context.others.model.deleteOne as jest.Mock).mockReturnValue({
         exec: jest.fn().mockResolvedValue({ deletedCount: 1 }),
       });
 
@@ -171,7 +176,7 @@ describe('[repositories] - ProjectRepository', () => {
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.model.deleteOne as jest.Mock).mockReturnValue({
+      (context.others.model.deleteOne as jest.Mock).mockReturnValue({
         exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
       });
 

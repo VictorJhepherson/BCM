@@ -5,7 +5,7 @@ import {
   mockData,
   MockDataFactory,
   MockMethodFactory,
-  ServiceMockProps,
+  MockPropsOf,
 } from '@shared/testing';
 import { LoggerProvider } from '../../../providers';
 import { LanguageRepository } from '../repositories/languages.repository';
@@ -25,7 +25,8 @@ const { ref, body, data, filter } = new MockDataFactory<LanguageMock>(
 ).build();
 
 describe('[services] - LanguageService', () => {
-  const context = {} as ServiceMockProps<
+  const context = {} as MockPropsOf<
+    'service',
     LanguageService,
     {
       strategy: LanguageStrategy;

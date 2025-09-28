@@ -1,8 +1,8 @@
 import { Test } from '@nestjs/testing';
 import {
-  ControllerMockProps,
   MockDataFactory,
   MockMethodFactory,
+  MockPropsOf,
   ProjectMock,
   mockData,
 } from '@shared/testing';
@@ -15,7 +15,13 @@ const { ref, body, data, filter } = new MockDataFactory<ProjectMock>(
 ).build();
 
 describe('[controllers] - ProjectController', () => {
-  const context = {} as ControllerMockProps<ProjectController, ProjectService>;
+  const context = {} as MockPropsOf<
+    'controller',
+    ProjectController,
+    {
+      service: ProjectService;
+    }
+  >;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -45,21 +51,23 @@ describe('[controllers] - ProjectController', () => {
       ],
     }).compile();
 
-    context.service = moduleRef.get(ProjectService);
     context.controller = moduleRef.get(ProjectController);
+    context.others = {
+      service: moduleRef.get(ProjectService),
+    };
   });
 
   afterEach(() => jest.clearAllMocks());
 
   describe('[getAll]', () => {
     it('[success] - should get all projects', async () => {
-      (context.service.getAll as jest.Mock).mockResolvedValue([data]);
+      (context.others.service.getAll as jest.Mock).mockResolvedValue([data]);
 
       expect(await context.controller.getAll(filter)).toEqual([data]);
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.service.getAll as jest.Mock).mockRejectedValue(
+      (context.others.service.getAll as jest.Mock).mockRejectedValue(
         new Error('SERVICE ERROR'),
       );
 
@@ -71,13 +79,13 @@ describe('[controllers] - ProjectController', () => {
 
   describe('[getById]', () => {
     it('[success] - should get a project', async () => {
-      (context.service.getById as jest.Mock).mockResolvedValue(data);
+      (context.others.service.getById as jest.Mock).mockResolvedValue(data);
 
       expect(await context.controller.getById(ref)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.service.getById as jest.Mock).mockRejectedValue(
+      (context.others.service.getById as jest.Mock).mockRejectedValue(
         new Error('SERVICE ERROR'),
       );
 
@@ -89,13 +97,13 @@ describe('[controllers] - ProjectController', () => {
 
   describe('[addProject]', () => {
     it('[success] - should add a project', async () => {
-      (context.service.addProject as jest.Mock).mockResolvedValue(data);
+      (context.others.service.addProject as jest.Mock).mockResolvedValue(data);
 
       expect(await context.controller.addProject(body.add)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.service.addProject as jest.Mock).mockRejectedValue(
+      (context.others.service.addProject as jest.Mock).mockRejectedValue(
         new Error('SERVICE ERROR'),
       );
 
@@ -107,7 +115,7 @@ describe('[controllers] - ProjectController', () => {
 
   describe('[editProject]', () => {
     it('[success] - should edit a project', async () => {
-      (context.service.editProject as jest.Mock).mockResolvedValue(data);
+      (context.others.service.editProject as jest.Mock).mockResolvedValue(data);
 
       expect(await context.controller.editProject(ref._id, body.edit)).toEqual(
         data,
@@ -115,7 +123,7 @@ describe('[controllers] - ProjectController', () => {
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.service.editProject as jest.Mock).mockRejectedValue(
+      (context.others.service.editProject as jest.Mock).mockRejectedValue(
         new Error('SERVICE ERROR'),
       );
 
@@ -127,13 +135,15 @@ describe('[controllers] - ProjectController', () => {
 
   describe('[deleteProject]', () => {
     it('[success] - should delete a project', async () => {
-      (context.service.deleteProject as jest.Mock).mockResolvedValue(undefined);
+      (context.others.service.deleteProject as jest.Mock).mockResolvedValue(
+        undefined,
+      );
 
       expect(await context.controller.deleteProject(ref._id)).toBeFalsy();
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.service.deleteProject as jest.Mock).mockRejectedValue(
+      (context.others.service.deleteProject as jest.Mock).mockRejectedValue(
         new Error('SERVICE ERROR'),
       );
 

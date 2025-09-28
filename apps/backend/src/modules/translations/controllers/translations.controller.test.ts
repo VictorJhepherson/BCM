@@ -1,9 +1,9 @@
 import { Test } from '@nestjs/testing';
 import {
-  ControllerMockProps,
   mockData,
   MockDataFactory,
   MockMethodFactory,
+  MockPropsOf,
   TranslationMock,
 } from '@shared/testing';
 import { LoggerProvider } from '../../../providers';
@@ -15,9 +15,12 @@ const { ref, body, data, filter } = new MockDataFactory<TranslationMock>(
 ).build();
 
 describe('[controllers] - TranslationController', () => {
-  const context = {} as ControllerMockProps<
+  const context = {} as MockPropsOf<
+    'controller',
     TranslationController,
-    TranslationService
+    {
+      service: TranslationService;
+    }
   >;
 
   beforeEach(async () => {
@@ -48,21 +51,23 @@ describe('[controllers] - TranslationController', () => {
       ],
     }).compile();
 
-    context.service = moduleRef.get(TranslationService);
     context.controller = moduleRef.get(TranslationController);
+    context.others = {
+      service: moduleRef.get(TranslationService),
+    };
   });
 
   afterEach(() => jest.clearAllMocks());
 
   describe('[getAll]', () => {
     it('[success] - should get all translations', async () => {
-      (context.service.getAll as jest.Mock).mockResolvedValue([data]);
+      (context.others.service.getAll as jest.Mock).mockResolvedValue([data]);
 
       expect(await context.controller.getAll(filter)).toEqual([data]);
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.service.getAll as jest.Mock).mockRejectedValue(
+      (context.others.service.getAll as jest.Mock).mockRejectedValue(
         new Error('SERVICE ERROR'),
       );
 
@@ -74,13 +79,13 @@ describe('[controllers] - TranslationController', () => {
 
   describe('[getById]', () => {
     it('[success] - should get a translation', async () => {
-      (context.service.getById as jest.Mock).mockResolvedValue([data]);
+      (context.others.service.getById as jest.Mock).mockResolvedValue([data]);
 
       expect(await context.controller.getById(ref)).toEqual([data]);
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.service.getById as jest.Mock).mockRejectedValue(
+      (context.others.service.getById as jest.Mock).mockRejectedValue(
         new Error('SERVICE ERROR'),
       );
 
@@ -92,13 +97,15 @@ describe('[controllers] - TranslationController', () => {
 
   describe('[addTranslation]', () => {
     it('[success] - should add a translation', async () => {
-      (context.service.addTranslation as jest.Mock).mockResolvedValue(data);
+      (context.others.service.addTranslation as jest.Mock).mockResolvedValue(
+        data,
+      );
 
       expect(await context.controller.addTranslation(body.add)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.service.addTranslation as jest.Mock).mockRejectedValue(
+      (context.others.service.addTranslation as jest.Mock).mockRejectedValue(
         new Error('SERVICE ERROR'),
       );
 
@@ -110,7 +117,9 @@ describe('[controllers] - TranslationController', () => {
 
   describe('[editTranslation]', () => {
     it('[success] - should edit a translation', async () => {
-      (context.service.editTranslation as jest.Mock).mockResolvedValue(data);
+      (context.others.service.editTranslation as jest.Mock).mockResolvedValue(
+        data,
+      );
 
       expect(await context.controller.editTranslation(ref, body.edit)).toEqual(
         data,
@@ -118,7 +127,7 @@ describe('[controllers] - TranslationController', () => {
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.service.editTranslation as jest.Mock).mockRejectedValue(
+      (context.others.service.editTranslation as jest.Mock).mockRejectedValue(
         new Error('SERVICE ERROR'),
       );
 
@@ -130,7 +139,7 @@ describe('[controllers] - TranslationController', () => {
 
   describe('[deleteTranslation]', () => {
     it('[success] - should delete a translation', async () => {
-      (context.service.deleteTranslation as jest.Mock).mockResolvedValue(
+      (context.others.service.deleteTranslation as jest.Mock).mockResolvedValue(
         undefined,
       );
 
@@ -138,7 +147,7 @@ describe('[controllers] - TranslationController', () => {
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.service.deleteTranslation as jest.Mock).mockRejectedValue(
+      (context.others.service.deleteTranslation as jest.Mock).mockRejectedValue(
         new Error('SERVICE ERROR'),
       );
 

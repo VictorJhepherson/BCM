@@ -1,8 +1,8 @@
-import { mockData, PipeMockProps } from '@shared/testing';
+import { mockData, MockPropsOf } from '@shared/testing';
 import { PaginationPipe } from './pagination.pipe';
 
 describe('[pipes] - PaginationPipe', () => {
-  const context = {} as PipeMockProps<PaginationPipe>;
+  const context = {} as MockPropsOf<'pipe', PaginationPipe>;
 
   beforeEach(() => {
     context.pipe = new PaginationPipe();

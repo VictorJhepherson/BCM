@@ -1,13 +1,16 @@
 import { HealthCheckService, MongooseHealthIndicator } from '@nestjs/terminus';
 import { Test } from '@nestjs/testing';
-import { ControllerMockProps, MockMethodFactory } from '@shared/testing';
+import { MockMethodFactory, MockPropsOf } from '@shared/testing';
 import { HealthController } from './health.controller';
 
 describe('[controllers] - HealthController', () => {
-  const context = {} as ControllerMockProps<
+  const context = {} as MockPropsOf<
+    'controller',
     HealthController,
-    HealthCheckService,
-    { mongo: MongooseHealthIndicator }
+    {
+      service: HealthCheckService;
+      mongo: MongooseHealthIndicator;
+    }
   >;
 
   beforeEach(async () => {
@@ -31,19 +34,18 @@ describe('[controllers] - HealthController', () => {
       ],
     }).compile();
 
-    context.service = moduleRef.get(HealthCheckService);
-    context.providers = {
-      mongo: moduleRef.get(MongooseHealthIndicator),
-    };
-
     context.controller = moduleRef.get(HealthController);
+    context.others = {
+      mongo: moduleRef.get(MongooseHealthIndicator),
+      service: moduleRef.get(HealthCheckService),
+    };
   });
 
   afterEach(() => jest.clearAllMocks());
 
   describe('[check]', () => {
     it('[success] - should return app healthy', async () => {
-      (context.service.check as jest.Mock).mockImplementationOnce(
+      (context.others.service.check as jest.Mock).mockImplementationOnce(
         async (indicators) => {
           const results = await Promise.all(indicators.map((fn: any) => fn()));
 
@@ -54,7 +56,7 @@ describe('[controllers] - HealthController', () => {
         },
       );
 
-      (context.providers.mongo.pingCheck as jest.Mock).mockResolvedValueOnce({
+      (context.others.mongo.pingCheck as jest.Mock).mockResolvedValueOnce({
         mongo: { status: 'up' },
       });
 

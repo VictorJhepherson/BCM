@@ -1,40 +1,22 @@
 type OthersType = Record<string, any>;
 
-export type ControllerMockProps<C, S, P extends OthersType = never> = {
-  service: S;
-  providers: P;
-  controller: C;
-};
+type MockProps<Key extends string, T, O extends OthersType = never> = {
+  [K in Key]: T;
+} & { others: O };
 
-export type MapperMockProps<M> = {
-  mapper: M;
-};
+type MockKind =
+  | 'pipe'
+  | 'guard'
+  | 'mapper'
+  | 'service'
+  | 'provider'
+  | 'strategy'
+  | 'controller'
+  | 'repository'
+  | 'middleware';
 
-export type RepositoryMockProps<R, M> = {
-  repository: R;
-  model: M;
-};
-
-export type ServiceMockProps<S, O extends OthersType = never> = {
-  service: S;
-  others: O;
-};
-
-export type LoggerMockProps<P, C> = {
-  provider: P;
-  config: C;
-};
-
-export type PipeMockProps<P> = {
-  pipe: P;
-};
-
-export type MiddlewareMockProps<M, S extends OthersType = never> = {
-  middleware: M;
-  services: S;
-};
-
-export type GuardMockProps<G, S extends OthersType = never> = {
-  guard: G;
-  services: S;
-};
+export type MockPropsOf<
+  K extends MockKind,
+  T,
+  O extends OthersType = never,
+> = MockProps<K, T, O>;

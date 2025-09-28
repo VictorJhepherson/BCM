@@ -1,9 +1,9 @@
 import { Language } from '@shared/models';
 import {
   LanguageMock,
-  MapperMockProps,
   mockData,
   MockDataFactory,
+  MockPropsOf,
 } from '@shared/testing';
 import { LanguageMapper } from './languages.mapper';
 
@@ -15,7 +15,7 @@ const { data } = new MockDataFactory<LanguageMock>(mockData.factory.language)
   .build();
 
 describe('[mappers] - LanguageMapper', () => {
-  const context = {} as MapperMockProps<LanguageMapper>;
+  const context = {} as MockPropsOf<'mapper', LanguageMapper>;
 
   beforeEach(() => {
     context.mapper = new LanguageMapper();

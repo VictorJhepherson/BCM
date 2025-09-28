@@ -1,19 +1,20 @@
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
-import {
-  GuardMockProps,
-  mockHelpers,
-  MockMethodFactory,
-} from '@shared/testing';
+import { mockHelpers, MockMethodFactory, MockPropsOf } from '@shared/testing';
 import { GROUPS_KEY, SCOPES_KEY } from '../../decorators';
 import { LoggerProvider } from '../../providers';
 import { PermissionGuard } from './permissions.guard';
 
 describe('[guards] - PermissionGuard', () => {
-  const context = {} as GuardMockProps<
+  const context = {} as MockPropsOf<
+    'guard',
     PermissionGuard,
-    { config: ConfigService; logger: LoggerProvider; reflector: Reflector }
+    {
+      reflector: Reflector;
+      config: ConfigService;
+      logger: LoggerProvider;
+    }
   >;
 
   beforeEach(async () => {
@@ -45,19 +46,18 @@ describe('[guards] - PermissionGuard', () => {
       ],
     }).compile();
 
-    context.services = {
+    context.guard = moduleRef.get(PermissionGuard);
+    context.others = {
       reflector: moduleRef.get(Reflector),
       config: moduleRef.get(ConfigService),
       logger: moduleRef.get(LoggerProvider),
     };
-
-    context.guard = moduleRef.get(PermissionGuard);
   });
 
   afterEach(() => jest.clearAllMocks());
 
   it('[by-pass] - should return true when environment is DEV', () => {
-    (context.services.config.get as jest.Mock).mockReturnValue('DEV');
+    (context.others.config.get as jest.Mock).mockReturnValue('DEV');
 
     const { mockContext } = mockHelpers.guards.getMocks({
       req: { user: {} },
@@ -67,7 +67,7 @@ describe('[guards] - PermissionGuard', () => {
   });
 
   it('[no-user] - should handle an error when user is not defined', () => {
-    (context.services.config.get as jest.Mock).mockReturnValue('PROD');
+    (context.others.config.get as jest.Mock).mockReturnValue('PROD');
 
     const { mockContext } = mockHelpers.guards.getMocks({
       req: { user: undefined },
@@ -81,8 +81,8 @@ describe('[guards] - PermissionGuard', () => {
   });
 
   it('[no-values] - should return true when groups and scopes are not found', () => {
-    (context.services.config.get as jest.Mock).mockReturnValue('PROD');
-    (context.services.reflector.get as jest.Mock).mockReturnValue([]);
+    (context.others.config.get as jest.Mock).mockReturnValue('PROD');
+    (context.others.reflector.get as jest.Mock).mockReturnValue([]);
 
     const { mockContext } = mockHelpers.guards.getMocks({
       req: { user: {} },
@@ -92,8 +92,8 @@ describe('[guards] - PermissionGuard', () => {
   });
 
   it('[not-include] - should handle an error when group or scope are not found in user payload', () => {
-    (context.services.config.get as jest.Mock).mockReturnValue('PROD');
-    (context.services.reflector.get as jest.Mock).mockImplementation(
+    (context.others.config.get as jest.Mock).mockReturnValue('PROD');
+    (context.others.reflector.get as jest.Mock).mockImplementation(
       (key: string) => {
         if (key === GROUPS_KEY) return ['ADMIN'];
         if (key === SCOPES_KEY) return ['TRANSLATIONS'];
@@ -112,8 +112,8 @@ describe('[guards] - PermissionGuard', () => {
   });
 
   it('[not-include] - should handle an error when group or scope is not present', () => {
-    (context.services.config.get as jest.Mock).mockReturnValue('PROD');
-    (context.services.reflector.get as jest.Mock).mockImplementation(
+    (context.others.config.get as jest.Mock).mockReturnValue('PROD');
+    (context.others.reflector.get as jest.Mock).mockImplementation(
       (key: string) => {
         if (key === GROUPS_KEY) return ['VIEWER'];
         if (key === SCOPES_KEY) return ['TRANSLATIONS'];
@@ -132,8 +132,8 @@ describe('[guards] - PermissionGuard', () => {
   });
 
   it('[success] - should return true when user has permissions', () => {
-    (context.services.config.get as jest.Mock).mockReturnValue('PROD');
-    (context.services.reflector.get as jest.Mock).mockImplementation(
+    (context.others.config.get as jest.Mock).mockReturnValue('PROD');
+    (context.others.reflector.get as jest.Mock).mockImplementation(
       (key: string) => {
         if (key === GROUPS_KEY) return ['VIEWER'];
         if (key === SCOPES_KEY) return ['PROJECTS'];

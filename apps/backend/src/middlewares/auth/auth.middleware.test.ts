@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
-import { MiddlewareMockProps, MockMethodFactory } from '@shared/testing';
+import { MockMethodFactory, MockPropsOf } from '@shared/testing';
 import { Request, Response } from 'express';
 import { LoggerProvider } from '../../providers';
 import { AuthMiddleware } from './auth.middleware';
@@ -13,9 +13,14 @@ const mocks = {
 };
 
 describe('[middlewares] - AuthMiddleware', () => {
-  const context = {} as MiddlewareMockProps<
+  const context = {} as MockPropsOf<
+    'middleware',
     AuthMiddleware,
-    { jwt: JwtService; config: ConfigService; logger: LoggerProvider }
+    {
+      jwt: JwtService;
+      config: ConfigService;
+      logger: LoggerProvider;
+    }
   >;
 
   beforeEach(async () => {
@@ -49,26 +54,25 @@ describe('[middlewares] - AuthMiddleware', () => {
       ],
     }).compile();
 
-    context.services = {
+    context.middleware = moduleRef.get(AuthMiddleware);
+    context.others = {
       jwt: moduleRef.get(JwtService),
       config: moduleRef.get(ConfigService),
       logger: moduleRef.get(LoggerProvider),
     };
-
-    context.middleware = moduleRef.get(AuthMiddleware);
   });
 
   afterEach(() => jest.clearAllMocks());
 
   it('[by-pass] - should call next when environment is DEV', () => {
-    (context.services.config.get as jest.Mock).mockReturnValue('DEV');
+    (context.others.config.get as jest.Mock).mockReturnValue('DEV');
 
     context.middleware.use(mocks.req(), mocks.res, mocks.next);
     expect(mocks.next).toHaveBeenCalled();
   });
 
   it('[no-auth] - should handle an error when authorization is not in headers', () => {
-    (context.services.config.get as jest.Mock).mockReturnValue('PROD');
+    (context.others.config.get as jest.Mock).mockReturnValue('PROD');
 
     expect(() =>
       context.middleware.use(mocks.req(), mocks.res, mocks.next),
@@ -76,7 +80,7 @@ describe('[middlewares] - AuthMiddleware', () => {
   });
 
   it('[no-type] - should handle an error when authorization has no type', () => {
-    (context.services.config.get as jest.Mock).mockReturnValue('PROD');
+    (context.others.config.get as jest.Mock).mockReturnValue('PROD');
 
     expect(() =>
       context.middleware.use(
@@ -88,7 +92,7 @@ describe('[middlewares] - AuthMiddleware', () => {
   });
 
   it('[no-token] - should handle an error when authorization has no token', () => {
-    (context.services.config.get as jest.Mock).mockReturnValue('PROD');
+    (context.others.config.get as jest.Mock).mockReturnValue('PROD');
 
     expect(() =>
       context.middleware.use(
@@ -100,8 +104,8 @@ describe('[middlewares] - AuthMiddleware', () => {
   });
 
   it('[success] - should call next when token is verified', () => {
-    (context.services.config.get as jest.Mock).mockReturnValue('PROD');
-    (context.services.jwt.verify as jest.Mock).mockReturnValue({ sub: '123' });
+    (context.others.config.get as jest.Mock).mockReturnValue('PROD');
+    (context.others.jwt.verify as jest.Mock).mockReturnValue({ sub: '123' });
 
     context.middleware.use(
       mocks.req({ authorization: 'Bearer token' }),
@@ -109,12 +113,12 @@ describe('[middlewares] - AuthMiddleware', () => {
       mocks.next,
     );
 
-    expect(context.services.jwt.verify).toHaveBeenCalledWith('token');
+    expect(context.others.jwt.verify).toHaveBeenCalledWith('token');
   });
 
   it('[failure] - should handle an error when verify failure', () => {
-    (context.services.config.get as jest.Mock).mockReturnValue('PROD');
-    (context.services.jwt.verify as jest.Mock).mockImplementation(() => {
+    (context.others.config.get as jest.Mock).mockReturnValue('PROD');
+    (context.others.jwt.verify as jest.Mock).mockImplementation(() => {
       throw new Error('Invalid Token');
     });
 

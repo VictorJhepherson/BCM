@@ -1,9 +1,9 @@
 import { Test } from '@nestjs/testing';
 import {
-  ControllerMockProps,
   LanguageMock,
   MockDataFactory,
   MockMethodFactory,
+  MockPropsOf,
   mockData,
 } from '@shared/testing';
 import { LoggerProvider } from '../../../providers';
@@ -15,9 +15,12 @@ const { ref, body, data, filter } = new MockDataFactory<LanguageMock>(
 ).build();
 
 describe('[controllers] - LanguageController', () => {
-  const context = {} as ControllerMockProps<
+  const context = {} as MockPropsOf<
+    'controller',
     LanguageController,
-    LanguageService
+    {
+      service: LanguageService;
+    }
   >;
 
   beforeEach(async () => {
@@ -49,21 +52,23 @@ describe('[controllers] - LanguageController', () => {
       ],
     }).compile();
 
-    context.service = moduleRef.get(LanguageService);
     context.controller = moduleRef.get(LanguageController);
+    context.others = {
+      service: moduleRef.get(LanguageService),
+    };
   });
 
   afterEach(() => jest.clearAllMocks());
 
   describe('[getAll]', () => {
     it('[success] - should get all languages', async () => {
-      (context.service.getAll as jest.Mock).mockResolvedValue([data]);
+      (context.others.service.getAll as jest.Mock).mockResolvedValue([data]);
 
       expect(await context.controller.getAll(filter)).toEqual([data]);
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.service.getAll as jest.Mock).mockRejectedValue(
+      (context.others.service.getAll as jest.Mock).mockRejectedValue(
         new Error('SERVICE ERROR'),
       );
 
@@ -75,13 +80,13 @@ describe('[controllers] - LanguageController', () => {
 
   describe('[getById]', () => {
     it('[success] - should get a language', async () => {
-      (context.service.getById as jest.Mock).mockResolvedValue(data);
+      (context.others.service.getById as jest.Mock).mockResolvedValue(data);
 
       expect(await context.controller.getById(ref)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.service.getById as jest.Mock).mockRejectedValue(
+      (context.others.service.getById as jest.Mock).mockRejectedValue(
         new Error('SERVICE ERROR'),
       );
 
@@ -93,13 +98,13 @@ describe('[controllers] - LanguageController', () => {
 
   describe('[addLanguage]', () => {
     it('[success] - should add a language', async () => {
-      (context.service.addLanguage as jest.Mock).mockResolvedValue(data);
+      (context.others.service.addLanguage as jest.Mock).mockResolvedValue(data);
 
       expect(await context.controller.addLanguage(body.add)).toEqual(data);
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.service.addLanguage as jest.Mock).mockRejectedValue(
+      (context.others.service.addLanguage as jest.Mock).mockRejectedValue(
         new Error('SERVICE ERROR'),
       );
 
@@ -111,7 +116,9 @@ describe('[controllers] - LanguageController', () => {
 
   describe('[editLanguage]', () => {
     it('[success] - should edit a language', async () => {
-      (context.service.editLanguage as jest.Mock).mockResolvedValue(data);
+      (context.others.service.editLanguage as jest.Mock).mockResolvedValue(
+        data,
+      );
 
       expect(await context.controller.editLanguage(ref._id, body.edit)).toEqual(
         data,
@@ -119,7 +126,7 @@ describe('[controllers] - LanguageController', () => {
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.service.editLanguage as jest.Mock).mockRejectedValue(
+      (context.others.service.editLanguage as jest.Mock).mockRejectedValue(
         new Error('SERVICE ERROR'),
       );
 
@@ -131,7 +138,9 @@ describe('[controllers] - LanguageController', () => {
 
   describe('[archiveLanguage]', () => {
     it('[success] - should archive a language', async () => {
-      (context.service.archiveLanguage as jest.Mock).mockResolvedValue(data);
+      (context.others.service.archiveLanguage as jest.Mock).mockResolvedValue(
+        data,
+      );
 
       expect(
         await context.controller.archiveLanguage(ref._id, body.archive),
@@ -139,7 +148,7 @@ describe('[controllers] - LanguageController', () => {
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.service.archiveLanguage as jest.Mock).mockRejectedValue(
+      (context.others.service.archiveLanguage as jest.Mock).mockRejectedValue(
         new Error('SERVICE ERROR'),
       );
 
@@ -151,7 +160,7 @@ describe('[controllers] - LanguageController', () => {
 
   describe('[deleteLanguage]', () => {
     it('[success] - should delete a language', async () => {
-      (context.service.deleteLanguage as jest.Mock).mockResolvedValue(
+      (context.others.service.deleteLanguage as jest.Mock).mockResolvedValue(
         undefined,
       );
 
@@ -159,7 +168,7 @@ describe('[controllers] - LanguageController', () => {
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.service.deleteLanguage as jest.Mock).mockRejectedValue(
+      (context.others.service.deleteLanguage as jest.Mock).mockRejectedValue(
         new Error('SERVICE ERROR'),
       );
 
