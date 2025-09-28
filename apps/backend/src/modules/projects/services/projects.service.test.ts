@@ -9,6 +9,7 @@ import {
 } from '@shared/testing';
 import { LoggerProvider } from '../../../providers';
 import { ProjectRepository } from '../repositories/projects.repository';
+import { ProjectDeleteStrategy } from '../strategies';
 import { ProjectService } from './projects.service';
 
 jest.mock('../mappers/projects.mapper', () => ({
@@ -29,6 +30,7 @@ describe('[services] - ProjectService', () => {
     ProjectService,
     {
       repository: ProjectRepository;
+      deleteStrategy: ProjectDeleteStrategy;
     }
   >;
 
@@ -57,12 +59,21 @@ describe('[services] - ProjectService', () => {
               .add('deleteOne', jest.fn())
               .build(),
         },
+        {
+          provide: ProjectDeleteStrategy,
+          useFactory: () =>
+            new MockMethodFactory<ProjectDeleteStrategy>()
+              .add('softDelete', jest.fn())
+              .add('hardDelete', jest.fn())
+              .build(),
+        },
       ],
     }).compile();
 
     context.service = moduleRef.get(ProjectService);
     context.others = {
       repository: moduleRef.get(ProjectRepository),
+      deleteStrategy: moduleRef.get(ProjectDeleteStrategy),
     };
   });
 
@@ -172,32 +183,44 @@ describe('[services] - ProjectService', () => {
     });
   });
 
+  describe('[archiveProject]', () => {
+    it('[success] - should archive a project', async () => {
+      (context.others.deleteStrategy.softDelete as jest.Mock).mockResolvedValue(
+        data,
+      );
+
+      expect(await context.service.archiveProject(ref, body.archive)).toEqual(
+        data,
+      );
+    });
+
+    it('[failure] - should handle an error', async () => {
+      (context.others.deleteStrategy.softDelete as jest.Mock).mockRejectedValue(
+        new Error('REPOSITORY ERROR'),
+      );
+
+      await expect(
+        context.service.archiveProject(ref, body.archive),
+      ).rejects.toThrow('REPOSITORY ERROR');
+    });
+  });
+
   describe('[deleteProject]', () => {
     it('[success] - should delete a project', async () => {
-      (context.others.repository.deleteOne as jest.Mock).mockResolvedValue({
-        deletedCount: 1,
-      });
+      (context.others.deleteStrategy.hardDelete as jest.Mock).mockResolvedValue(
+        undefined,
+      );
 
       expect(await context.service.deleteProject(ref)).toBeFalsy();
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.others.repository.deleteOne as jest.Mock).mockRejectedValue(
+      (context.others.deleteStrategy.hardDelete as jest.Mock).mockRejectedValue(
         new Error('REPOSITORY ERROR'),
       );
 
       await expect(context.service.deleteProject(ref)).rejects.toThrow(
         'REPOSITORY ERROR',
-      );
-    });
-
-    it('[edge-case] - should failed to delete a project', async () => {
-      (context.others.repository.deleteOne as jest.Mock).mockResolvedValue({
-        deletedCount: 0,
-      });
-
-      await expect(context.service.deleteProject(ref)).rejects.toThrow(
-        `Failed to delete a project for: ${format.base(ref)}`,
       );
     });
   });

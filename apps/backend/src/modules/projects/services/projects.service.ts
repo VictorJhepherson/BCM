@@ -9,10 +9,12 @@ import {
   MappedProject,
   Project,
   ProjectPayload,
+  RequiredField,
 } from '@shared/models';
 import { LoggerProvider } from '../../../providers';
 import { ProjectMapper, ProjectMapperType } from '../mappers/projects.mapper';
 import { ProjectRepository } from '../repositories/projects.repository';
+import { ProjectDeleteStrategy } from '../strategies';
 
 @Injectable()
 export class ProjectService
@@ -22,6 +24,7 @@ export class ProjectService
   constructor(
     logger: LoggerProvider,
     private readonly repository: ProjectRepository,
+    private readonly deleteStrategy: ProjectDeleteStrategy,
   ) {
     super('[projects]', logger, new ProjectMapper());
   }
@@ -75,17 +78,18 @@ export class ProjectService
     });
   }
 
+  async archiveProject(
+    ref: IProjectRef,
+    payload: RequiredField<Partial<IProject>, 'active'>,
+  ): Promise<Project> {
+    return this.execute({
+      fn: () => this.deleteStrategy.softDelete(ref, payload),
+    });
+  }
+
   async deleteProject(ref: IProjectRef): Promise<void> {
     return this.execute({
-      fn: async () => {
-        const deleted = await this.repository.deleteOne(ref);
-
-        if (deleted.deletedCount < 1) {
-          throw new NotFoundException({
-            message: `Failed to delete a project for: ${format.base(ref)}`,
-          });
-        }
-      },
+      fn: () => this.deleteStrategy.hardDelete(ref),
     });
   }
 }

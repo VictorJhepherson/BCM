@@ -51,3 +51,9 @@ export class ProjectEditDTO implements Partial<IProject> {
   @Matches(RegexProjects.DESCRIPTION, { message: ValidatorMessages.isMatches })
   readonly description?: string;
 }
+
+export class ProjectArchiveDTO extends ProjectEditDTO {
+  @IsBoolean({ message: ValidatorMessages.isBoolean })
+  @IsNotEmpty({ message: ValidatorMessages.isNotEmpty })
+  declare readonly active: boolean;
+}

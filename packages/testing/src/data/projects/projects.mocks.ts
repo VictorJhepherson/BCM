@@ -18,8 +18,10 @@ const body: ProjectMockBody = {
     description: values.project.description,
   },
   edit: {
-    active: false,
     description: 'project-description-edited',
+  },
+  archive: {
+    active: false,
   },
 };
 

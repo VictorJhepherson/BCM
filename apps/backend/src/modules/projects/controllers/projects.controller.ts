@@ -16,6 +16,7 @@ import {
   MappedProject,
   Project,
   ProjectAddDTO,
+  ProjectArchiveDTO,
   ProjectEditDTO,
   ProjectFilterDTO,
   ProjectPayload,
@@ -87,11 +88,25 @@ export class ProjectController
     });
   }
 
+  @Patch('/archive/:_id')
+  @Version('1')
+  @HttpCode(200)
+  @Scopes(['PROJECTS'])
+  @Groups(['EDITOR', 'ADMIN'])
+  async archiveProject(
+    @Param() params: ProjectRefDTO,
+    @Body() body: ProjectArchiveDTO,
+  ): Promise<Project> {
+    return this.execute({
+      fn: () => this.service.archiveProject(params, body),
+    });
+  }
+
   @Delete('/:_id')
   @Version('1')
   @HttpCode(204)
   @Scopes(['PROJECTS'])
-  @Groups(['EDITOR', 'ADMIN'])
+  @Groups(['ADMIN'])
   async deleteProject(@Param() params: ProjectRefDTO): Promise<void> {
     return this.execute({
       fn: () => this.service.deleteProject(params),

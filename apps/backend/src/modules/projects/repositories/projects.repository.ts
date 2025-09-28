@@ -6,6 +6,7 @@ import {
   IProjectFilter,
   IProjectRef,
   IProjectRepository,
+  IQueryOptions,
   Project,
   ProjectEntity,
   WithPagination,
@@ -61,15 +62,22 @@ export class ProjectRepository
   async updateOne(
     ref: IProjectRef,
     payload: Partial<IProject>,
+    options?: IQueryOptions,
   ): Promise<Project | null> {
     return this.execute({
-      fn: () => this.model.findOneAndUpdate(ref, payload, { new: true }).exec(),
+      fn: () =>
+        this.model
+          .findOneAndUpdate(ref, payload, { new: true, ...options })
+          .exec(),
     });
   }
 
-  async deleteOne(ref: IProjectRef): Promise<DeleteResult> {
+  async deleteOne(
+    ref: IProjectRef,
+    options?: IQueryOptions,
+  ): Promise<DeleteResult> {
     return this.execute({
-      fn: () => this.model.deleteOne(ref).exec(),
+      fn: () => this.model.deleteOne(ref, options).exec(),
     });
   }
 }

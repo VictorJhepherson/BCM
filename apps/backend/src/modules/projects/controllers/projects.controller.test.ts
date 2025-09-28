@@ -45,6 +45,7 @@ describe('[controllers] - ProjectController', () => {
               .add('getById', jest.fn())
               .add('addProject', jest.fn())
               .add('editProject', jest.fn())
+              .add('archiveProject', jest.fn())
               .add('deleteProject', jest.fn())
               .build(),
         },
@@ -129,6 +130,28 @@ describe('[controllers] - ProjectController', () => {
 
       await expect(
         context.controller.editProject(ref._id, body.edit),
+      ).rejects.toThrow('SERVICE ERROR');
+    });
+  });
+
+  describe('[archiveProject]', () => {
+    it('[success] - should archive a project', async () => {
+      (context.others.service.archiveProject as jest.Mock).mockResolvedValue(
+        data,
+      );
+
+      expect(
+        await context.controller.archiveProject(ref._id, body.archive),
+      ).toEqual(data);
+    });
+
+    it('[failure] - should handle an error', async () => {
+      (context.others.service.archiveProject as jest.Mock).mockRejectedValue(
+        new Error('SERVICE ERROR'),
+      );
+
+      await expect(
+        context.controller.archiveProject(ref._id, body.archive),
       ).rejects.toThrow('SERVICE ERROR');
     });
   });
