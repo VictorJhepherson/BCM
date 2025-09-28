@@ -45,6 +45,8 @@ describe('[base] - strategy', () => {
         referrer: '[test][strategy]',
         error: { success: false },
       });
+
+      expect(logger.error).toHaveBeenCalled();
     });
 
     describe('[map]', () => {
@@ -102,6 +104,8 @@ describe('[base] - strategy', () => {
         referrer: '[test][strategy]',
         error: { success: false },
       });
+
+      expect(logger.error).toHaveBeenCalled();
     });
   });
 });

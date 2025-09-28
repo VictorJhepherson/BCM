@@ -43,9 +43,8 @@ export abstract class BaseStrategy<M = never> {
 
       return mapped;
     } catch (error) {
-      throw AppError.handler({
+      throw AppError.withLogger(this.logger, {
         referrer: this.referrer,
-        logger: this.logger,
         error,
       });
     }
@@ -66,9 +65,8 @@ export abstract class BaseStrategy<M = never> {
       return value;
     } catch (error) {
       await session.abortTransaction();
-      throw AppError.handler({
+      throw AppError.withLogger(this.logger, {
         referrer: this.referrer,
-        logger: this.logger,
         error,
       });
     } finally {

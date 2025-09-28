@@ -37,10 +37,9 @@ export class PermissionGuard implements CanActivate {
       this.validate(SCOPES_KEY, { user, handler: context.getHandler() });
       return true;
     } catch (error) {
-      throw AppError.handler({
+      throw AppError.withLogger(this.logger, {
         referrer: '[guard][permission]',
         error,
-        logger: this.logger,
       });
     }
   }

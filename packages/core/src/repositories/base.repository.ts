@@ -18,9 +18,8 @@ export abstract class BaseRepository {
 
       return value;
     } catch (error) {
-      throw AppError.handler({
+      throw AppError.withLogger(this.logger, {
         referrer: this.referrer,
-        logger: this.logger,
         error,
       });
     }

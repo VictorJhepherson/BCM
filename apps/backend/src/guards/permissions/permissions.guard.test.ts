@@ -78,6 +78,8 @@ describe('[guards] - PermissionGuard', () => {
     expect(() => context.guard.canActivate(mockContext)).toThrow(
       'User not found!',
     );
+
+    expect(context.others.logger.error).toHaveBeenCalled();
   });
 
   it('[no-values] - should return true when groups and scopes are not found', () => {
@@ -109,6 +111,8 @@ describe('[guards] - PermissionGuard', () => {
     expect(() => context.guard.canActivate(mockContext)).toThrow(
       'User does not have the required groups: ADMIN',
     );
+
+    expect(context.others.logger.error).toHaveBeenCalled();
   });
 
   it('[not-include] - should handle an error when group or scope is not present', () => {
@@ -129,6 +133,8 @@ describe('[guards] - PermissionGuard', () => {
     expect(() => context.guard.canActivate(mockContext)).toThrow(
       'User does not have the required scopes: TRANSLATIONS',
     );
+
+    expect(context.others.logger.error).toHaveBeenCalled();
   });
 
   it('[success] - should return true when user has permissions', () => {

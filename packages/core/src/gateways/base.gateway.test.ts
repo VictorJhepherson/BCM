@@ -36,6 +36,8 @@ describe('[base] - gateway', () => {
         referrer: '[test][gateway]',
         error: { success: false },
       });
+
+      expect(logger.error).toHaveBeenCalled();
     });
   });
 });

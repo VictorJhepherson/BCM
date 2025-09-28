@@ -37,6 +37,8 @@ describe('[base] - strategy', () => {
         referrer: '[test][service]',
         error: { success: false },
       });
+
+      expect(logger.error).toHaveBeenCalled();
     });
 
     describe('[map]', () => {

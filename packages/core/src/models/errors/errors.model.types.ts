@@ -1,8 +1,4 @@
-import { ErrorTypes, ILoggerProvider } from '@shared/models';
-
-export type WithLogger = {
-  logger: ILoggerProvider;
-};
+import { ErrorTypes } from '@shared/models';
 
 export type AppErrorProps = {
   referrer: string;

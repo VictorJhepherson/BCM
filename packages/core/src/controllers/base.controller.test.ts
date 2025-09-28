@@ -36,6 +36,8 @@ describe('[base] - controller', () => {
         referrer: '[test][controller]',
         error: { success: false },
       });
+
+      expect(logger.error).toHaveBeenCalled();
     });
   });
 });

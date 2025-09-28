@@ -42,9 +42,8 @@ export abstract class BaseService<M = never> {
 
       return mapped;
     } catch (error) {
-      throw AppError.handler({
+      throw AppError.withLogger(this.logger, {
         referrer: this.referrer,
-        logger: this.logger,
         error,
       });
     }

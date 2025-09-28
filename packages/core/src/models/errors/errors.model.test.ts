@@ -48,7 +48,40 @@ describe('[model] - AppError', () => {
     const error = new Error('generic failure');
 
     it('[default] - should throw AppError when receiving a generic Error', () => {
-      const mockFn = () => AppError.handler({ referrer, logger, error });
+      const mockFn = () => AppError.handler({ referrer, error });
+
+      expect(mockFn).toThrow(AppError);
+      expect(mockFn).toThrow('generic failure');
+    });
+
+    it('[http-exception] - should throw AppError when receiving an HttpException', () => {
+      const mockFn = () =>
+        AppError.handler({
+          referrer,
+          error: new BadRequestException({ message: 'bad request' }),
+        });
+
+      expect(mockFn).toThrow(AppError);
+      expect(mockFn).toThrow('bad request');
+    });
+
+    it('[app-error] - should throw AppError when receiving an AppError', () => {
+      const mockFn = () =>
+        AppError.handler({
+          referrer,
+          error: new AppError({ referrer, error }),
+        });
+
+      expect(mockFn).toThrow(AppError);
+      expect(mockFn).toThrow('generic failure');
+    });
+  });
+
+  describe('[withLogger]', () => {
+    const error = new Error('generic failure');
+
+    it('[default] - should throw AppError when receiving a generic Error', () => {
+      const mockFn = () => AppError.withLogger(logger, { referrer, error });
 
       expect(mockFn).toThrow(AppError);
       expect(mockFn).toThrow('generic failure');
@@ -58,9 +91,8 @@ describe('[model] - AppError', () => {
 
     it('[http-exception] - should throw AppError when receiving an HttpException', () => {
       const mockFn = () =>
-        AppError.handler({
+        AppError.withLogger(logger, {
           referrer,
-          logger,
           error: new BadRequestException({ message: 'bad request' }),
         });
 
@@ -72,9 +104,8 @@ describe('[model] - AppError', () => {
 
     it('[app-error] - should throw AppError when receiving an AppError', () => {
       const mockFn = () =>
-        AppError.handler({
+        AppError.withLogger(logger, {
           referrer,
-          logger,
           error: new AppError({ referrer, error }),
         });
 

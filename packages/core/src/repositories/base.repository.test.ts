@@ -36,6 +36,8 @@ describe('[base] - repository', () => {
         referrer: '[test][repository]',
         error: { success: false },
       });
+
+      expect(logger.error).toHaveBeenCalled();
     });
   });
 });

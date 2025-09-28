@@ -39,10 +39,9 @@ export class AuthMiddleware implements NestMiddleware {
       req.user = this.jwtService.verify<UserPayload>(token);
       return next();
     } catch (error) {
-      throw AppError.handler({
+      throw AppError.withLogger(this.logger, {
         referrer: '[middleware][auth]',
         error,
-        logger: this.logger,
       });
     }
   }

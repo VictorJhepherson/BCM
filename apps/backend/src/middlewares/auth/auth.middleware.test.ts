@@ -77,6 +77,8 @@ describe('[middlewares] - AuthMiddleware', () => {
     expect(() =>
       context.middleware.use(mocks.req(), mocks.res, mocks.next),
     ).toThrow('Missing Authorization header');
+
+    expect(context.others.logger.error).toHaveBeenCalled();
   });
 
   it('[no-type] - should handle an error when authorization has no type', () => {
@@ -101,6 +103,8 @@ describe('[middlewares] - AuthMiddleware', () => {
         mocks.next,
       ),
     ).toThrow('Invalid Authorization format');
+
+    expect(context.others.logger.error).toHaveBeenCalled();
   });
 
   it('[success] - should call next when token is verified', () => {
@@ -129,5 +133,7 @@ describe('[middlewares] - AuthMiddleware', () => {
         mocks.next,
       ),
     ).toThrow('Invalid Token');
+
+    expect(context.others.logger.error).toHaveBeenCalled();
   });
 });
