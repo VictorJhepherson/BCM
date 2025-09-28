@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { BaseService } from '@shared/core';
 import { format } from '@shared/helpers';
 import {
+  FlatLanguage,
   ILanguage,
   ILanguageFilter,
   ILanguageRef,
@@ -65,7 +66,7 @@ export class LanguageService
   async editLanguage(
     ref: ILanguageRef,
     payload: Partial<ILanguage>,
-  ): Promise<Language> {
+  ): Promise<FlatLanguage> {
     return this.execute({
       fn: async () => {
         const updated = await this.repository.updateOne(ref, payload);
@@ -84,7 +85,7 @@ export class LanguageService
   async archiveLanguage(
     ref: ILanguageRef,
     payload: RequiredField<Partial<ILanguage>, 'active'>,
-  ): Promise<Language> {
+  ): Promise<FlatLanguage> {
     return this.execute({
       fn: () => this.deleteStrategy.softDelete(ref, payload),
     });

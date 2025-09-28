@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { BaseRepository } from '@shared/core';
 import {
+  FlatLanguage,
   ILanguage,
   ILanguageFilter,
   ILanguageRef,
@@ -27,13 +28,15 @@ export class LanguageRepository
     super('[languages]', logger);
   }
 
-  async findOne(ref: ILanguageRef): Promise<Language | null> {
+  async findOne(ref: ILanguageRef): Promise<FlatLanguage | null> {
     return this.execute({
-      fn: () => this.model.findOne(ref).exec(),
+      fn: () => this.model.findOne(ref).lean<FlatLanguage>().exec(),
     });
   }
 
-  async findMany(filter: ILanguageFilter): Promise<WithPagination<Language>> {
+  async findMany(
+    filter: ILanguageFilter,
+  ): Promise<WithPagination<FlatLanguage>> {
     const { sort, pagination } = filter;
 
     return this.execute({
@@ -45,6 +48,7 @@ export class LanguageRepository
             .sort({ [sort.by]: sort.order === 'ASC' ? 1 : -1 })
             .skip(pagination.skip)
             .limit(pagination.limit)
+            .lean<FlatLanguage[]>()
             .exec(),
         ]);
 
@@ -63,11 +67,12 @@ export class LanguageRepository
     ref: ILanguageRef,
     payload: Partial<ILanguage>,
     options?: IQueryOptions,
-  ): Promise<Language | null> {
+  ): Promise<FlatLanguage | null> {
     return this.execute({
       fn: () =>
         this.model
           .findOneAndUpdate(ref, payload, { new: true, ...options })
+          .lean<FlatLanguage>()
           .exec(),
     });
   }

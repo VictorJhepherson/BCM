@@ -7,10 +7,10 @@ import { InjectConnection } from '@nestjs/mongoose';
 import { BaseStrategy } from '@shared/core';
 import { format } from '@shared/helpers';
 import {
+  FlatProject,
   IProject,
   IProjectDeleteStrategy,
   IProjectRef,
-  Project,
   RequiredField,
 } from '@shared/models';
 import { Connection } from 'mongoose';
@@ -36,7 +36,7 @@ export class ProjectDeleteStrategy
   async softDelete(
     ref: IProjectRef,
     payload: RequiredField<Partial<IProject>, 'active'>,
-  ): Promise<Project> {
+  ): Promise<FlatProject> {
     return this.withTransaction({
       connection: this.conn,
       fn: async (session) => {

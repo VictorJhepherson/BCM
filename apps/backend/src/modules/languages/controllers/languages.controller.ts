@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { BaseController } from '@shared/core';
 import {
+  FlatLanguage,
   ILanguageController,
   Language,
   LanguageAddDTO,
@@ -82,7 +83,7 @@ export class LanguageController
   async editLanguage(
     @Param() params: LanguageRefDTO,
     @Body() body: LanguageEditDTO,
-  ): Promise<Language> {
+  ): Promise<FlatLanguage> {
     return this.execute({
       fn: () => this.service.editLanguage(params, body),
     });
@@ -96,7 +97,7 @@ export class LanguageController
   async archiveLanguage(
     @Param() params: LanguageRefDTO,
     @Body() body: LanguageArchiveDTO,
-  ): Promise<Language> {
+  ): Promise<FlatLanguage> {
     return this.execute({
       fn: () => this.service.archiveLanguage(params, body),
     });

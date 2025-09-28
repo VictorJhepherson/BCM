@@ -52,10 +52,8 @@ export type UserPayload = {
   scopes: string[];
 };
 
-export type MongoPayload = {
+export type WithId<T> = Omit<T, '_id'> & {
   id: Types.ObjectId;
-  createdAt: Date;
-  updatedAt: Date;
 };
 //#endregion UTILS
 

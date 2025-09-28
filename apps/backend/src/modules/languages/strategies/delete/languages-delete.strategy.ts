@@ -7,10 +7,10 @@ import { InjectConnection } from '@nestjs/mongoose';
 import { BaseStrategy } from '@shared/core';
 import { format } from '@shared/helpers';
 import {
+  FlatLanguage,
   ILanguage,
   ILanguageDeleteStrategy,
   ILanguageRef,
-  Language,
   RequiredField,
 } from '@shared/models';
 import { Connection } from 'mongoose';
@@ -36,7 +36,7 @@ export class LanguageDeleteStrategy
   async softDelete(
     ref: ILanguageRef,
     payload: RequiredField<Partial<ILanguage>, 'active'>,
-  ): Promise<Language> {
+  ): Promise<FlatLanguage> {
     return this.withTransaction({
       connection: this.conn,
       fn: async (session) => {

@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { BaseService } from '@shared/core';
 import { format } from '@shared/helpers';
 import {
+  FlatProject,
   IProject,
   IProjectFilter,
   IProjectRef,
@@ -62,7 +63,7 @@ export class ProjectService
   async editProject(
     ref: IProjectRef,
     payload: Partial<IProject>,
-  ): Promise<Project> {
+  ): Promise<FlatProject> {
     return this.execute({
       fn: async () => {
         const updated = await this.repository.updateOne(ref, payload);
@@ -81,7 +82,7 @@ export class ProjectService
   async archiveProject(
     ref: IProjectRef,
     payload: RequiredField<Partial<IProject>, 'active'>,
-  ): Promise<Project> {
+  ): Promise<FlatProject> {
     return this.execute({
       fn: () => this.deleteStrategy.softDelete(ref, payload),
     });

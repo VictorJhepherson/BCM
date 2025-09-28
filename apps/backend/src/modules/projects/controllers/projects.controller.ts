@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { BaseController } from '@shared/core';
 import {
+  FlatProject,
   IProjectController,
   MappedProject,
   Project,
@@ -82,7 +83,7 @@ export class ProjectController
   async editProject(
     @Param() params: ProjectRefDTO,
     @Body() body: ProjectEditDTO,
-  ): Promise<Project> {
+  ): Promise<FlatProject> {
     return this.execute({
       fn: () => this.service.editProject(params, body),
     });
@@ -96,7 +97,7 @@ export class ProjectController
   async archiveProject(
     @Param() params: ProjectRefDTO,
     @Body() body: ProjectArchiveDTO,
-  ): Promise<Project> {
+  ): Promise<FlatProject> {
     return this.execute({
       fn: () => this.service.archiveProject(params, body),
     });

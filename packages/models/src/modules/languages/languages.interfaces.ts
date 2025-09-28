@@ -12,7 +12,12 @@ import {
   LanguageFilterDTO,
   LanguageRefDTO,
 } from './languages.dtos';
-import { Language, LanguagePayload, MappedLanguage } from './languages.types';
+import {
+  FlatLanguage,
+  Language,
+  LanguagePayload,
+  MappedLanguage,
+} from './languages.types';
 
 export interface ILanguage {
   name: string;
@@ -32,11 +37,11 @@ export interface ILanguageController {
   editLanguage(
     params: LanguageRefDTO,
     body: LanguageEditDTO,
-  ): Promise<Language>;
+  ): Promise<FlatLanguage>;
   archiveLanguage(
     params: LanguageRefDTO,
     body: LanguageArchiveDTO,
-  ): Promise<Language>;
+  ): Promise<FlatLanguage>;
   deleteLanguage(params: LanguageRefDTO): Promise<void>;
 }
 
@@ -47,35 +52,35 @@ export interface ILanguageService {
   editLanguage(
     ref: ILanguageRef,
     payload: Partial<ILanguage>,
-  ): Promise<Language>;
+  ): Promise<FlatLanguage>;
   archiveLanguage(
     ref: ILanguageRef,
     payload: RequiredField<Partial<ILanguage>, 'active'>,
-  ): Promise<Language>;
+  ): Promise<FlatLanguage>;
   deleteLanguage(ref: ILanguageRef): Promise<void>;
 }
 
 export interface ILanguageRepository {
-  findOne(ref: ILanguageRef): Promise<Language | null>;
-  findMany(filter: ILanguageFilter): Promise<WithPagination<Language>>;
+  findOne(ref: ILanguageRef): Promise<FlatLanguage | null>;
+  findMany(filter: ILanguageFilter): Promise<WithPagination<FlatLanguage>>;
   createOne(payload: ILanguage): Promise<Language>;
   updateOne(
     ref: ILanguageRef,
     payload: Partial<ILanguage>,
     options?: IQueryOptions,
-  ): Promise<Language | null>;
+  ): Promise<FlatLanguage | null>;
   deleteOne(ref: ILanguageRef, options?: IQueryOptions): Promise<DeleteResult>;
 }
 
 export interface ILanguageMapper {
-  mapLanguage(language: Language): LanguagePayload;
-  mapLanguages(payload: WithPagination<Language>): MappedLanguage;
+  mapLanguage(language: FlatLanguage): LanguagePayload;
+  mapLanguages(payload: WithPagination<FlatLanguage>): MappedLanguage;
 }
 
 export interface ILanguageDeleteStrategy {
   softDelete(
     ref: ILanguageRef,
     payload: RequiredField<Partial<ILanguage>, 'active'>,
-  ): Promise<Language>;
+  ): Promise<FlatLanguage>;
   hardDelete(ref: ILanguageRef): Promise<void>;
 }

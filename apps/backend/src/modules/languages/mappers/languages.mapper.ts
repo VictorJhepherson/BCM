@@ -1,6 +1,6 @@
 import {
+  FlatLanguage,
   ILanguageMapper,
-  Language,
   LanguagePayload,
   MappedLanguage,
   Mappers,
@@ -8,21 +8,21 @@ import {
 } from '@shared/models';
 
 export class LanguageMapper implements ILanguageMapper {
-  mapLanguage(language: Language): LanguagePayload {
+  mapLanguage(language: FlatLanguage): LanguagePayload {
     return {
       id: language._id,
       name: language.name,
       active: language.active,
-      createdAt: language.get('createdAt'),
-      updatedAt: language.get('updatedAt'),
+      createdAt: language.createdAt,
+      updatedAt: language.updatedAt,
     };
   }
 
-  mapLanguages(payload: WithPagination<Language>): MappedLanguage {
+  mapLanguages(payload: WithPagination<FlatLanguage>): MappedLanguage {
     const { data, sort, pagination } = payload;
 
     return {
-      data: data.map((language: Language) => this.mapLanguage(language)),
+      data: data.map((language: FlatLanguage) => this.mapLanguage(language)),
       sort: { by: sort.by, order: sort.order },
       pagination: {
         page: pagination.page,

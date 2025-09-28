@@ -12,7 +12,12 @@ import {
   ProjectFilterDTO,
   ProjectRefDTO,
 } from './projects.dtos';
-import { MappedProject, Project, ProjectPayload } from './projects.types';
+import {
+  FlatProject,
+  MappedProject,
+  Project,
+  ProjectPayload,
+} from './projects.types';
 
 export interface IProject {
   name: string;
@@ -30,11 +35,14 @@ export interface IProjectController {
   getAll(query: ProjectFilterDTO): Promise<MappedProject>;
   getById(params: ProjectRefDTO): Promise<ProjectPayload>;
   addProject(body: ProjectAddDTO): Promise<Project>;
-  editProject(params: ProjectRefDTO, body: ProjectEditDTO): Promise<Project>;
+  editProject(
+    params: ProjectRefDTO,
+    body: ProjectEditDTO,
+  ): Promise<FlatProject>;
   archiveProject(
     params: ProjectRefDTO,
     body: ProjectArchiveDTO,
-  ): Promise<Project>;
+  ): Promise<FlatProject>;
   deleteProject(params: ProjectRefDTO): Promise<void>;
 }
 
@@ -42,35 +50,38 @@ export interface IProjectService {
   getAll(filter: IProjectFilter): Promise<MappedProject>;
   getById(ref: IProjectRef): Promise<ProjectPayload>;
   addProject(payload: IProject): Promise<Project>;
-  editProject(ref: IProjectRef, payload: Partial<IProject>): Promise<Project>;
+  editProject(
+    ref: IProjectRef,
+    payload: Partial<IProject>,
+  ): Promise<FlatProject>;
   archiveProject(
     ref: IProjectRef,
     payload: RequiredField<Partial<IProject>, 'active'>,
-  ): Promise<Project>;
+  ): Promise<FlatProject>;
   deleteProject(ref: IProjectRef): Promise<void>;
 }
 
 export interface IProjectRepository {
-  findOne(ref: IProjectRef): Promise<Project | null>;
-  findMany(filter: IProjectFilter): Promise<WithPagination<Project>>;
+  findOne(ref: IProjectRef): Promise<FlatProject | null>;
+  findMany(filter: IProjectFilter): Promise<WithPagination<FlatProject>>;
   createOne(payload: IProject): Promise<Project>;
   updateOne(
     ref: IProjectRef,
     payload: IProject,
     options?: IQueryOptions,
-  ): Promise<Project | null>;
+  ): Promise<FlatProject | null>;
   deleteOne(ref: IProjectRef, options?: IQueryOptions): Promise<DeleteResult>;
 }
 
 export interface IProjectMapper {
-  mapProject(project: Project): ProjectPayload;
-  mapProjects(payload: WithPagination<Project>): MappedProject;
+  mapProject(project: FlatProject): ProjectPayload;
+  mapProjects(payload: WithPagination<FlatProject>): MappedProject;
 }
 
 export interface IProjectDeleteStrategy {
   softDelete(
     ref: IProjectRef,
     payload: RequiredField<Partial<IProject>, 'active'>,
-  ): Promise<Project>;
+  ): Promise<FlatProject>;
   hardDelete(ref: IProjectRef): Promise<void>;
 }

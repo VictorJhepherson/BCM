@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { BaseRepository } from '@shared/core';
 import {
+  FlatProject,
   IProject,
   IProjectFilter,
   IProjectRef,
@@ -27,13 +28,13 @@ export class ProjectRepository
     super('[projects]', logger);
   }
 
-  async findOne(ref: IProjectRef): Promise<Project | null> {
+  async findOne(ref: IProjectRef): Promise<FlatProject | null> {
     return this.execute({
-      fn: () => this.model.findOne(ref).exec(),
+      fn: () => this.model.findOne(ref).lean<FlatProject>().exec(),
     });
   }
 
-  async findMany(filter: IProjectFilter): Promise<WithPagination<Project>> {
+  async findMany(filter: IProjectFilter): Promise<WithPagination<FlatProject>> {
     const { sort, pagination } = filter;
 
     return this.execute({
@@ -45,6 +46,7 @@ export class ProjectRepository
             .sort({ [sort.by]: sort.order === 'ASC' ? 1 : -1 })
             .skip(pagination.skip)
             .limit(pagination.limit)
+            .lean<FlatProject[]>()
             .exec(),
         ]);
 
@@ -63,11 +65,12 @@ export class ProjectRepository
     ref: IProjectRef,
     payload: Partial<IProject>,
     options?: IQueryOptions,
-  ): Promise<Project | null> {
+  ): Promise<FlatProject | null> {
     return this.execute({
       fn: () =>
         this.model
           .findOneAndUpdate(ref, payload, { new: true, ...options })
+          .lean<FlatProject>()
           .exec(),
     });
   }
