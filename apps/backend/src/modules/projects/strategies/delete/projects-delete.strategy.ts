@@ -52,7 +52,7 @@ export class ProjectDeleteStrategy
 
         const { matchedCount, modifiedCount } =
           await this.translation.updateMany(
-            { language: ref._id },
+            { project: ref._id },
             { active: payload.active },
             { session },
           );
