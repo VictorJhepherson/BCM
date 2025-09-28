@@ -11,7 +11,7 @@ import { TranslationRepository } from '../translations/repositories/translations
 import { LanguageController } from './controllers/languages.controller';
 import { LanguageRepository } from './repositories/languages.repository';
 import { LanguageService } from './services/languages.service';
-import { LanguageStrategy } from './strategies/languages.strategy';
+import { LanguageDeleteStrategy } from './strategies';
 
 @Module({
   imports: [
@@ -24,8 +24,8 @@ import { LanguageStrategy } from './strategies/languages.strategy';
   providers: [
     LoggerProvider,
     LanguageService,
-    LanguageStrategy,
     LanguageRepository,
+    LanguageDeleteStrategy,
     TranslationRepository,
   ],
 })

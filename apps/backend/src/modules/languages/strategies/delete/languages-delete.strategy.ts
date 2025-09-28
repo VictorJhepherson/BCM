@@ -8,20 +8,20 @@ import { BaseStrategy } from '@shared/core';
 import { format } from '@shared/helpers';
 import {
   ILanguage,
+  ILanguageDeleteStrategy,
   ILanguageRef,
-  ILanguageStrategy,
   Language,
   RequiredField,
 } from '@shared/models';
 import { Connection } from 'mongoose';
-import { LoggerProvider } from '../../../providers';
-import { TranslationRepository } from '../../translations/repositories/translations.repository';
-import { LanguageRepository } from '../repositories/languages.repository';
+import { LoggerProvider } from '../../../../providers';
+import { TranslationRepository } from '../../../translations/repositories/translations.repository';
+import { LanguageRepository } from '../../repositories/languages.repository';
 
 @Injectable()
-export class LanguageStrategy
+export class LanguageDeleteStrategy
   extends BaseStrategy
-  implements ILanguageStrategy
+  implements ILanguageDeleteStrategy
 {
   constructor(
     logger: LoggerProvider,

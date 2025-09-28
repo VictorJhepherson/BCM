@@ -10,10 +10,10 @@ import {
   MockPropsOf,
 } from '@shared/testing';
 import { Connection } from 'mongoose';
-import { LoggerProvider } from '../../../providers';
-import { TranslationRepository } from '../../translations/repositories/translations.repository';
-import { LanguageRepository } from '../repositories/languages.repository';
-import { LanguageStrategy } from './languages.strategy';
+import { LoggerProvider } from '../../../../providers';
+import { TranslationRepository } from '../../../translations/repositories/translations.repository';
+import { LanguageRepository } from '../../repositories/languages.repository';
+import { LanguageDeleteStrategy } from './languages-delete.strategy';
 
 const { mockConnection } = mockHelpers.mongo.getMocks();
 
@@ -21,10 +21,10 @@ const { ref, body, data } = new MockDataFactory<LanguageMock>(
   mockData.factory.language,
 ).build();
 
-describe('[strategies] - LanguageStrategy', () => {
+describe('[strategies] - LanguageDeleteStrategy', () => {
   const context = {} as MockPropsOf<
     'strategy',
-    LanguageStrategy,
+    LanguageDeleteStrategy,
     {
       logger: LoggerProvider;
       connection: Connection;
@@ -36,7 +36,7 @@ describe('[strategies] - LanguageStrategy', () => {
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
-        LanguageStrategy,
+        LanguageDeleteStrategy,
         {
           provide: LoggerProvider,
           useFactory: () =>
@@ -73,7 +73,7 @@ describe('[strategies] - LanguageStrategy', () => {
       ],
     }).compile();
 
-    context.strategy = moduleRef.get(LanguageStrategy);
+    context.strategy = moduleRef.get(LanguageDeleteStrategy);
     context.others = {
       logger: moduleRef.get(LoggerProvider),
       connection: moduleRef.get(getConnectionToken()),

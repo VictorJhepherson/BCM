@@ -17,7 +17,7 @@ import {
   LanguageMapperType,
 } from '../mappers/languages.mapper';
 import { LanguageRepository } from '../repositories/languages.repository';
-import { LanguageStrategy } from '../strategies/languages.strategy';
+import { LanguageDeleteStrategy } from '../strategies';
 
 @Injectable()
 export class LanguageService
@@ -26,8 +26,8 @@ export class LanguageService
 {
   constructor(
     logger: LoggerProvider,
-    private readonly strategy: LanguageStrategy,
     private readonly repository: LanguageRepository,
+    private readonly deleteStrategy: LanguageDeleteStrategy,
   ) {
     super('[languages]', logger, new LanguageMapper());
   }
@@ -86,13 +86,13 @@ export class LanguageService
     payload: RequiredField<Partial<ILanguage>, 'active'>,
   ): Promise<Language> {
     return this.execute({
-      fn: () => this.strategy.softDelete(ref, payload),
+      fn: () => this.deleteStrategy.softDelete(ref, payload),
     });
   }
 
   async deleteLanguage(ref: ILanguageRef): Promise<void> {
     return this.execute({
-      fn: () => this.strategy.hardDelete(ref),
+      fn: () => this.deleteStrategy.hardDelete(ref),
     });
   }
 }

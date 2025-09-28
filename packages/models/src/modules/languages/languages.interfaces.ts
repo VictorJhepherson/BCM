@@ -72,7 +72,7 @@ export interface ILanguageMapper {
   mapLanguages(payload: WithPagination<Language>): MappedLanguage;
 }
 
-export interface ILanguageStrategy {
+export interface ILanguageDeleteStrategy {
   softDelete(
     ref: ILanguageRef,
     payload: RequiredField<Partial<ILanguage>, 'active'>,

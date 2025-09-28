@@ -9,7 +9,7 @@ import {
 } from '@shared/testing';
 import { LoggerProvider } from '../../../providers';
 import { LanguageRepository } from '../repositories/languages.repository';
-import { LanguageStrategy } from '../strategies/languages.strategy';
+import { LanguageDeleteStrategy } from '../strategies';
 import { LanguageService } from './languages.service';
 
 jest.mock('../mappers/languages.mapper', () => ({
@@ -29,8 +29,8 @@ describe('[services] - LanguageService', () => {
     'service',
     LanguageService,
     {
-      strategy: LanguageStrategy;
       repository: LanguageRepository;
+      deleteStrategy: LanguageDeleteStrategy;
     }
   >;
 
@@ -49,14 +49,6 @@ describe('[services] - LanguageService', () => {
               .build(),
         },
         {
-          provide: LanguageStrategy,
-          useFactory: () =>
-            new MockMethodFactory<LanguageStrategy>()
-              .add('softDelete', jest.fn())
-              .add('hardDelete', jest.fn())
-              .build(),
-        },
-        {
           provide: LanguageRepository,
           useFactory: () =>
             new MockMethodFactory<LanguageRepository>()
@@ -67,13 +59,21 @@ describe('[services] - LanguageService', () => {
               .add('deleteOne', jest.fn())
               .build(),
         },
+        {
+          provide: LanguageDeleteStrategy,
+          useFactory: () =>
+            new MockMethodFactory<LanguageDeleteStrategy>()
+              .add('softDelete', jest.fn())
+              .add('hardDelete', jest.fn())
+              .build(),
+        },
       ],
     }).compile();
 
     context.service = moduleRef.get(LanguageService);
     context.others = {
-      strategy: moduleRef.get(LanguageStrategy),
       repository: moduleRef.get(LanguageRepository),
+      deleteStrategy: moduleRef.get(LanguageDeleteStrategy),
     };
   });
 
@@ -185,7 +185,9 @@ describe('[services] - LanguageService', () => {
 
   describe('[archiveLanguage]', () => {
     it('[success] - should archive a language', async () => {
-      (context.others.strategy.softDelete as jest.Mock).mockResolvedValue(data);
+      (context.others.deleteStrategy.softDelete as jest.Mock).mockResolvedValue(
+        data,
+      );
 
       expect(await context.service.archiveLanguage(ref, body.archive)).toEqual(
         data,
@@ -193,7 +195,7 @@ describe('[services] - LanguageService', () => {
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.others.strategy.softDelete as jest.Mock).mockRejectedValue(
+      (context.others.deleteStrategy.softDelete as jest.Mock).mockRejectedValue(
         new Error('REPOSITORY ERROR'),
       );
 
@@ -205,7 +207,7 @@ describe('[services] - LanguageService', () => {
 
   describe('[deleteLanguage]', () => {
     it('[success] - should delete a language', async () => {
-      (context.others.strategy.hardDelete as jest.Mock).mockResolvedValue(
+      (context.others.deleteStrategy.hardDelete as jest.Mock).mockResolvedValue(
         undefined,
       );
 
@@ -213,7 +215,7 @@ describe('[services] - LanguageService', () => {
     });
 
     it('[failure] - should handle an error', async () => {
-      (context.others.strategy.hardDelete as jest.Mock).mockRejectedValue(
+      (context.others.deleteStrategy.hardDelete as jest.Mock).mockRejectedValue(
         new Error('REPOSITORY ERROR'),
       );
 
