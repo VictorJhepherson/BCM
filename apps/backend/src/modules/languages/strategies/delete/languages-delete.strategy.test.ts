@@ -129,7 +129,9 @@ describe('[strategies] - LanguageDeleteStrategy', () => {
 
       await expect(
         context.strategy.softDelete(ref, body.archive),
-      ).rejects.toThrow(`Unable to find a language for: ${format.base(ref)}`);
+      ).rejects.toThrow(
+        `Unable to archive a language for: ${format.base(ref)}`,
+      );
     });
 
     it('[edge-case][updateMany] - should failed to archive translations', async () => {

@@ -46,7 +46,7 @@ export class LanguageDeleteStrategy
 
         if (!updated) {
           throw new NotFoundException({
-            message: `Unable to find a language for: ${format.base(ref)}`,
+            message: `Unable to archive a language for: ${format.base(ref)}`,
           });
         }
 
