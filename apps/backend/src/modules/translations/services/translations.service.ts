@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { BaseService } from '@shared/core';
 import { format } from '@shared/helpers';
 import {
+  FlatTranslation,
   ITranslation,
   ITranslationFilter,
   ITranslationRef,
@@ -62,7 +63,7 @@ export class TranslationService
   async editTranslation(
     ref: ITranslationRef,
     payload: Partial<ITranslation>,
-  ): Promise<Translation> {
+  ): Promise<FlatTranslation> {
     return this.execute({
       fn: async () => {
         const updated = await this.repository.updateOne(ref, payload);

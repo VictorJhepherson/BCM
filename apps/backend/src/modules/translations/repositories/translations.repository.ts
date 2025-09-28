@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { BaseRepository } from '@shared/core';
 import {
+  FlatTranslation,
   IQueryOptions,
   ITranslation,
   ITranslationFilter,
@@ -72,9 +73,13 @@ export class TranslationRepository
   async updateOne(
     ref: ITranslationRef,
     payload: Partial<ITranslation>,
-  ): Promise<Translation | null> {
+  ): Promise<FlatTranslation | null> {
     return this.execute({
-      fn: () => this.model.findOneAndUpdate(ref, payload, { new: true }).exec(),
+      fn: () =>
+        this.model
+          .findOneAndUpdate(ref, payload, { new: true })
+          .lean<FlatTranslation>()
+          .exec(),
     });
   }
 

@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import { FlattenMaps, Require_id, Types } from 'mongoose';
 import { GROUPS, SCOPES } from './common.constants';
 
 //#region ENUMS
@@ -67,4 +67,9 @@ export type RequiredField<T, K extends keyof T> = Omit<T, K> &
   Required<Pick<T, K>>;
 
 export type PromiseFn<T> = () => Promise<T>;
+
+export type WithLean<T> = FlattenMaps<Require_id<T>> & {
+  createdAt: Date;
+  updatedAt: Date;
+};
 //#endregion GENERICS

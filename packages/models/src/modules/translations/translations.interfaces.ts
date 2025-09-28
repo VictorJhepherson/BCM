@@ -7,6 +7,7 @@ import {
   TranslationRefDTO,
 } from './translations.dtos';
 import {
+  FlatTranslation,
   MappedTranslation,
   PopulateTranslation,
   Translation,
@@ -35,7 +36,7 @@ export interface ITranslationController {
   editTranslation(
     params: TranslationRefDTO,
     body: TranslationEditDTO,
-  ): Promise<Translation>;
+  ): Promise<FlatTranslation>;
   deleteTranslation(params: TranslationRefDTO): Promise<void>;
 }
 
@@ -46,7 +47,7 @@ export interface ITranslationService {
   editTranslation(
     ref: ITranslationRef,
     payload: Partial<ITranslation>,
-  ): Promise<Translation>;
+  ): Promise<FlatTranslation>;
   deleteTranslation(ref: ITranslationRef): Promise<void>;
 }
 
@@ -59,7 +60,7 @@ export interface ITranslationRepository {
   updateOne(
     ref: ITranslationRef,
     payload: Partial<ITranslation>,
-  ): Promise<Translation | null>;
+  ): Promise<FlatTranslation | null>;
   updateMany(
     ref: Partial<ITranslationRef>,
     payload: Partial<ITranslation>,

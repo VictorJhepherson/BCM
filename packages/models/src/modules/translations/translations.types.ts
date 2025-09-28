@@ -1,9 +1,11 @@
 import { HydratedDocument, Types } from 'mongoose';
-import { ITranslation, MongoPayload, WithPagination } from '../..';
+import { ITranslation, MongoPayload, WithLean, WithPagination } from '../..';
 import { TranslationEntity } from './translations.schemas';
 
 export type Translation = HydratedDocument<TranslationEntity>;
-export type PopulateTranslation = Omit<Translation, 'language'> & {
+export type FlatTranslation = WithLean<TranslationEntity>;
+
+export type PopulateTranslation = Omit<FlatTranslation, 'language'> & {
   language: { _id: Types.ObjectId; name: string };
 };
 

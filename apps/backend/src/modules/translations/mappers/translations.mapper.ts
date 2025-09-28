@@ -14,8 +14,8 @@ export class TranslationMapper implements ITranslationMapper {
       active: translation.active,
       language: translation.language.name,
       translations: translation.translations,
-      createdAt: translation.get('createdAt'),
-      updatedAt: translation.get('updatedAt'),
+      createdAt: translation.createdAt,
+      updatedAt: translation.updatedAt,
     };
   }
 

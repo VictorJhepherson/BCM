@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { BaseController } from '@shared/core';
 import {
+  FlatTranslation,
   ITranslationController,
   MappedTranslation,
   Translation,
@@ -83,7 +84,7 @@ export class TranslationController
   async editTranslation(
     @Param() params: TranslationRefDTO,
     @Body() body: TranslationEditDTO,
-  ): Promise<Translation> {
+  ): Promise<FlatTranslation> {
     return this.execute({
       fn: () => this.service.editTranslation(params, body),
     });
