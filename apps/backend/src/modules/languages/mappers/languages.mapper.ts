@@ -3,7 +3,6 @@ import {
   ILanguageMapper,
   LanguagePayload,
   MappedLanguage,
-  Mappers,
   WithPagination,
 } from '@shared/models';
 
@@ -32,5 +31,3 @@ export class LanguageMapper implements ILanguageMapper {
     };
   }
 }
-
-export type LanguageMapperType = Mappers<LanguageMapper>;

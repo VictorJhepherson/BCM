@@ -7,10 +7,8 @@ const objectId = new Types.ObjectId();
 const mongo = {
   _id: objectId,
   id: objectId.toHexString(),
-  get: (key: string) => {
-    if (key === 'createdAt') return new Date('2025-09-26T19:00:00.000Z');
-    if (key === 'updatedAt') return new Date('2025-09-26T19:00:00.000Z');
-  },
+  createdAt: new Date('2025-09-26T19:00:00.000Z'),
+  updatedAt: new Date('2025-09-26T19:00:00.000Z'),
 };
 
 const sort: MockSort = {

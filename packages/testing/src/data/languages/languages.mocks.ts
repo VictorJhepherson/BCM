@@ -26,9 +26,10 @@ const body: LanguageMockBody = {
 
 const data: LanguageMockData = {
   _id: values.mongo._id,
-  get: values.mongo.get,
   name: values.language.name,
   active: values.language.active,
+  createdAt: values.mongo.createdAt,
+  updatedAt: values.mongo.updatedAt,
 };
 
 const filter: LanguageMockFilter = {

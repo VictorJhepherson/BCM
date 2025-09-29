@@ -1,9 +1,9 @@
 import {
+  FlatProject,
   IPagination,
   IProject,
   IProjectFilter,
   IProjectRef,
-  Project,
   RequiredField,
 } from '@shared/models';
 import { DataMock } from '../common/common.mocks.types';
@@ -16,7 +16,7 @@ export type ProjectMockBody = {
   archive: RequiredField<Partial<IProject>, 'active'>;
 };
 
-export type ProjectMockData = Partial<Project>;
+export type ProjectMockData = Partial<FlatProject>;
 
 export type ProjectMockFilter = IProjectFilter & IPagination;
 

@@ -13,13 +13,13 @@ import {
   RequiredField,
 } from '@shared/models';
 import { LoggerProvider } from '../../../providers';
-import { ProjectMapper, ProjectMapperType } from '../mappers/projects.mapper';
+import { ProjectMapper } from '../mappers/projects.mapper';
 import { ProjectRepository } from '../repositories/projects.repository';
 import { ProjectDeleteStrategy } from '../strategies';
 
 @Injectable()
 export class ProjectService
-  extends BaseService<ProjectMapperType>
+  extends BaseService<ProjectMapper>
   implements IProjectService
 {
   constructor(

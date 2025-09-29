@@ -1,9 +1,9 @@
 import {
+  FlatLanguage,
   ILanguage,
   ILanguageFilter,
   ILanguageRef,
   IPagination,
-  Language,
   RequiredField,
 } from '@shared/models';
 import { DataMock } from '../common/common.mocks.types';
@@ -16,7 +16,7 @@ export type LanguageMockBody = {
   archive: RequiredField<Partial<ILanguage>, 'active'>;
 };
 
-export type LanguageMockData = Partial<Language>;
+export type LanguageMockData = Partial<FlatLanguage>;
 
 export type LanguageMockFilter = ILanguageFilter & IPagination;
 

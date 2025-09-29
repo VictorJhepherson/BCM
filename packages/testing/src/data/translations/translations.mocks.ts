@@ -26,11 +26,12 @@ const body: TranslationMockBody = {
 
 const data: TranslationMockData = {
   _id: values.mongo._id,
-  get: values.mongo.get,
   active: values.translation.active,
   project: values.translation.project,
   language: values.translation.language,
   translations: values.translation.translations,
+  createdAt: values.mongo.createdAt,
+  updatedAt: values.mongo.updatedAt,
 };
 
 const filter: TranslationMockFilter = {

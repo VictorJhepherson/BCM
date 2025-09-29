@@ -7,9 +7,3 @@ export type MapProps<M, K extends keyof M> = {
 };
 
 export type MapReturn<M, K extends keyof M> = MapRet<M[K]>;
-
-export type Mappers<T> = {
-  [K in keyof T]: T[K] extends (arg: infer A) => infer R
-    ? (arg: A) => R
-    : never;
-};

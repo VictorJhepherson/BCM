@@ -1,9 +1,9 @@
 import {
+  FlatTranslation,
   IPagination,
   ITranslation,
   ITranslationFilter,
   ITranslationRef,
-  Translation,
 } from '@shared/models';
 import { DataMock } from '../common/common.mocks.types';
 
@@ -14,7 +14,7 @@ export type TranslationMockBody = {
   edit: Partial<ITranslation>;
 };
 
-export type TranslationMockData = Partial<Translation>;
+export type TranslationMockData = Partial<FlatTranslation>;
 
 export type TranslationMockFilter = ITranslationFilter & IPagination;
 

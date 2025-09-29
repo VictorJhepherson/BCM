@@ -34,8 +34,8 @@ describe('[mappers] - TranslationMapper', () => {
         active: data.active,
         language: data.language.name,
         translations: data.translations,
-        createdAt: data.get('createdAt'),
-        updatedAt: data.get('updatedAt'),
+        createdAt: data.createdAt,
+        updatedAt: data.updatedAt,
       });
     });
   });
@@ -55,8 +55,8 @@ describe('[mappers] - TranslationMapper', () => {
             active: data.active,
             language: data.language.name,
             translations: data.translations,
-            createdAt: data.get('createdAt'),
-            updatedAt: data.get('updatedAt'),
+            createdAt: data.createdAt,
+            updatedAt: data.updatedAt,
           },
         ]),
         sort: { by: sort.by, order: sort.order },

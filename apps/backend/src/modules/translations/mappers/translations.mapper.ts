@@ -1,7 +1,6 @@
 import {
   ITranslationMapper,
   MappedTranslation,
-  Mappers,
   PopulateTranslation,
   TranslationPayload,
   WithPagination,
@@ -37,5 +36,3 @@ export class TranslationMapper implements ITranslationMapper {
     };
   }
 }
-
-export type TranslationMapperType = Mappers<TranslationMapper>;

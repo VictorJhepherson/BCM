@@ -27,10 +27,11 @@ const body: ProjectMockBody = {
 
 const data: ProjectMockData = {
   _id: values.mongo._id,
-  get: values.mongo.get,
   name: values.project.name,
   active: values.project.active,
   description: values.project.description,
+  createdAt: values.mongo.createdAt,
+  updatedAt: values.mongo.updatedAt,
 };
 
 const filter: ProjectMockFilter = {

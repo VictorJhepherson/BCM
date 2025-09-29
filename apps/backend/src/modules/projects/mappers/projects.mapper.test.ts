@@ -1,4 +1,4 @@
-import { Project } from '@shared/models';
+import { FlatProject } from '@shared/models';
 import {
   MockDataFactory,
   MockPropsOf,
@@ -11,7 +11,7 @@ const sort = mockData.values.filter.sort;
 const pagination = mockData.values.filter.pagination;
 
 const { data } = new MockDataFactory<ProjectMock>(mockData.factory.project)
-  .select<'data', Required<Project>>('data')
+  .select<'data', Required<FlatProject>>('data')
   .build();
 
 describe('[mappers] - ProjectMapper', () => {
@@ -28,8 +28,8 @@ describe('[mappers] - ProjectMapper', () => {
         name: data.name,
         active: data.active,
         description: data.description,
-        createdAt: data.get('createdAt'),
-        updatedAt: data.get('updatedAt'),
+        createdAt: data.createdAt,
+        updatedAt: data.updatedAt,
       });
     });
   });
@@ -49,8 +49,8 @@ describe('[mappers] - ProjectMapper', () => {
             name: data.name,
             active: data.active,
             description: data.description,
-            createdAt: data.get('createdAt'),
-            updatedAt: data.get('updatedAt'),
+            createdAt: data.createdAt,
+            updatedAt: data.updatedAt,
           },
         ]),
         sort: { by: sort.by, order: sort.order },

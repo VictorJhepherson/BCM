@@ -12,15 +12,12 @@ import {
   TranslationPayload,
 } from '@shared/models';
 import { LoggerProvider } from '../../../providers';
-import {
-  TranslationMapper,
-  TranslationMapperType,
-} from '../mappers/translations.mapper';
+import { TranslationMapper } from '../mappers/translations.mapper';
 import { TranslationRepository } from '../repositories/translations.repository';
 
 @Injectable()
 export class TranslationService
-  extends BaseService<TranslationMapperType>
+  extends BaseService<TranslationMapper>
   implements ITranslationService
 {
   constructor(

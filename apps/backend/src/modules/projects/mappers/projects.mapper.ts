@@ -2,7 +2,6 @@ import {
   FlatProject,
   IProjectMapper,
   MappedProject,
-  Mappers,
   ProjectPayload,
   WithPagination,
 } from '@shared/models';
@@ -33,5 +32,3 @@ export class ProjectMapper implements IProjectMapper {
     };
   }
 }
-
-export type ProjectMapperType = Mappers<ProjectMapper>;

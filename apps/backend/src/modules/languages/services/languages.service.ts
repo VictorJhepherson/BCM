@@ -13,16 +13,13 @@ import {
   RequiredField,
 } from '@shared/models';
 import { LoggerProvider } from '../../../providers';
-import {
-  LanguageMapper,
-  LanguageMapperType,
-} from '../mappers/languages.mapper';
+import { LanguageMapper } from '../mappers/languages.mapper';
 import { LanguageRepository } from '../repositories/languages.repository';
 import { LanguageDeleteStrategy } from '../strategies';
 
 @Injectable()
 export class LanguageService
-  extends BaseService<LanguageMapperType>
+  extends BaseService<LanguageMapper>
   implements ILanguageService
 {
   constructor(
