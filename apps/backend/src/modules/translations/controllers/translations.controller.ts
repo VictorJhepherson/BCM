@@ -12,15 +12,14 @@ import {
 } from '@nestjs/common';
 import { BaseController } from '@shared/core';
 import {
-  FlatTranslation,
   ITranslationController,
   MappedTranslation,
   Translation,
   TranslationAddDTO,
   TranslationEditDTO,
   TranslationFilterDTO,
-  TranslationPayload,
   TranslationRefDTO,
+  WithPagination,
 } from '@shared/models';
 import { Groups, Scopes } from '../../../decorators';
 import { PaginationPipe } from '../../../pipes';
@@ -46,7 +45,7 @@ export class TranslationController
   @Groups(['VIEWER', 'EDITOR', 'ADMIN'])
   async getAll(
     @Query(PaginationPipe) query: TranslationFilterDTO,
-  ): Promise<MappedTranslation> {
+  ): Promise<WithPagination<MappedTranslation>> {
     return this.execute({
       fn: () => this.service.getAll(query),
     });
@@ -59,7 +58,7 @@ export class TranslationController
   @Groups(['VIEWER', 'EDITOR', 'ADMIN'])
   async getById(
     @Param() params: TranslationRefDTO,
-  ): Promise<TranslationPayload> {
+  ): Promise<MappedTranslation> {
     return this.execute({
       fn: () => this.service.getById(params),
     });
@@ -84,7 +83,7 @@ export class TranslationController
   async editTranslation(
     @Param() params: TranslationRefDTO,
     @Body() body: TranslationEditDTO,
-  ): Promise<FlatTranslation> {
+  ): Promise<MappedTranslation> {
     return this.execute({
       fn: () => this.service.editTranslation(params, body),
     });

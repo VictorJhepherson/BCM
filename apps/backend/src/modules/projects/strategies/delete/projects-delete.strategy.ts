@@ -53,7 +53,7 @@ export class ProjectDeleteStrategy
           await this.translation.updateMany(
             { project: ref._id },
             { active: payload.active },
-            session,
+            { session },
           );
 
         if (matchedCount > 0 && modifiedCount < 1) {
@@ -83,7 +83,7 @@ export class ProjectDeleteStrategy
 
         const translations = await this.translation.deleteMany(
           { language: ref._id },
-          session,
+          { session },
         );
 
         if (translations.deletedCount < 1) {

@@ -6,7 +6,7 @@ export class MapBuilder<T, M> {
   constructor(
     private readonly mapper: M,
     private readonly parent: ExecutorBuilder<T>,
-    private readonly transformers: Transform[] = [],
+    private readonly transformers: Transform<any, any>[] = [],
   ) {}
 
   async build(): Promise<T> {

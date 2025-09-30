@@ -51,7 +51,7 @@ export class LanguageDeleteStrategy
           await this.translation.updateMany(
             { language: ref._id },
             { active: payload.active },
-            session,
+            { session },
           );
 
         if (matchedCount > 0 && modifiedCount < 1) {
@@ -81,7 +81,7 @@ export class LanguageDeleteStrategy
 
         const translations = await this.translation.deleteMany(
           { language: ref._id },
-          session,
+          { session },
         );
 
         if (translations.deletedCount < 1) {

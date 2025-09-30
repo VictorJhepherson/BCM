@@ -2,12 +2,11 @@ import {
   ITranslationMapper,
   MappedTranslation,
   PopulateTranslation,
-  TranslationPayload,
   WithPagination,
 } from '@shared/models';
 
 export class TranslationMapper implements ITranslationMapper {
-  mapTranslation(translation: PopulateTranslation): TranslationPayload {
+  mapTranslation(translation: PopulateTranslation): MappedTranslation {
     return {
       id: translation._id,
       active: translation.active,
@@ -20,7 +19,7 @@ export class TranslationMapper implements ITranslationMapper {
 
   mapTranslations(
     payload: WithPagination<PopulateTranslation>,
-  ): MappedTranslation {
+  ): WithPagination<MappedTranslation> {
     const { data, sort, pagination } = payload;
 
     return {
