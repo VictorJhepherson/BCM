@@ -118,7 +118,10 @@ export class LanguageService extends BaseService implements ILanguageService {
     return this.execute({
       fn: (builder) =>
         builder
-          .use(() => this.deleteStrategy.softDelete(ref, payload))
+          .use((session) =>
+            this.deleteStrategy.softDelete(ref, payload, { session }),
+          )
+          .withConnection(this.connection)
           .withMapper(this.mapper)
           .map({ key: 'mapLanguage' })
           .build(),
@@ -130,7 +133,7 @@ export class LanguageService extends BaseService implements ILanguageService {
       fn: (builder) =>
         builder
           .use((session) => this.deleteStrategy.hardDelete(ref, { session }))
-          .withTransaction(this.connection)
+          .withConnection(this.connection)
           .build(),
     });
   }

@@ -11,6 +11,7 @@ import {
   IProject,
   IProjectDeleteStrategy,
   IProjectRef,
+  IQueryOptions,
   RequiredField,
 } from '@shared/models';
 import { Connection } from 'mongoose';
@@ -36,11 +37,11 @@ export class ProjectDeleteStrategy
   async softDelete(
     ref: IProjectRef,
     payload: RequiredField<Partial<IProject>, 'active'>,
+    { session }: IQueryOptions = {},
   ): Promise<FlatProject> {
     return this.execute({
-      connection: this.connection,
-      fn: async (session) => {
-        const updated = await this.project.updateOne(ref, payload, session);
+      fn: async () => {
+        const updated = await this.project.updateOne(ref, payload, { session });
 
         if (!updated) {
           throw new NotFoundException({
@@ -66,11 +67,13 @@ export class ProjectDeleteStrategy
     });
   }
 
-  async hardDelete(ref: IProjectRef): Promise<void> {
+  async hardDelete(
+    ref: IProjectRef,
+    { session }: IQueryOptions = {},
+  ): Promise<void> {
     return this.execute({
-      connection: this.connection,
-      fn: async (session) => {
-        const deleted = await this.project.deleteOne(ref, session);
+      fn: async () => {
+        const deleted = await this.project.deleteOne(ref, { session });
 
         if (deleted.deletedCount < 1) {
           throw new NotFoundException({

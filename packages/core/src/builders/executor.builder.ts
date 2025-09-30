@@ -23,7 +23,7 @@ export class ExecutorBuilder<T> {
     return new MapBuilder<T, M>(mapper, this);
   }
 
-  withTransaction(connection: Connection): this {
+  withConnection(connection: Connection): this {
     this.connection = connection;
     return this;
   }
