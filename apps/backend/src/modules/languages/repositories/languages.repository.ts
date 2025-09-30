@@ -7,11 +7,12 @@ import {
   ILanguageFilter,
   ILanguageRef,
   ILanguageRepository,
+  IQueryOptions,
   Language,
   LanguageEntity,
   WithPagination,
 } from '@shared/models';
-import { ClientSession, DeleteResult, Model } from 'mongoose';
+import { DeleteResult, Model } from 'mongoose';
 import { LoggerProvider } from '../../../providers';
 
 @Injectable()
@@ -65,7 +66,7 @@ export class LanguageRepository
   async updateOne(
     ref: ILanguageRef,
     payload: Partial<ILanguage>,
-    session?: ClientSession,
+    { session }: IQueryOptions = {},
   ): Promise<FlatLanguage | null> {
     return this.execute({
       fn: () =>
@@ -78,7 +79,7 @@ export class LanguageRepository
 
   async deleteOne(
     ref: ILanguageRef,
-    session?: ClientSession,
+    { session }: IQueryOptions = {},
   ): Promise<DeleteResult> {
     return this.execute({
       fn: () => this.model.deleteOne(ref, { session }).exec(),

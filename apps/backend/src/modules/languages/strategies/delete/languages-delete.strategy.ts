@@ -3,7 +3,6 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { InjectConnection } from '@nestjs/mongoose';
 import { BaseStrategy } from '@shared/core';
 import { format } from '@shared/helpers';
 import {
@@ -11,9 +10,9 @@ import {
   ILanguage,
   ILanguageDeleteStrategy,
   ILanguageRef,
+  IQueryOptions,
   RequiredField,
 } from '@shared/models';
-import { Connection } from 'mongoose';
 import { LoggerProvider } from '../../../../providers';
 import { TranslationRepository } from '../../../translations/repositories/translations.repository';
 import { LanguageRepository } from '../../repositories/languages.repository';
@@ -25,8 +24,6 @@ export class LanguageDeleteStrategy
 {
   constructor(
     logger: LoggerProvider,
-    @InjectConnection()
-    private readonly connection: Connection,
     private readonly language: LanguageRepository,
     private readonly translation: TranslationRepository,
   ) {
@@ -36,11 +33,13 @@ export class LanguageDeleteStrategy
   async softDelete(
     ref: ILanguageRef,
     payload: RequiredField<Partial<ILanguage>, 'active'>,
+    { session }: IQueryOptions = {},
   ): Promise<FlatLanguage> {
     return this.execute({
-      connection: this.connection,
-      fn: async (session) => {
-        const updated = await this.language.updateOne(ref, payload, session);
+      fn: async () => {
+        const updated = await this.language.updateOne(ref, payload, {
+          session,
+        });
 
         if (!updated) {
           throw new NotFoundException({
@@ -66,11 +65,13 @@ export class LanguageDeleteStrategy
     });
   }
 
-  async hardDelete(ref: ILanguageRef): Promise<void> {
+  async hardDelete(
+    ref: ILanguageRef,
+    { session }: IQueryOptions = {},
+  ): Promise<void> {
     return this.execute({
-      connection: this.connection,
-      fn: async (session) => {
-        const deleted = await this.language.deleteOne(ref, session);
+      fn: async () => {
+        const deleted = await this.language.deleteOne(ref, { session });
 
         if (deleted.deletedCount < 1) {
           throw new NotFoundException({

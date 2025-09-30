@@ -1,5 +1,10 @@
-import { ClientSession, DeleteResult, Types } from 'mongoose';
-import { IPaginationFilter, RequiredField, WithPagination } from '../..';
+import { DeleteResult, Types } from 'mongoose';
+import {
+  IPaginationFilter,
+  IQueryOptions,
+  RequiredField,
+  WithPagination,
+} from '../..';
 import {
   LanguageAddDTO,
   LanguageArchiveDTO,
@@ -7,12 +12,7 @@ import {
   LanguageFilterDTO,
   LanguageRefDTO,
 } from './languages.dtos';
-import {
-  FlatLanguage,
-  Language,
-  LanguagePayload,
-  MappedLanguage,
-} from './languages.types';
+import { FlatLanguage, Language, MappedLanguage } from './languages.types';
 
 export interface ILanguage {
   name: string;
@@ -26,32 +26,32 @@ export interface ILanguageRef {
 export interface ILanguageFilter extends IPaginationFilter {}
 
 export interface ILanguageController {
-  getAll(query: LanguageFilterDTO): Promise<MappedLanguage>;
-  getById(params: LanguageRefDTO): Promise<LanguagePayload>;
+  getAll(query: LanguageFilterDTO): Promise<WithPagination<MappedLanguage>>;
+  getById(params: LanguageRefDTO): Promise<MappedLanguage>;
   addLanguage(body: LanguageAddDTO): Promise<Language>;
   editLanguage(
     params: LanguageRefDTO,
     body: LanguageEditDTO,
-  ): Promise<FlatLanguage>;
+  ): Promise<MappedLanguage>;
   archiveLanguage(
     params: LanguageRefDTO,
     body: LanguageArchiveDTO,
-  ): Promise<FlatLanguage>;
+  ): Promise<MappedLanguage>;
   deleteLanguage(params: LanguageRefDTO): Promise<void>;
 }
 
 export interface ILanguageService {
-  getAll(filter: ILanguageFilter): Promise<MappedLanguage>;
-  getById(ref: ILanguageRef): Promise<LanguagePayload>;
+  getAll(filter: ILanguageFilter): Promise<WithPagination<MappedLanguage>>;
+  getById(ref: ILanguageRef): Promise<MappedLanguage>;
   addLanguage(payload: ILanguage): Promise<Language>;
   editLanguage(
     ref: ILanguageRef,
     payload: Partial<ILanguage>,
-  ): Promise<FlatLanguage>;
+  ): Promise<MappedLanguage>;
   archiveLanguage(
     ref: ILanguageRef,
     payload: RequiredField<Partial<ILanguage>, 'active'>,
-  ): Promise<FlatLanguage>;
+  ): Promise<MappedLanguage>;
   deleteLanguage(ref: ILanguageRef): Promise<void>;
 }
 
@@ -62,20 +62,23 @@ export interface ILanguageRepository {
   updateOne(
     ref: ILanguageRef,
     payload: Partial<ILanguage>,
-    session?: ClientSession,
+    options?: IQueryOptions,
   ): Promise<FlatLanguage | null>;
-  deleteOne(ref: ILanguageRef, session?: ClientSession): Promise<DeleteResult>;
+  deleteOne(ref: ILanguageRef, options?: IQueryOptions): Promise<DeleteResult>;
 }
 
 export interface ILanguageMapper {
-  mapLanguage(language: FlatLanguage): LanguagePayload;
-  mapLanguages(payload: WithPagination<FlatLanguage>): MappedLanguage;
+  mapLanguage(language: FlatLanguage): MappedLanguage;
+  mapLanguages(
+    payload: WithPagination<FlatLanguage>,
+  ): WithPagination<MappedLanguage>;
 }
 
 export interface ILanguageDeleteStrategy {
   softDelete(
     ref: ILanguageRef,
     payload: RequiredField<Partial<ILanguage>, 'active'>,
+    options?: IQueryOptions,
   ): Promise<FlatLanguage>;
-  hardDelete(ref: ILanguageRef): Promise<void>;
+  hardDelete(ref: ILanguageRef, options?: IQueryOptions): Promise<void>;
 }

@@ -5,7 +5,7 @@ import { BuildOptions, ExecutorOptions } from './executor.builder.types';
 import { MapBuilder } from './mapper/mapper.builder';
 
 export class ExecutorBuilder<T> {
-  private fn: PromiseFn<T, ClientSession>;
+  private fn: PromiseFn<unknown, ClientSession>;
   private session: ClientSession;
   private connection: Connection;
 
@@ -14,7 +14,7 @@ export class ExecutorBuilder<T> {
     private readonly options: ExecutorOptions,
   ) {}
 
-  use(fn: PromiseFn<T, ClientSession>): this {
+  use<P>(fn: PromiseFn<P, ClientSession>): this {
     this.fn = fn;
     return this;
   }
@@ -47,7 +47,7 @@ export class ExecutorBuilder<T> {
       });
 
       if (this.session) this.session.commitTransaction();
-      return value;
+      return value as T;
     } catch (error) {
       if (this.session) this.session.abortTransaction();
 
