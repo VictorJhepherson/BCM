@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { BaseRepository } from '@shared/core';
 import {
   FlatTranslation,
-  IQueryOptions,
   ITranslation,
   ITranslationFilter,
   ITranslationRef,
@@ -13,7 +12,7 @@ import {
   TranslationEntity,
   WithPagination,
 } from '@shared/models';
-import { DeleteResult, Model, UpdateResult } from 'mongoose';
+import { ClientSession, DeleteResult, Model, UpdateResult } from 'mongoose';
 import { LoggerProvider } from '../../../providers';
 
 @Injectable()
@@ -73,11 +72,12 @@ export class TranslationRepository
   async updateOne(
     ref: ITranslationRef,
     payload: Partial<ITranslation>,
+    session?: ClientSession,
   ): Promise<FlatTranslation | null> {
     return this.execute({
       fn: () =>
         this.model
-          .findOneAndUpdate(ref, payload, { new: true })
+          .findOneAndUpdate(ref, payload, { new: true, session })
           .lean<FlatTranslation>()
           .exec(),
     });
@@ -86,25 +86,28 @@ export class TranslationRepository
   async updateMany(
     ref: Partial<ITranslationRef>,
     payload: Partial<ITranslation>,
-    options?: IQueryOptions,
+    session?: ClientSession,
   ): Promise<UpdateResult> {
     return this.execute({
-      fn: () => this.model.updateMany(ref, payload, options).exec(),
+      fn: () => this.model.updateMany(ref, payload, { session }).exec(),
     });
   }
 
-  async deleteOne(ref: ITranslationRef): Promise<DeleteResult> {
+  async deleteOne(
+    ref: ITranslationRef,
+    session?: ClientSession,
+  ): Promise<DeleteResult> {
     return this.execute({
-      fn: () => this.model.deleteOne(ref).exec(),
+      fn: () => this.model.deleteOne(ref, { session }).exec(),
     });
   }
 
   async deleteMany(
     ref: Partial<ITranslationRef>,
-    options?: IQueryOptions,
+    session?: ClientSession,
   ): Promise<DeleteResult> {
     return this.execute({
-      fn: () => this.model.deleteMany(ref, options).exec(),
+      fn: () => this.model.deleteMany(ref, { session }).exec(),
     });
   }
 }

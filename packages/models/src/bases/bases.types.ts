@@ -1,11 +1,10 @@
-import { ClientSession, Connection } from 'mongoose';
-import { PromiseFn } from '../common/common.types';
+import { ClientSession } from 'mongoose';
 
 export type ExecuteProps<T> = {
-  fn: PromiseFn<T>;
+  fn: (session?: ClientSession) => Promise<T>;
 };
 
 export type WithTransaction<T> = {
   fn: (session: ClientSession) => Promise<T>;
-  connection: Connection;
+  session: ClientSession;
 };

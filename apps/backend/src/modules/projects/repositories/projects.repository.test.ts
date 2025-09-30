@@ -65,7 +65,9 @@ describe('[repositories] - ProjectRepository', () => {
   describe('[findOne]', () => {
     it('[success] - should get a project', async () => {
       (context.others.model.findOne as jest.Mock).mockReturnValue({
-        exec: jest.fn().mockResolvedValue(data),
+        lean: jest.fn().mockReturnValue({
+          exec: jest.fn().mockResolvedValue(data),
+        }),
       });
 
       expect(await context.repository.findOne(ref)).toEqual(data);
@@ -73,7 +75,9 @@ describe('[repositories] - ProjectRepository', () => {
 
     it('[failure] - should handle an error', async () => {
       (context.others.model.findOne as jest.Mock).mockReturnValue({
-        exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
+        lean: jest.fn().mockReturnValue({
+          exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
+        }),
       });
 
       await expect(context.repository.findOne(ref)).rejects.toThrow(
@@ -92,7 +96,9 @@ describe('[repositories] - ProjectRepository', () => {
         sort: jest.fn().mockReturnValue({
           skip: jest.fn().mockReturnValue({
             limit: jest.fn().mockReturnValue({
-              exec: jest.fn().mockResolvedValue([data]),
+              lean: jest.fn().mockReturnValue({
+                exec: jest.fn().mockResolvedValue([data]),
+              }),
             }),
           }),
         }),
@@ -114,7 +120,9 @@ describe('[repositories] - ProjectRepository', () => {
         sort: jest.fn().mockReturnValue({
           skip: jest.fn().mockReturnValue({
             limit: jest.fn().mockReturnValue({
-              exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
+              lean: jest.fn().mockReturnValue({
+                exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
+              }),
             }),
           }),
         }),
@@ -147,7 +155,9 @@ describe('[repositories] - ProjectRepository', () => {
   describe('[updateOne]', () => {
     it('[success] - should edit a project', async () => {
       (context.others.model.findOneAndUpdate as jest.Mock).mockReturnValue({
-        exec: jest.fn().mockResolvedValue(data),
+        lean: jest.fn().mockReturnValue({
+          exec: jest.fn().mockResolvedValue(data),
+        }),
       });
 
       expect(await context.repository.updateOne(ref, body.edit)).toEqual(data);
@@ -155,7 +165,9 @@ describe('[repositories] - ProjectRepository', () => {
 
     it('[failure] - should handle an error', async () => {
       (context.others.model.findOneAndUpdate as jest.Mock).mockReturnValue({
-        exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
+        lean: jest.fn().mockReturnValue({
+          exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
+        }),
       });
 
       await expect(

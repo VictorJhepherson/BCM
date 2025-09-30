@@ -1,5 +1,5 @@
-import { DeleteResult, Types, UpdateResult } from 'mongoose';
-import { IPaginationFilter, IQueryOptions, WithPagination } from '../..';
+import { ClientSession, DeleteResult, Types, UpdateResult } from 'mongoose';
+import { IPaginationFilter, WithPagination } from '../..';
 import {
   TranslationAddDTO,
   TranslationEditDTO,
@@ -64,12 +64,15 @@ export interface ITranslationRepository {
   updateMany(
     ref: Partial<ITranslationRef>,
     payload: Partial<ITranslation>,
-    options?: IQueryOptions,
+    session?: ClientSession,
   ): Promise<UpdateResult>;
-  deleteOne(ref: ITranslationRef): Promise<DeleteResult>;
+  deleteOne(
+    ref: ITranslationRef,
+    session?: ClientSession,
+  ): Promise<DeleteResult>;
   deleteMany(
     ref: Partial<ITranslationRef>,
-    options?: IQueryOptions,
+    session?: ClientSession,
   ): Promise<DeleteResult>;
 }
 

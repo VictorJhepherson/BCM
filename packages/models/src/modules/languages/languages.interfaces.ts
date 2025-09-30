@@ -1,10 +1,5 @@
-import { DeleteResult, Types } from 'mongoose';
-import {
-  IPaginationFilter,
-  IQueryOptions,
-  RequiredField,
-  WithPagination,
-} from '../..';
+import { ClientSession, DeleteResult, Types } from 'mongoose';
+import { IPaginationFilter, RequiredField, WithPagination } from '../..';
 import {
   LanguageAddDTO,
   LanguageArchiveDTO,
@@ -67,9 +62,9 @@ export interface ILanguageRepository {
   updateOne(
     ref: ILanguageRef,
     payload: Partial<ILanguage>,
-    options?: IQueryOptions,
+    session?: ClientSession,
   ): Promise<FlatLanguage | null>;
-  deleteOne(ref: ILanguageRef, options?: IQueryOptions): Promise<DeleteResult>;
+  deleteOne(ref: ILanguageRef, session?: ClientSession): Promise<DeleteResult>;
 }
 
 export interface ILanguageMapper {

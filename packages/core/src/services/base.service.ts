@@ -38,11 +38,11 @@ export abstract class BaseService<M = never> {
       }
 
       const mapped = this.map({ key: mapKey, data: value as MapArg<M[K]> });
-      this.logger.info(this.referrer, { response: { value, mapped } });
+      this.logger.info(this.referrer, { response: { mapped } });
 
       return mapped;
     } catch (error) {
-      throw AppError.withLogger(this.logger, {
+      throw AppError.handler(this.logger, {
         referrer: this.referrer,
         error,
       });

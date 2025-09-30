@@ -35,13 +35,7 @@ export class AppError extends Error {
     return { status: 500, message: 'Internal Server Error' };
   }
 
-  static handler({ referrer, error }: AppErrorProps): void {
-    if (error instanceof AppError) throw error;
-
-    throw new AppError({ referrer, error });
-  }
-
-  static withLogger(
+  static handler(
     logger: ILoggerProvider,
     { referrer, error }: AppErrorProps,
   ): void {

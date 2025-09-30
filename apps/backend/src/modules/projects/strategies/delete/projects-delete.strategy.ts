@@ -26,7 +26,7 @@ export class ProjectDeleteStrategy
   constructor(
     logger: LoggerProvider,
     @InjectConnection()
-    private readonly conn: Connection,
+    private readonly connection: Connection,
     private readonly project: ProjectRepository,
     private readonly translation: TranslationRepository,
   ) {
@@ -37,12 +37,10 @@ export class ProjectDeleteStrategy
     ref: IProjectRef,
     payload: RequiredField<Partial<IProject>, 'active'>,
   ): Promise<FlatProject> {
-    return this.withTransaction({
-      connection: this.conn,
+    return this.execute({
+      connection: this.connection,
       fn: async (session) => {
-        const updated = await this.project.updateOne(ref, payload, {
-          session,
-        });
+        const updated = await this.project.updateOne(ref, payload, session);
 
         if (!updated) {
           throw new NotFoundException({
@@ -54,7 +52,7 @@ export class ProjectDeleteStrategy
           await this.translation.updateMany(
             { project: ref._id },
             { active: payload.active },
-            { session },
+            session,
           );
 
         if (matchedCount > 0 && modifiedCount < 1) {
@@ -69,10 +67,10 @@ export class ProjectDeleteStrategy
   }
 
   async hardDelete(ref: IProjectRef): Promise<void> {
-    return this.withTransaction({
-      connection: this.conn,
+    return this.execute({
+      connection: this.connection,
       fn: async (session) => {
-        const deleted = await this.project.deleteOne(ref, { session });
+        const deleted = await this.project.deleteOne(ref, session);
 
         if (deleted.deletedCount < 1) {
           throw new NotFoundException({
@@ -82,7 +80,7 @@ export class ProjectDeleteStrategy
 
         const translations = await this.translation.deleteMany(
           { language: ref._id },
-          { session },
+          session,
         );
 
         if (translations.deletedCount < 1) {

@@ -1,10 +1,5 @@
-import { DeleteResult, Types } from 'mongoose';
-import {
-  IPaginationFilter,
-  IQueryOptions,
-  RequiredField,
-  WithPagination,
-} from '../..';
+import { ClientSession, DeleteResult, Types } from 'mongoose';
+import { IPaginationFilter, RequiredField, WithPagination } from '../..';
 import {
   ProjectAddDTO,
   ProjectArchiveDTO,
@@ -68,9 +63,9 @@ export interface IProjectRepository {
   updateOne(
     ref: IProjectRef,
     payload: IProject,
-    options?: IQueryOptions,
+    session?: ClientSession,
   ): Promise<FlatProject | null>;
-  deleteOne(ref: IProjectRef, options?: IQueryOptions): Promise<DeleteResult>;
+  deleteOne(ref: IProjectRef, session?: ClientSession): Promise<DeleteResult>;
 }
 
 export interface IProjectMapper {

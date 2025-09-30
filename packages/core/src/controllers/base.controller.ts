@@ -18,7 +18,7 @@ export abstract class BaseController {
 
       return value;
     } catch (error) {
-      throw AppError.withLogger(this.logger, {
+      throw AppError.handler(this.logger, {
         referrer: this.referrer,
         error,
       });

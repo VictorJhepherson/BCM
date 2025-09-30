@@ -165,7 +165,9 @@ describe('[repositories] - TranslationRepository', () => {
   describe('[updateOne]', () => {
     it('[success] - should edit a translation', async () => {
       (context.others.model.findOneAndUpdate as jest.Mock).mockReturnValue({
-        exec: jest.fn().mockResolvedValue(data),
+        lean: jest.fn().mockReturnValue({
+          exec: jest.fn().mockResolvedValue(data),
+        }),
       });
 
       expect(await context.repository.updateOne(ref, body.edit)).toEqual(data);
@@ -173,7 +175,9 @@ describe('[repositories] - TranslationRepository', () => {
 
     it('[failure] - should handle an error', async () => {
       (context.others.model.findOneAndUpdate as jest.Mock).mockReturnValue({
-        exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
+        lean: jest.fn().mockReturnValue({
+          exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
+        }),
       });
 
       await expect(

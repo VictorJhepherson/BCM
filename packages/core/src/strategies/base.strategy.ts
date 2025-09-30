@@ -1,62 +1,50 @@
-import { NotImplementedException } from '@nestjs/common';
-import {
-  ExecuteProps,
-  ILoggerProvider,
-  MapArg,
-  MapProps,
-  MapReturn,
-  WithTransaction,
-} from '@shared/models';
+import { ExecuteProps, ILoggerProvider, WithTransaction } from '@shared/models';
+import { Connection } from 'mongoose';
 import { AppError } from '../models';
 
-export abstract class BaseStrategy<M = never> {
+export abstract class BaseStrategy {
   private readonly referrer: string;
 
   constructor(
     private readonly name: string,
     private readonly logger: ILoggerProvider,
-    private readonly mapper?: M,
   ) {
     this.referrer = `${this.name}[strategy]`;
   }
 
   protected async execute<T>({ fn }: ExecuteProps<T>): Promise<T>;
-  protected async execute<T, K extends keyof M>({
-    mapKey,
+  protected async execute<T>({
     fn,
-  }: ExecuteProps<T> & { mapKey: K }): Promise<MapReturn<M, K>>;
+  }: ExecuteProps<T> & { connection: Connection }): Promise<T>;
 
-  protected async execute<T, K extends keyof M>({
-    mapKey,
+  protected async execute<T>({
     fn,
-  }: ExecuteProps<T> & { mapKey?: K }): Promise<T | MapReturn<M, K>> {
+    connection,
+  }: ExecuteProps<T> & { connection?: Connection }): Promise<T> {
+    if (connection) {
+      const session = await connection.startSession();
+      session.startTransaction();
+
+      return this.withTransaction({ fn, session });
+    }
+
     try {
       const value = await fn();
+      this.logger.info(this.referrer, { response: { value } });
 
-      if (!mapKey) {
-        this.logger.info(this.referrer, { response: { value } });
-        return value;
-      }
-
-      const mapped = this.map({ key: mapKey, data: value as MapArg<M[K]> });
-      this.logger.info(this.referrer, { response: { value, mapped } });
-
-      return mapped;
+      return value;
     } catch (error) {
-      throw AppError.withLogger(this.logger, {
+      throw AppError.handler(this.logger, {
         referrer: this.referrer,
         error,
       });
     }
   }
 
-  protected async withTransaction<T>({
+  private async withTransaction<T>({
     fn,
-    connection,
+    session,
   }: WithTransaction<T>): Promise<T> {
-    const session = await connection.startSession();
-    session.startTransaction();
-
     try {
       const value = await fn(session);
       await session.commitTransaction();
@@ -65,25 +53,13 @@ export abstract class BaseStrategy<M = never> {
       return value;
     } catch (error) {
       await session.abortTransaction();
-      throw AppError.withLogger(this.logger, {
+
+      throw AppError.handler(this.logger, {
         referrer: this.referrer,
         error,
       });
     } finally {
       await session.endSession();
     }
-  }
-
-  private map<K extends keyof M>({
-    key,
-    data,
-  }: MapProps<M, K>): MapReturn<M, K> {
-    if (!this.mapper) {
-      throw new NotImplementedException({
-        message: 'Mapper not implemented!',
-      });
-    }
-
-    return (this.mapper[key] as Function)(data);
   }
 }

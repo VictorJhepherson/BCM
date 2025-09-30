@@ -26,7 +26,7 @@ export class LanguageDeleteStrategy
   constructor(
     logger: LoggerProvider,
     @InjectConnection()
-    private readonly conn: Connection,
+    private readonly connection: Connection,
     private readonly language: LanguageRepository,
     private readonly translation: TranslationRepository,
   ) {
@@ -37,12 +37,10 @@ export class LanguageDeleteStrategy
     ref: ILanguageRef,
     payload: RequiredField<Partial<ILanguage>, 'active'>,
   ): Promise<FlatLanguage> {
-    return this.withTransaction({
-      connection: this.conn,
+    return this.execute({
+      connection: this.connection,
       fn: async (session) => {
-        const updated = await this.language.updateOne(ref, payload, {
-          session,
-        });
+        const updated = await this.language.updateOne(ref, payload, session);
 
         if (!updated) {
           throw new NotFoundException({
@@ -54,7 +52,7 @@ export class LanguageDeleteStrategy
           await this.translation.updateMany(
             { language: ref._id },
             { active: payload.active },
-            { session },
+            session,
           );
 
         if (matchedCount > 0 && modifiedCount < 1) {
@@ -69,10 +67,10 @@ export class LanguageDeleteStrategy
   }
 
   async hardDelete(ref: ILanguageRef): Promise<void> {
-    return this.withTransaction({
-      connection: this.conn,
+    return this.execute({
+      connection: this.connection,
       fn: async (session) => {
-        const deleted = await this.language.deleteOne(ref, { session });
+        const deleted = await this.language.deleteOne(ref, session);
 
         if (deleted.deletedCount < 1) {
           throw new NotFoundException({
@@ -82,7 +80,7 @@ export class LanguageDeleteStrategy
 
         const translations = await this.translation.deleteMany(
           { language: ref._id },
-          { session },
+          session,
         );
 
         if (translations.deletedCount < 1) {
