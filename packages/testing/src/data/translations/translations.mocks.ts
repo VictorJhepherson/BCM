@@ -35,7 +35,17 @@ const data: TranslationMockData = {
 };
 
 const filter: TranslationMockFilter = {
-  ...values.filter,
+  default: {
+    active: true,
+  },
+  pagination: {
+    active: true,
+    ...values.filter,
+  },
+  controller: {
+    active: true,
+    ...values.filter,
+  },
 };
 
 export const translation: TranslationMock = {

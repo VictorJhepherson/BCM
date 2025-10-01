@@ -4,7 +4,6 @@ import {
   LanguageMock,
   mockData,
   MockDataFactory,
-  mockHelpers,
   MockMethodFactory,
   MockPropsOf,
 } from '@shared/testing';
@@ -12,8 +11,6 @@ import { LoggerProvider } from '../../../../providers';
 import { TranslationRepository } from '../../../translations/repositories/translations.repository';
 import { LanguageRepository } from '../../repositories/languages.repository';
 import { LanguageDeleteStrategy } from './languages-delete.strategy';
-
-const { mockConnection } = mockHelpers.mongo.getMocks();
 
 const { ref, body, data } = new MockDataFactory<LanguageMock>(
   mockData.factory.language,

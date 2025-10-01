@@ -2,11 +2,15 @@ import {
   FlatLanguage,
   ILanguage,
   ILanguageFilter,
+  ILanguageFilterPG,
   ILanguageRef,
-  IPagination,
   RequiredField,
 } from '@shared/models';
-import { DataMock } from '../common/common.mocks.types';
+import {
+  DataMock,
+  MockPagination,
+  MockSort,
+} from '../common/common.mocks.types';
 
 export type LanguageMockRef = ILanguageRef;
 
@@ -18,7 +22,11 @@ export type LanguageMockBody = {
 
 export type LanguageMockData = Partial<FlatLanguage>;
 
-export type LanguageMockFilter = ILanguageFilter & IPagination;
+export type LanguageMockFilter = {
+  default: ILanguageFilter;
+  pagination: ILanguageFilterPG;
+  controller: ILanguageFilter & MockSort & MockPagination;
+};
 
 export type LanguageMock = DataMock<
   LanguageMockRef,

@@ -33,7 +33,17 @@ const data: LanguageMockData = {
 };
 
 const filter: LanguageMockFilter = {
-  ...values.filter,
+  default: {
+    active: true,
+  },
+  pagination: {
+    active: true,
+    ...values.filter,
+  },
+  controller: {
+    active: true,
+    ...values.filter,
+  },
 };
 
 export const language: LanguageMock = {

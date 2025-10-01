@@ -64,7 +64,9 @@ describe('[controllers] - ProjectController', () => {
     it('[success] - should get all projects', async () => {
       (context.others.service.getAll as jest.Mock).mockResolvedValue([data]);
 
-      expect(await context.controller.getAll(filter)).toEqual([data]);
+      expect(await context.controller.getAll(filter.controller)).toEqual([
+        data,
+      ]);
     });
 
     it('[failure] - should handle an error', async () => {
@@ -72,9 +74,9 @@ describe('[controllers] - ProjectController', () => {
         new Error('SERVICE ERROR'),
       );
 
-      await expect(context.controller.getAll(filter)).rejects.toThrow(
-        'SERVICE ERROR',
-      );
+      await expect(
+        context.controller.getAll(filter.controller),
+      ).rejects.toThrow('SERVICE ERROR');
     });
   });
 

@@ -112,7 +112,7 @@ describe('[repositories] - TranslationRepository', () => {
         }),
       });
 
-      expect(await context.repository.findMany(filter)).toEqual({
+      expect(await context.repository.findMany(filter.pagination)).toEqual({
         data: [data],
         sort: mockData.values.filter.sort,
         pagination: { ...mockData.values.filter.pagination, total: 100 },
@@ -138,9 +138,9 @@ describe('[repositories] - TranslationRepository', () => {
         }),
       });
 
-      await expect(context.repository.findMany(filter)).rejects.toThrow(
-        'MODEL ERROR',
-      );
+      await expect(
+        context.repository.findMany(filter.pagination),
+      ).rejects.toThrow('MODEL ERROR');
     });
   });
 

@@ -116,7 +116,7 @@ describe('[services] - LanguageService', () => {
         data,
       ]);
 
-      expect(await context.service.getAll(filter)).toEqual([data]);
+      expect(await context.service.getAll(filter.pagination)).toEqual([data]);
     });
 
     it('[failure] - should handle an error', async () => {
@@ -124,7 +124,7 @@ describe('[services] - LanguageService', () => {
         new Error('REPOSITORY ERROR'),
       );
 
-      await expect(context.service.getAll(filter)).rejects.toThrow(
+      await expect(context.service.getAll(filter.pagination)).rejects.toThrow(
         'REPOSITORY ERROR',
       );
     });
@@ -132,7 +132,7 @@ describe('[services] - LanguageService', () => {
     it('[edge-case] - should get an empty array when has no languages', async () => {
       (context.others.repository.findMany as jest.Mock).mockResolvedValue([]);
 
-      expect(await context.service.getAll(filter)).toEqual([]);
+      expect(await context.service.getAll(filter.pagination)).toEqual([]);
     });
   });
 

@@ -35,7 +35,17 @@ const data: ProjectMockData = {
 };
 
 const filter: ProjectMockFilter = {
-  ...values.filter,
+  default: {
+    active: true,
+  },
+  pagination: {
+    active: true,
+    ...values.filter,
+  },
+  controller: {
+    active: true,
+    ...values.filter,
+  },
 };
 
 export const project: ProjectMock = {

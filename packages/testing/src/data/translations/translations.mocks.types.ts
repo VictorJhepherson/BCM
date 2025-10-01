@@ -1,11 +1,15 @@
 import {
   FlatTranslation,
-  IPagination,
   ITranslation,
   ITranslationFilter,
+  ITranslationFilterPG,
   ITranslationRef,
 } from '@shared/models';
-import { DataMock } from '../common/common.mocks.types';
+import {
+  DataMock,
+  MockPagination,
+  MockSort,
+} from '../common/common.mocks.types';
 
 export type TranslationMockRef = ITranslationRef;
 
@@ -16,7 +20,11 @@ export type TranslationMockBody = {
 
 export type TranslationMockData = Partial<FlatTranslation>;
 
-export type TranslationMockFilter = ITranslationFilter & IPagination;
+export type TranslationMockFilter = {
+  default: ITranslationFilter;
+  pagination: ITranslationFilterPG;
+  controller: ITranslationFilter & MockSort & MockPagination;
+};
 
 export type TranslationMock = DataMock<
   TranslationMockRef,

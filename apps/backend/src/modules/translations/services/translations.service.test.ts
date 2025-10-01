@@ -95,7 +95,7 @@ describe('[services] - TranslationService', () => {
         data,
       ]);
 
-      expect(await context.service.getAll(filter)).toEqual([data]);
+      expect(await context.service.getAll(filter.pagination)).toEqual([data]);
     });
 
     it('[failure] - should handle an error', async () => {
@@ -103,7 +103,7 @@ describe('[services] - TranslationService', () => {
         new Error('REPOSITORY ERROR'),
       );
 
-      await expect(context.service.getAll(filter)).rejects.toThrow(
+      await expect(context.service.getAll(filter.pagination)).rejects.toThrow(
         'REPOSITORY ERROR',
       );
     });
