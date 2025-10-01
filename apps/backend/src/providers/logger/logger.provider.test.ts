@@ -1,6 +1,5 @@
 import { ConfigService } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
-import { Logging, LoggingLevel } from '@shared/models';
 import { MockMethodFactory, MockPropsOf } from '@shared/testing';
 import { LoggerProvider } from './logger.provider';
 
@@ -42,14 +41,9 @@ describe('[providers] - LoggerProvider', () => {
     beforeEach(() => {
       (context.others.config.get as jest.Mock).mockImplementation(
         (key: string) => {
-          if (key === 'LOGGING') return Logging.ENABLED;
+          if (key === 'LOGGING') return 'ENABLED';
           if (key === 'LOGGING_LEVEL') {
-            return [
-              LoggingLevel.INFO,
-              LoggingLevel.WARN,
-              LoggingLevel.ERROR,
-              LoggingLevel.DEBUG,
-            ];
+            return 'INFO,WARN,ERROR,DEBUG';
           }
 
           return undefined;
@@ -96,14 +90,9 @@ describe('[providers] - LoggerProvider', () => {
     beforeEach(() =>
       (context.others.config.get as jest.Mock).mockImplementation(
         (key: string) => {
-          if (key === 'LOGGING') return Logging.DISABLED;
+          if (key === 'LOGGING') return 'DISABLED';
           if (key === 'LOGGING_LEVEL') {
-            return [
-              LoggingLevel.INFO,
-              LoggingLevel.WARN,
-              LoggingLevel.ERROR,
-              LoggingLevel.DEBUG,
-            ];
+            return 'INFO,WARN,ERROR,DEBUG';
           }
 
           return undefined;

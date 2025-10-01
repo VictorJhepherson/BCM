@@ -12,7 +12,6 @@ import {
 } from '@nestjs/common';
 import { BaseController } from '@shared/core';
 import {
-  FlatProject,
   IProjectController,
   MappedProject,
   Project,
@@ -20,8 +19,8 @@ import {
   ProjectArchiveDTO,
   ProjectEditDTO,
   ProjectFilterDTO,
-  ProjectPayload,
   ProjectRefDTO,
+  WithPagination,
 } from '@shared/models';
 import { Groups, Scopes } from '../../../decorators';
 import { PaginationPipe } from '../../../pipes';
@@ -47,7 +46,7 @@ export class ProjectController
   @Groups(['VIEWER', 'EDITOR', 'ADMIN'])
   async getAll(
     @Query(PaginationPipe) query: ProjectFilterDTO,
-  ): Promise<MappedProject> {
+  ): Promise<WithPagination<MappedProject>> {
     return this.execute({
       fn: () => this.service.getAll(query),
     });
@@ -58,7 +57,7 @@ export class ProjectController
   @HttpCode(200)
   @Scopes(['PROJECTS'])
   @Groups(['VIEWER', 'EDITOR', 'ADMIN'])
-  async getById(params: ProjectRefDTO): Promise<ProjectPayload> {
+  async getById(params: ProjectRefDTO): Promise<MappedProject> {
     return this.execute({
       fn: () => this.service.getById(params),
     });
@@ -83,7 +82,7 @@ export class ProjectController
   async editProject(
     @Param() params: ProjectRefDTO,
     @Body() body: ProjectEditDTO,
-  ): Promise<FlatProject> {
+  ): Promise<MappedProject> {
     return this.execute({
       fn: () => this.service.editProject(params, body),
     });
@@ -97,7 +96,7 @@ export class ProjectController
   async archiveProject(
     @Param() params: ProjectRefDTO,
     @Body() body: ProjectArchiveDTO,
-  ): Promise<FlatProject> {
+  ): Promise<MappedProject> {
     return this.execute({
       fn: () => this.service.archiveProject(params, body),
     });

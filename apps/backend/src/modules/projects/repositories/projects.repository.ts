@@ -7,11 +7,12 @@ import {
   IProjectFilter,
   IProjectRef,
   IProjectRepository,
+  IQueryOptions,
   Project,
   ProjectEntity,
   WithPagination,
 } from '@shared/models';
-import { ClientSession, DeleteResult, Model } from 'mongoose';
+import { DeleteResult, Model } from 'mongoose';
 import { LoggerProvider } from '../../../providers';
 
 @Injectable()
@@ -63,7 +64,7 @@ export class ProjectRepository
   async updateOne(
     ref: IProjectRef,
     payload: Partial<IProject>,
-    session?: ClientSession,
+    { session }: IQueryOptions = {},
   ): Promise<FlatProject | null> {
     return this.execute({
       fn: () =>
@@ -76,7 +77,7 @@ export class ProjectRepository
 
   async deleteOne(
     ref: IProjectRef,
-    session?: ClientSession,
+    { session }: IQueryOptions = {},
   ): Promise<DeleteResult> {
     return this.execute({
       fn: () => this.model.deleteOne(ref, { session }).exec(),

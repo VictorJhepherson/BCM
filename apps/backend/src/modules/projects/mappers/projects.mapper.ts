@@ -1,13 +1,14 @@
+import { Injectable } from '@nestjs/common';
 import {
   FlatProject,
   IProjectMapper,
   MappedProject,
-  ProjectPayload,
   WithPagination,
 } from '@shared/models';
 
+@Injectable()
 export class ProjectMapper implements IProjectMapper {
-  mapProject(project: FlatProject): ProjectPayload {
+  mapProject(project: FlatProject): MappedProject {
     return {
       id: project._id,
       name: project.name,
@@ -18,7 +19,9 @@ export class ProjectMapper implements IProjectMapper {
     };
   }
 
-  mapProjects(payload: WithPagination<FlatProject>): MappedProject {
+  mapProjects(
+    payload: WithPagination<FlatProject>,
+  ): WithPagination<MappedProject> {
     const { data, sort, pagination } = payload;
 
     return {

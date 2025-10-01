@@ -2,12 +2,13 @@ type OthersType = Record<string, any>;
 
 type MockProps<Key extends string, T, O extends OthersType = never> = {
   [K in Key]: T;
-} & { others: O };
+} & ([O] extends [never] ? {} : { others: O });
 
 type MockKind =
   | 'pipe'
   | 'guard'
   | 'mapper'
+  | 'builder'
   | 'service'
   | 'provider'
   | 'strategy'

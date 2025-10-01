@@ -9,6 +9,7 @@ import {
 import { LoggerProvider } from '../../providers';
 import { TranslationRepository } from '../translations/repositories/translations.repository';
 import { LanguageController } from './controllers/languages.controller';
+import { LanguageMapper } from './mappers/languages.mapper';
 import { LanguageRepository } from './repositories/languages.repository';
 import { LanguageService } from './services/languages.service';
 import { LanguageDeleteStrategy } from './strategies';
@@ -23,6 +24,7 @@ import { LanguageDeleteStrategy } from './strategies';
   controllers: [LanguageController],
   providers: [
     LoggerProvider,
+    LanguageMapper,
     LanguageService,
     LanguageRepository,
     LanguageDeleteStrategy,

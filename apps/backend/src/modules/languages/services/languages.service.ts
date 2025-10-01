@@ -1,55 +1,69 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectConnection } from '@nestjs/mongoose';
 import { BaseService } from '@shared/core';
 import { format } from '@shared/helpers';
 import {
-  FlatLanguage,
   ILanguage,
   ILanguageFilter,
   ILanguageRef,
   ILanguageService,
   Language,
-  LanguagePayload,
   MappedLanguage,
   RequiredField,
+  WithPagination,
 } from '@shared/models';
+import { Connection } from 'mongoose';
 import { LoggerProvider } from '../../../providers';
 import { LanguageMapper } from '../mappers/languages.mapper';
 import { LanguageRepository } from '../repositories/languages.repository';
 import { LanguageDeleteStrategy } from '../strategies';
 
 @Injectable()
-export class LanguageService
-  extends BaseService<LanguageMapper>
-  implements ILanguageService
-{
+export class LanguageService extends BaseService implements ILanguageService {
   constructor(
     logger: LoggerProvider,
+    private readonly mapper: LanguageMapper,
+    @InjectConnection()
+    private readonly connection: Connection,
     private readonly repository: LanguageRepository,
     private readonly deleteStrategy: LanguageDeleteStrategy,
   ) {
-    super('[languages]', logger, new LanguageMapper());
+    super('[languages]', logger);
   }
 
-  async getAll(filter: ILanguageFilter): Promise<MappedLanguage> {
+  async getAll(
+    filter: ILanguageFilter,
+  ): Promise<WithPagination<MappedLanguage>> {
     return this.execute({
-      mapKey: 'mapLanguages',
-      fn: () => this.repository.findMany(filter),
+      fn: (builder) =>
+        builder
+          .use(() => this.repository.findMany(filter))
+          .withMapper(this.mapper)
+          .map({ key: 'mapLanguages' })
+          .build(),
     });
   }
 
-  async getById(ref: ILanguageRef): Promise<LanguagePayload> {
+  async getById(ref: ILanguageRef): Promise<MappedLanguage> {
     return this.execute({
-      mapKey: 'mapLanguage',
-      fn: async () => {
-        const finded = await this.repository.findOne(ref);
+      fn: (builder) => {
+        const promise = async () => {
+          const finded = await this.repository.findOne(ref);
 
-        if (!finded) {
-          throw new NotFoundException({
-            message: `Unable to find a language for: ${format.base(ref)}`,
-          });
-        }
+          if (!finded) {
+            throw new NotFoundException({
+              message: `Unable to find a language for: ${format.base(ref)}`,
+            });
+          }
 
-        return finded;
+          return finded;
+        };
+
+        return builder
+          .use(promise)
+          .withMapper(this.mapper)
+          .map({ key: 'mapLanguage' })
+          .build();
       },
     });
   }
@@ -63,18 +77,26 @@ export class LanguageService
   async editLanguage(
     ref: ILanguageRef,
     payload: Partial<ILanguage>,
-  ): Promise<FlatLanguage> {
+  ): Promise<MappedLanguage> {
     return this.execute({
-      fn: async () => {
-        const updated = await this.repository.updateOne(ref, payload);
+      fn: (builder) => {
+        const promise = async () => {
+          const updated = await this.repository.updateOne(ref, payload);
 
-        if (!updated) {
-          throw new NotFoundException({
-            message: `Unable to find a language for: ${format.base(ref)}`,
-          });
-        }
+          if (!updated) {
+            throw new NotFoundException({
+              message: `Unable to find a language for: ${format.base(ref)}`,
+            });
+          }
 
-        return updated;
+          return updated;
+        };
+
+        return builder
+          .use(promise)
+          .withMapper(this.mapper)
+          .map({ key: 'mapLanguage' })
+          .build();
       },
     });
   }
@@ -82,15 +104,27 @@ export class LanguageService
   async archiveLanguage(
     ref: ILanguageRef,
     payload: RequiredField<Partial<ILanguage>, 'active'>,
-  ): Promise<FlatLanguage> {
+  ): Promise<MappedLanguage> {
     return this.execute({
-      fn: () => this.deleteStrategy.softDelete(ref, payload),
+      fn: (builder) =>
+        builder
+          .use((session) =>
+            this.deleteStrategy.softDelete(ref, payload, { session }),
+          )
+          .withConnection(this.connection)
+          .withMapper(this.mapper)
+          .map({ key: 'mapLanguage' })
+          .build(),
     });
   }
 
   async deleteLanguage(ref: ILanguageRef): Promise<void> {
     return this.execute({
-      fn: () => this.deleteStrategy.hardDelete(ref),
+      fn: (builder) =>
+        builder
+          .use((session) => this.deleteStrategy.hardDelete(ref, { session }))
+          .withConnection(this.connection)
+          .build(),
     });
   }
 }

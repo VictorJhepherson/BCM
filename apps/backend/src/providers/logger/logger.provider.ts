@@ -28,9 +28,10 @@ export class LoggerProvider implements ILoggerProvider {
   }
 
   private isEnabled(level: LoggingLevel): boolean {
-    const levels = this.config.get<LoggingLevel[]>('LOGGING_LEVEL') || [];
-    const enabled = this.config.get<Logging>('LOGGING') === Logging.ENABLED;
+    const enabled = this.config.get<string>('LOGGING') === Logging.ENABLED;
+    const loggings = this.config.get<string>('LOGGING_LEVEL') || '';
 
+    const levels = loggings.split(',');
     return enabled && levels.includes(level);
   }
 

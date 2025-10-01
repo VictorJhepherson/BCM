@@ -12,16 +12,15 @@ import {
 } from '@nestjs/common';
 import { BaseController } from '@shared/core';
 import {
-  FlatLanguage,
   ILanguageController,
   Language,
   LanguageAddDTO,
   LanguageArchiveDTO,
   LanguageEditDTO,
   LanguageFilterDTO,
-  LanguagePayload,
   LanguageRefDTO,
   MappedLanguage,
+  WithPagination,
 } from '@shared/models';
 import { Groups, Scopes } from '../../../decorators';
 import { PaginationPipe } from '../../../pipes';
@@ -47,7 +46,7 @@ export class LanguageController
   @Groups(['VIEWER', 'EDITOR', 'ADMIN'])
   async getAll(
     @Query(PaginationPipe) query: LanguageFilterDTO,
-  ): Promise<MappedLanguage> {
+  ): Promise<WithPagination<MappedLanguage>> {
     return this.execute({
       fn: () => this.service.getAll(query),
     });
@@ -58,7 +57,7 @@ export class LanguageController
   @HttpCode(200)
   @Scopes(['LANGUAGES'])
   @Groups(['VIEWER', 'EDITOR', 'ADMIN'])
-  async getById(params: LanguageRefDTO): Promise<LanguagePayload> {
+  async getById(params: LanguageRefDTO): Promise<MappedLanguage> {
     return this.execute({
       fn: () => this.service.getById(params),
     });
@@ -83,7 +82,7 @@ export class LanguageController
   async editLanguage(
     @Param() params: LanguageRefDTO,
     @Body() body: LanguageEditDTO,
-  ): Promise<FlatLanguage> {
+  ): Promise<MappedLanguage> {
     return this.execute({
       fn: () => this.service.editLanguage(params, body),
     });
@@ -97,7 +96,7 @@ export class LanguageController
   async archiveLanguage(
     @Param() params: LanguageRefDTO,
     @Body() body: LanguageArchiveDTO,
-  ): Promise<FlatLanguage> {
+  ): Promise<MappedLanguage> {
     return this.execute({
       fn: () => this.service.archiveLanguage(params, body),
     });

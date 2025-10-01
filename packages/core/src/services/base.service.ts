@@ -1,64 +1,33 @@
-import { NotImplementedException } from '@nestjs/common';
-import {
-  ExecuteProps,
-  ILoggerProvider,
-  MapArg,
-  MapProps,
-  MapReturn,
-} from '@shared/models';
+import { ILoggerProvider } from '@shared/models';
+import { ExecutorBuilder } from '../builders/executor.builder';
 import { AppError } from '../models';
+import { ExecutorProps } from './base.service.types';
 
-export abstract class BaseService<M = never> {
+export abstract class BaseService {
   private readonly referrer: string;
 
   constructor(
     private readonly name: string,
     private readonly logger: ILoggerProvider,
-    private readonly mapper?: M,
   ) {
     this.referrer = `${this.name}[service]`;
   }
 
-  protected async execute<T>({ fn }: ExecuteProps<T>): Promise<T>;
-  protected async execute<T, K extends keyof M>({
-    mapKey,
-    fn,
-  }: ExecuteProps<T> & { mapKey: K }): Promise<MapReturn<M, K>>;
-
-  protected async execute<T, K extends keyof M>({
-    mapKey,
-    fn,
-  }: ExecuteProps<T> & { mapKey?: K }): Promise<T | MapReturn<M, K>> {
+  protected async execute<T>({ fn }: ExecutorProps<T>): Promise<T> {
     try {
-      const value = await fn();
+      const builder = new ExecutorBuilder<T>(this.logger, {
+        referrer: this.referrer,
+      });
 
-      if (!mapKey) {
-        this.logger.info(this.referrer, { response: { value } });
-        return value;
-      }
+      const value = await fn(builder);
+      this.logger.info(this.referrer, { response: { value } });
 
-      const mapped = this.map({ key: mapKey, data: value as MapArg<M[K]> });
-      this.logger.info(this.referrer, { response: { mapped } });
-
-      return mapped;
+      return value;
     } catch (error) {
       throw AppError.handler(this.logger, {
         referrer: this.referrer,
         error,
       });
     }
-  }
-
-  private map<K extends keyof M>({
-    key,
-    data,
-  }: MapProps<M, K>): MapReturn<M, K> {
-    if (!this.mapper) {
-      throw new NotImplementedException({
-        message: 'Mapper not implemented!',
-      });
-    }
-
-    return (this.mapper[key] as Function)(data);
   }
 }

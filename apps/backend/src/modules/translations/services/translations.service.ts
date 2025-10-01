@@ -2,14 +2,13 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { BaseService } from '@shared/core';
 import { format } from '@shared/helpers';
 import {
-  FlatTranslation,
   ITranslation,
   ITranslationFilter,
   ITranslationRef,
   ITranslationService,
   MappedTranslation,
   Translation,
-  TranslationPayload,
+  WithPagination,
 } from '@shared/models';
 import { LoggerProvider } from '../../../providers';
 import { TranslationMapper } from '../mappers/translations.mapper';
@@ -17,36 +16,50 @@ import { TranslationRepository } from '../repositories/translations.repository';
 
 @Injectable()
 export class TranslationService
-  extends BaseService<TranslationMapper>
+  extends BaseService
   implements ITranslationService
 {
   constructor(
     logger: LoggerProvider,
+    private readonly mapper: TranslationMapper,
     private readonly repository: TranslationRepository,
   ) {
-    super('[translations]', logger, new TranslationMapper());
+    super('[translations]', logger);
   }
 
-  async getAll(filter: ITranslationFilter): Promise<MappedTranslation> {
+  async getAll(
+    filter: ITranslationFilter,
+  ): Promise<WithPagination<MappedTranslation>> {
     return this.execute({
-      mapKey: 'mapTranslations',
-      fn: () => this.repository.findMany(filter),
+      fn: (builder) =>
+        builder
+          .use(() => this.repository.findMany(filter))
+          .withMapper(this.mapper)
+          .map({ key: 'mapTranslations' })
+          .build(),
     });
   }
 
-  async getById(ref: ITranslationRef): Promise<TranslationPayload> {
+  async getById(ref: ITranslationRef): Promise<MappedTranslation> {
     return this.execute({
-      mapKey: 'mapTranslation',
-      fn: async () => {
-        const finded = await this.repository.findOne(ref);
+      fn: (builder) => {
+        const promise = async () => {
+          const finded = await this.repository.findOne(ref);
 
-        if (!finded) {
-          throw new NotFoundException({
-            message: `Unable to find a translation for: ${format.base(ref)}`,
-          });
-        }
+          if (!finded) {
+            throw new NotFoundException({
+              message: `Unable to find a translation for: ${format.base(ref)}`,
+            });
+          }
 
-        return finded;
+          return finded;
+        };
+
+        return builder
+          .use(promise)
+          .withMapper(this.mapper)
+          .map({ key: 'mapTranslation' })
+          .build();
       },
     });
   }
@@ -60,18 +73,26 @@ export class TranslationService
   async editTranslation(
     ref: ITranslationRef,
     payload: Partial<ITranslation>,
-  ): Promise<FlatTranslation> {
+  ): Promise<MappedTranslation> {
     return this.execute({
-      fn: async () => {
-        const updated = await this.repository.updateOne(ref, payload);
+      fn: (builder) => {
+        const promise = async () => {
+          const updated = await this.repository.updateOne(ref, payload);
 
-        if (!updated) {
-          throw new NotFoundException({
-            message: `Unable to find a translation for: ${format.base(ref)}`,
-          });
-        }
+          if (!updated) {
+            throw new NotFoundException({
+              message: `Unable to find a translation for: ${format.base(ref)}`,
+            });
+          }
 
-        return updated;
+          return updated;
+        };
+
+        return builder
+          .use(promise)
+          .withMapper(this.mapper)
+          .map({ key: 'mapTranslation' })
+          .build();
       },
     });
   }
@@ -79,13 +100,7 @@ export class TranslationService
   async deleteTranslation(ref: ITranslationRef): Promise<void> {
     return this.execute({
       fn: async () => {
-        const deleted = await this.repository.deleteOne(ref);
-
-        if (deleted.deletedCount < 1) {
-          throw new NotFoundException({
-            message: `Failed to delete a translation for: ${format.base(ref)}`,
-          });
-        }
+        await this.repository.deleteOne(ref);
       },
     });
   }

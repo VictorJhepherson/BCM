@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { BaseRepository } from '@shared/core';
 import {
   FlatTranslation,
+  IQueryOptions,
   ITranslation,
   ITranslationFilter,
   ITranslationRef,
@@ -12,7 +13,7 @@ import {
   TranslationEntity,
   WithPagination,
 } from '@shared/models';
-import { ClientSession, DeleteResult, Model, UpdateResult } from 'mongoose';
+import { DeleteResult, Model, UpdateResult } from 'mongoose';
 import { LoggerProvider } from '../../../providers';
 
 @Injectable()
@@ -72,7 +73,7 @@ export class TranslationRepository
   async updateOne(
     ref: ITranslationRef,
     payload: Partial<ITranslation>,
-    session?: ClientSession,
+    { session }: IQueryOptions = {},
   ): Promise<FlatTranslation | null> {
     return this.execute({
       fn: () =>
@@ -86,7 +87,7 @@ export class TranslationRepository
   async updateMany(
     ref: Partial<ITranslationRef>,
     payload: Partial<ITranslation>,
-    session?: ClientSession,
+    { session }: IQueryOptions = {},
   ): Promise<UpdateResult> {
     return this.execute({
       fn: () => this.model.updateMany(ref, payload, { session }).exec(),
@@ -95,7 +96,7 @@ export class TranslationRepository
 
   async deleteOne(
     ref: ITranslationRef,
-    session?: ClientSession,
+    { session }: IQueryOptions = {},
   ): Promise<DeleteResult> {
     return this.execute({
       fn: () => this.model.deleteOne(ref, { session }).exec(),
@@ -104,7 +105,7 @@ export class TranslationRepository
 
   async deleteMany(
     ref: Partial<ITranslationRef>,
-    session?: ClientSession,
+    { session }: IQueryOptions = {},
   ): Promise<DeleteResult> {
     return this.execute({
       fn: () => this.model.deleteMany(ref, { session }).exec(),

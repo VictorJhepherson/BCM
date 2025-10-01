@@ -3,7 +3,6 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { InjectConnection } from '@nestjs/mongoose';
 import { BaseStrategy } from '@shared/core';
 import { format } from '@shared/helpers';
 import {
@@ -11,9 +10,9 @@ import {
   ILanguage,
   ILanguageDeleteStrategy,
   ILanguageRef,
+  IQueryOptions,
   RequiredField,
 } from '@shared/models';
-import { Connection } from 'mongoose';
 import { LoggerProvider } from '../../../../providers';
 import { TranslationRepository } from '../../../translations/repositories/translations.repository';
 import { LanguageRepository } from '../../repositories/languages.repository';
@@ -25,8 +24,6 @@ export class LanguageDeleteStrategy
 {
   constructor(
     logger: LoggerProvider,
-    @InjectConnection()
-    private readonly connection: Connection,
     private readonly language: LanguageRepository,
     private readonly translation: TranslationRepository,
   ) {
@@ -36,11 +33,13 @@ export class LanguageDeleteStrategy
   async softDelete(
     ref: ILanguageRef,
     payload: RequiredField<Partial<ILanguage>, 'active'>,
+    { session }: IQueryOptions = {},
   ): Promise<FlatLanguage> {
     return this.execute({
-      connection: this.connection,
-      fn: async (session) => {
-        const updated = await this.language.updateOne(ref, payload, session);
+      fn: async () => {
+        const updated = await this.language.updateOne(ref, payload, {
+          session,
+        });
 
         if (!updated) {
           throw new NotFoundException({
@@ -52,7 +51,7 @@ export class LanguageDeleteStrategy
           await this.translation.updateMany(
             { language: ref._id },
             { active: payload.active },
-            session,
+            { session },
           );
 
         if (matchedCount > 0 && modifiedCount < 1) {
@@ -66,28 +65,14 @@ export class LanguageDeleteStrategy
     });
   }
 
-  async hardDelete(ref: ILanguageRef): Promise<void> {
+  async hardDelete(
+    ref: ILanguageRef,
+    { session }: IQueryOptions = {},
+  ): Promise<void> {
     return this.execute({
-      connection: this.connection,
-      fn: async (session) => {
-        const deleted = await this.language.deleteOne(ref, session);
-
-        if (deleted.deletedCount < 1) {
-          throw new NotFoundException({
-            message: `Failed to delete a language for: ${format.base(ref)}`,
-          });
-        }
-
-        const translations = await this.translation.deleteMany(
-          { language: ref._id },
-          session,
-        );
-
-        if (translations.deletedCount < 1) {
-          throw new UnprocessableEntityException({
-            message: `Failed to delete translations by language: ${format.base(ref)}`,
-          });
-        }
+      fn: async () => {
+        await this.language.deleteOne(ref, { session });
+        await this.translation.deleteMany({ language: ref._id }, { session });
       },
     });
   }

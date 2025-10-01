@@ -1,5 +1,4 @@
-import { mockHelpers, TestLogger, TestMapper } from '@shared/testing';
-import { Connection } from 'mongoose';
+import { TestLogger } from '@shared/testing';
 import { BaseStrategy } from './base.strategy';
 
 class TestStrategy extends BaseStrategy {
@@ -7,7 +6,7 @@ class TestStrategy extends BaseStrategy {
     super('[test]', logger);
   }
 
-  async run<T>(props: { fn: () => Promise<T>; connection?: Connection }) {
+  async run<T>(props: { fn: () => Promise<T> }) {
     return this.execute(props);
   }
 }
@@ -16,7 +15,6 @@ describe('[base] - strategy', () => {
   afterEach(() => jest.clearAllMocks());
 
   const logger = new TestLogger();
-  const mapper = new TestMapper();
 
   describe('[execute]', () => {
     const strategy = new TestStrategy(logger);
@@ -40,38 +38,6 @@ describe('[base] - strategy', () => {
       });
 
       expect(logger.error).toHaveBeenCalled();
-    });
-
-    describe('[withTransaction]', () => {
-      const strategy = new TestStrategy(logger);
-
-      it('[success] - should call `execute` with session successfully', async () => {
-        const mockFn = jest.fn().mockResolvedValue({ success: true });
-        const { mockConnection } = mockHelpers.mongo.getMocks();
-
-        const response = await strategy.run({
-          connection: mockConnection,
-          fn: mockFn,
-        });
-
-        expect(mockFn).toHaveBeenCalled();
-        expect(logger.info).toHaveBeenCalled();
-        expect(response).toStrictEqual({ success: true });
-      });
-
-      it('[failure] - should call `execute` with session failure', async () => {
-        const mockFn = jest.fn().mockRejectedValue({ success: false });
-        const { mockConnection } = mockHelpers.mongo.getMocks();
-
-        await expect(
-          strategy.run({ connection: mockConnection, fn: mockFn }),
-        ).rejects.toEqual({
-          referrer: '[test][strategy]',
-          error: { success: false },
-        });
-
-        expect(logger.error).toHaveBeenCalled();
-      });
     });
   });
 });

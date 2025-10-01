@@ -3,7 +3,6 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { InjectConnection } from '@nestjs/mongoose';
 import { BaseStrategy } from '@shared/core';
 import { format } from '@shared/helpers';
 import {
@@ -11,9 +10,9 @@ import {
   IProject,
   IProjectDeleteStrategy,
   IProjectRef,
+  IQueryOptions,
   RequiredField,
 } from '@shared/models';
-import { Connection } from 'mongoose';
 import { LoggerProvider } from '../../../../providers';
 import { TranslationRepository } from '../../../translations/repositories/translations.repository';
 import { ProjectRepository } from '../../repositories/projects.repository';
@@ -25,8 +24,6 @@ export class ProjectDeleteStrategy
 {
   constructor(
     logger: LoggerProvider,
-    @InjectConnection()
-    private readonly connection: Connection,
     private readonly project: ProjectRepository,
     private readonly translation: TranslationRepository,
   ) {
@@ -36,11 +33,11 @@ export class ProjectDeleteStrategy
   async softDelete(
     ref: IProjectRef,
     payload: RequiredField<Partial<IProject>, 'active'>,
+    { session }: IQueryOptions = {},
   ): Promise<FlatProject> {
     return this.execute({
-      connection: this.connection,
-      fn: async (session) => {
-        const updated = await this.project.updateOne(ref, payload, session);
+      fn: async () => {
+        const updated = await this.project.updateOne(ref, payload, { session });
 
         if (!updated) {
           throw new NotFoundException({
@@ -52,7 +49,7 @@ export class ProjectDeleteStrategy
           await this.translation.updateMany(
             { project: ref._id },
             { active: payload.active },
-            session,
+            { session },
           );
 
         if (matchedCount > 0 && modifiedCount < 1) {
@@ -66,28 +63,14 @@ export class ProjectDeleteStrategy
     });
   }
 
-  async hardDelete(ref: IProjectRef): Promise<void> {
+  async hardDelete(
+    ref: IProjectRef,
+    { session }: IQueryOptions = {},
+  ): Promise<void> {
     return this.execute({
-      connection: this.connection,
-      fn: async (session) => {
-        const deleted = await this.project.deleteOne(ref, session);
-
-        if (deleted.deletedCount < 1) {
-          throw new NotFoundException({
-            message: `Failed to delete a project for: ${format.base(ref)}`,
-          });
-        }
-
-        const translations = await this.translation.deleteMany(
-          { language: ref._id },
-          session,
-        );
-
-        if (translations.deletedCount < 1) {
-          throw new UnprocessableEntityException({
-            message: `Failed to delete translations by project: ${format.base(ref)}`,
-          });
-        }
+      fn: async () => {
+        await this.project.deleteOne(ref, { session });
+        await this.translation.deleteMany({ language: ref._id }, { session });
       },
     });
   }
