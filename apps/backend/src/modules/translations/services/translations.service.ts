@@ -66,8 +66,7 @@ export class TranslationService
 
   async addTranslation(payload: ITranslation): Promise<Translation> {
     return this.execute({
-      fn: (builder) =>
-        builder.use(() => this.repository.createOne(payload)).build(),
+      fn: () => this.repository.createOne(payload),
     });
   }
 

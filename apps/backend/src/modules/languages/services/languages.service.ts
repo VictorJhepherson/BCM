@@ -70,8 +70,7 @@ export class LanguageService extends BaseService implements ILanguageService {
 
   async addLanguage(payload: ILanguage): Promise<Language> {
     return this.execute({
-      fn: (builder) =>
-        builder.use(() => this.repository.createOne(payload)).build(),
+      fn: () => this.repository.createOne(payload),
     });
   }
 

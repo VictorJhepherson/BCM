@@ -68,8 +68,7 @@ export class ProjectService extends BaseService implements IProjectService {
 
   async addProject(payload: IProject): Promise<Project> {
     return this.execute({
-      fn: (builder) =>
-        builder.use(() => this.repository.createOne(payload)).build(),
+      fn: () => this.repository.createOne(payload),
     });
   }
 

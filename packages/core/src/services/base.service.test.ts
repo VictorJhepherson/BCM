@@ -1,12 +1,24 @@
-import { TestLogger, TestMapper } from '@shared/testing';
+import { TestLogger } from '@shared/testing';
+import { ExecutorBuilder } from '../builders/executor.builder';
 import { BaseService } from './base.service';
+import { ExecutorProps } from './base.service.types';
 
-class TestService extends BaseService<TestMapper> {
-  constructor(logger: TestLogger, mapper?: TestMapper) {
-    super('[test]', logger, mapper);
+jest.mock('../builders/executor.builder', () => ({
+  ExecutorBuilder: jest.fn().mockImplementation(() => {
+    return {
+      use: jest.fn().mockReturnThis(),
+      build: jest.fn().mockResolvedValue({ success: true }),
+      withMapper: jest.fn().mockReturnThis(),
+    };
+  }),
+}));
+
+class TestService extends BaseService {
+  constructor(logger: TestLogger) {
+    super('[test]', logger);
   }
 
-  async run<T>(props: { mapKey?: string; fn: () => Promise<T> }) {
+  async run<T>(props: ExecutorProps<T>) {
     return this.execute(props);
   }
 }
@@ -15,7 +27,6 @@ describe('[base] - strategy', () => {
   afterEach(() => jest.clearAllMocks());
 
   const logger = new TestLogger();
-  const mapper = new TestMapper();
 
   describe('[execute]', () => {
     const service = new TestService(logger);
@@ -30,7 +41,7 @@ describe('[base] - strategy', () => {
       expect(response).toStrictEqual({ success: true });
     });
 
-    it('[failure] - should call `execute` function with failure', async () => {
+    it('[failed] - should call `execute` function with failure', async () => {
       const mockFn = jest.fn().mockRejectedValue({ success: false });
 
       await expect(service.run({ fn: mockFn })).rejects.toEqual({
@@ -41,31 +52,14 @@ describe('[base] - strategy', () => {
       expect(logger.error).toHaveBeenCalled();
     });
 
-    describe('[map]', () => {
-      const mockFn = jest.fn().mockResolvedValue({ value: 'TEST' });
-
-      it('[success] - should map entity using provided mapper', async () => {
-        const service = new TestService(logger, mapper);
-
-        const response = await service.run({ mapKey: 'mapTest', fn: mockFn });
-
-        expect(mockFn).toHaveBeenCalled();
-        expect(logger.info).toHaveBeenCalled();
-
-        expect(response).toEqual('TEST');
+    it('[with-builder] - should call `execute` function successfully', async () => {
+      const response = await service.run({
+        fn: (builder) => builder.use(jest.fn()).build(),
       });
 
-      it('[failure] - should throw when mapper is not implemented', async () => {
-        const service = new TestService(logger);
-
-        await expect(
-          service.run({ mapKey: 'mapTest', fn: mockFn }),
-        ).rejects.toEqual({
-          referrer: '[test][service]',
-          error: expect.objectContaining({
-            message: 'Mapper not implemented!',
-          }),
-        });
+      expect(response).toStrictEqual({ success: true });
+      expect(ExecutorBuilder).toHaveBeenCalledWith(logger, {
+        referrer: '[test][service]',
       });
     });
   });
