@@ -5,5 +5,5 @@ export type ExecutorOptions = {
 };
 
 export type BuildOptions = {
-  transformers?: Transform<any, any>[];
+  transformers?: Transform<any, unknown>[];
 };

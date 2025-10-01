@@ -1,6 +1,6 @@
 import { ArgumentsHost, ExecutionContext } from '@nestjs/common';
 import { ClientSession, Connection } from 'mongoose';
-import { Options } from './common.mocks.types';
+import { BuilderOptions, Options } from './common.mocks.types';
 
 export const getArgumentsHost = <T = ArgumentsHost>({
   req = {},
@@ -35,5 +35,37 @@ export const getConnection = <T = Connection>(): T => {
       startTransaction: jest.fn(),
       commitTransaction: jest.fn(),
     } as unknown as ClientSession),
+  } as T;
+};
+
+export const getExecutorBuilder = <T>({
+  data = { response: 'MOCK_RESPONSE' },
+}: BuilderOptions = {}): T => {
+  return {
+    use: jest.fn().mockReturnThis(),
+    withConnection: jest.fn().mockReturnThis(),
+    withMapper: jest.fn().mockImplementation(() => getMapBuilder({ data })),
+    build: jest.fn().mockImplementation(({ transformers }) => {
+      if (!transformers?.length) return data;
+      for (const transform of transformers) {
+        data = transform(data);
+      }
+
+      return data;
+    }),
+  } as T;
+};
+
+export const getMapBuilder = <T>({
+  data = { response: 'MOCK_RESPONSE' },
+}: BuilderOptions = {}): T => {
+  const mockExecutor = getExecutorBuilder<any>({ data });
+
+  return {
+    map: jest.fn().mockImplementation(() => getMapBuilder({ data })),
+    filter: jest.fn().mockImplementation(() => getMapBuilder({ data })),
+    build: jest
+      .fn()
+      .mockImplementation((options) => mockExecutor.build(options)),
   } as T;
 };

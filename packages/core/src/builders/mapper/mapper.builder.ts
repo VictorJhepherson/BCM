@@ -1,4 +1,4 @@
-import { MapReturn, Transform } from '@shared/models';
+import { ElementType, MapReturn, Transform } from '@shared/models';
 import { ExecutorBuilder } from '../executor.builder';
 import { MapperProps } from './mapper.builder.types';
 
@@ -6,7 +6,7 @@ export class MapBuilder<T, M> {
   constructor(
     private readonly mapper: M,
     private readonly parent: ExecutorBuilder<T>,
-    private readonly transformers: Transform<any, any>[] = [],
+    private readonly transformers: Transform<any, unknown>[] = [],
   ) {}
 
   async build(): Promise<T> {
@@ -28,7 +28,7 @@ export class MapBuilder<T, M> {
     );
   }
 
-  filter(predicate: Transform<T, boolean>): MapBuilder<T, M> {
+  filter(predicate: Transform<ElementType<T>, boolean>): MapBuilder<T, M> {
     this.transformers.push((value: T) => {
       if (!Array.isArray(value)) return value;
       return value.filter(predicate);

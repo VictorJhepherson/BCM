@@ -64,7 +64,11 @@ export type PartialField<T, K extends keyof T> = Omit<T, K> &
 export type RequiredField<T, K extends keyof T> = Omit<T, K> &
   Required<Pick<T, K>>;
 
-export type Transform<T = any, N = any> = (value: T) => N;
+export type ArrayContainer<T> = T[] | { data: T[] };
+export type ElementType<T> =
+  T extends ArrayContainer<infer ElementType> ? ElementType : T;
+
+export type Transform<T, N> = (value: T) => N;
 export type PromiseFn<T, A = void> = A extends void
   ? () => Promise<T>
   : (arg: A) => Promise<T>;

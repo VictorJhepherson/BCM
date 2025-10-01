@@ -1,3 +1,4 @@
+import { InternalServerErrorException } from '@nestjs/common';
 import { ILoggerProvider, PromiseFn } from '@shared/models';
 import { ClientSession, Connection } from 'mongoose';
 import { AppError } from '../models';
@@ -37,14 +38,17 @@ export class ExecutorBuilder<T> {
         this.session.startTransaction();
       }
 
+      if (!this.fn) {
+        throw new InternalServerErrorException({
+          message:
+            'Executor function (fn) is missing. The builder was not properly configured using the .use() method.',
+        });
+      }
+
       let value = await this.fn(this.session);
       for (const transform of transformers) {
         value = transform(value);
       }
-
-      this.logger.info(this.options.referrer, {
-        response: { value },
-      });
 
       if (this.session) await this.session.commitTransaction();
       return value as T;
