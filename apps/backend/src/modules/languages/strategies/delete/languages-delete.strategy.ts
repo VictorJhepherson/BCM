@@ -71,24 +71,8 @@ export class LanguageDeleteStrategy
   ): Promise<void> {
     return this.execute({
       fn: async () => {
-        const deleted = await this.language.deleteOne(ref, { session });
-
-        if (deleted.deletedCount < 1) {
-          throw new NotFoundException({
-            message: `Failed to delete a language for: ${format.base(ref)}`,
-          });
-        }
-
-        const translations = await this.translation.deleteMany(
-          { language: ref._id },
-          { session },
-        );
-
-        if (translations.deletedCount < 1) {
-          throw new UnprocessableEntityException({
-            message: `Failed to delete translations by language: ${format.base(ref)}`,
-          });
-        }
+        await this.language.deleteOne(ref, { session });
+        await this.translation.deleteMany({ language: ref._id }, { session });
       },
     });
   }

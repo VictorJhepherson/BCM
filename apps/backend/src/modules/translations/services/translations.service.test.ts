@@ -211,15 +211,5 @@ describe('[services] - TranslationService', () => {
         'REPOSITORY ERROR',
       );
     });
-
-    it('[edge-case] - should failed to delete a translation', async () => {
-      (context.others.repository.deleteOne as jest.Mock).mockResolvedValue({
-        deletedCount: 0,
-      });
-
-      await expect(context.service.deleteTranslation(ref)).rejects.toThrow(
-        `Failed to delete a translation for: ${format.base(ref)}`,
-      );
-    });
   });
 });

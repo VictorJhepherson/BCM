@@ -168,29 +168,5 @@ describe('[strategies] - LanguageDeleteStrategy', () => {
         'REPOSITORY ERROR',
       );
     });
-
-    it('[edge-case][deleteOne] - should failed to delete a language', async () => {
-      (context.others.language.deleteOne as jest.Mock).mockResolvedValue({
-        deletedCount: 0,
-      });
-
-      await expect(context.strategy.hardDelete(ref)).rejects.toThrow(
-        `Failed to delete a language for: ${format.base(ref)}`,
-      );
-    });
-
-    it('[edge-case][deleteMany] - should failed to delete translations', async () => {
-      (context.others.language.deleteOne as jest.Mock).mockResolvedValue({
-        deletedCount: 1,
-      });
-
-      (context.others.translation.deleteMany as jest.Mock).mockResolvedValue({
-        deletedCount: 0,
-      });
-
-      await expect(context.strategy.hardDelete(ref)).rejects.toThrow(
-        `Failed to delete translations by language: ${format.base(ref)}`,
-      );
-    });
   });
 });

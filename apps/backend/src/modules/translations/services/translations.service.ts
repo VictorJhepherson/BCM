@@ -99,18 +99,8 @@ export class TranslationService
 
   async deleteTranslation(ref: ITranslationRef): Promise<void> {
     return this.execute({
-      fn: (builder) => {
-        const promise = async () => {
-          const deleted = await this.repository.deleteOne(ref);
-
-          if (deleted.deletedCount < 1) {
-            throw new NotFoundException({
-              message: `Failed to delete a translation for: ${format.base(ref)}`,
-            });
-          }
-        };
-
-        return builder.use(promise).build();
+      fn: async () => {
+        await this.repository.deleteOne(ref);
       },
     });
   }
