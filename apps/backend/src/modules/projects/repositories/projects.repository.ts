@@ -4,7 +4,7 @@ import { BaseRepository } from '@shared/core';
 import {
   FlatProject,
   IProject,
-  IProjectFilter,
+  IProjectFilterPG,
   IProjectRef,
   IProjectRepository,
   IQueryOptions,
@@ -34,15 +34,17 @@ export class ProjectRepository
     });
   }
 
-  async findMany(filter: IProjectFilter): Promise<WithPagination<FlatProject>> {
-    const { sort, pagination } = filter;
+  async findMany(
+    filter: IProjectFilterPG,
+  ): Promise<WithPagination<FlatProject>> {
+    const { sort, pagination, ...filters } = filter;
 
     return this.execute({
       fn: async () => {
         const [total, data] = await Promise.all([
           this.model.countDocuments().exec(),
           this.model
-            .find()
+            .find(filters)
             .sort({ [sort.by]: sort.order === 'ASC' ? 1 : -1 })
             .skip(pagination.skip)
             .limit(pagination.limit)

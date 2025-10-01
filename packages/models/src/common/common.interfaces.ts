@@ -1,7 +1,6 @@
 import { ClientSession } from 'mongoose';
 import { Pagination, Sort, SortOrder } from './common.types';
 
-//#region UTILS
 export interface IQueryOptions {
   session?: ClientSession;
 }
@@ -17,4 +16,3 @@ export interface IPaginationFilter {
   sort: Sort;
   pagination: Pagination;
 }
-//#endregion UTILS

@@ -17,7 +17,7 @@ import {
   Translation,
   TranslationAddDTO,
   TranslationEditDTO,
-  TranslationFilterDTO,
+  TranslationFilterPGDTO,
   TranslationRefDTO,
   WithPagination,
 } from '@shared/models';
@@ -44,7 +44,7 @@ export class TranslationController
   @Scopes(['TRANSLATIONS'])
   @Groups(['VIEWER', 'EDITOR', 'ADMIN'])
   async getAll(
-    @Query(PaginationPipe) query: TranslationFilterDTO,
+    @Query(PaginationPipe) query: TranslationFilterPGDTO,
   ): Promise<WithPagination<MappedTranslation>> {
     return this.execute({
       fn: () => this.service.getAll(query),

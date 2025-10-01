@@ -4,7 +4,7 @@ import { BaseService } from '@shared/core';
 import { format } from '@shared/helpers';
 import {
   ILanguage,
-  ILanguageFilter,
+  ILanguageFilterPG,
   ILanguageRef,
   ILanguageService,
   Language,
@@ -32,7 +32,7 @@ export class LanguageService extends BaseService implements ILanguageService {
   }
 
   async getAll(
-    filter: ILanguageFilter,
+    filter: ILanguageFilterPG,
   ): Promise<WithPagination<MappedLanguage>> {
     return this.execute({
       fn: (builder) =>

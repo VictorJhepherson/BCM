@@ -3,7 +3,7 @@ import { BaseService } from '@shared/core';
 import { format } from '@shared/helpers';
 import {
   ITranslation,
-  ITranslationFilter,
+  ITranslationFilterPG,
   ITranslationRef,
   ITranslationService,
   MappedTranslation,
@@ -28,7 +28,7 @@ export class TranslationService
   }
 
   async getAll(
-    filter: ITranslationFilter,
+    filter: ITranslationFilterPG,
   ): Promise<WithPagination<MappedTranslation>> {
     return this.execute({
       fn: (builder) =>

@@ -4,7 +4,7 @@ import { BaseRepository } from '@shared/core';
 import {
   FlatLanguage,
   ILanguage,
-  ILanguageFilter,
+  ILanguageFilterPG,
   ILanguageRef,
   ILanguageRepository,
   IQueryOptions,
@@ -35,16 +35,16 @@ export class LanguageRepository
   }
 
   async findMany(
-    filter: ILanguageFilter,
+    filter: ILanguageFilterPG,
   ): Promise<WithPagination<FlatLanguage>> {
-    const { sort, pagination } = filter;
+    const { sort, pagination, ...filters } = filter;
 
     return this.execute({
       fn: async () => {
         const [total, data] = await Promise.all([
           this.model.countDocuments().exec(),
           this.model
-            .find()
+            .find(filters)
             .sort({ [sort.by]: sort.order === 'ASC' ? 1 : -1 })
             .skip(pagination.skip)
             .limit(pagination.limit)

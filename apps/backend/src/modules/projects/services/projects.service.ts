@@ -4,7 +4,7 @@ import { BaseService } from '@shared/core';
 import { format } from '@shared/helpers';
 import {
   IProject,
-  IProjectFilter,
+  IProjectFilterPG,
   IProjectRef,
   IProjectService,
   MappedProject,
@@ -31,7 +31,9 @@ export class ProjectService extends BaseService implements IProjectService {
     super('[projects]', logger);
   }
 
-  async getAll(filter: IProjectFilter): Promise<WithPagination<MappedProject>> {
+  async getAll(
+    filter: IProjectFilterPG,
+  ): Promise<WithPagination<MappedProject>> {
     return this.execute({
       fn: (builder) =>
         builder

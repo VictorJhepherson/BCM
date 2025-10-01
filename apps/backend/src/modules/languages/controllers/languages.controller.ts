@@ -17,7 +17,7 @@ import {
   LanguageAddDTO,
   LanguageArchiveDTO,
   LanguageEditDTO,
-  LanguageFilterDTO,
+  LanguageFilterPGDTO,
   LanguageRefDTO,
   MappedLanguage,
   WithPagination,
@@ -45,7 +45,7 @@ export class LanguageController
   @Scopes(['LANGUAGES'])
   @Groups(['VIEWER', 'EDITOR', 'ADMIN'])
   async getAll(
-    @Query(PaginationPipe) query: LanguageFilterDTO,
+    @Query(PaginationPipe) query: LanguageFilterPGDTO,
   ): Promise<WithPagination<MappedLanguage>> {
     return this.execute({
       fn: () => this.service.getAll(query),

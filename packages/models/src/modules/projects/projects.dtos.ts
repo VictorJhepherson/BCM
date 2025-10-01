@@ -1,3 +1,5 @@
+import { IntersectionType } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import {
   IsBoolean,
   IsMongoId,
@@ -7,19 +9,32 @@ import {
   Matches,
 } from 'class-validator';
 import { Types } from 'mongoose';
-import { PaginationDTO } from '../..';
+import { PaginationDTO } from '../../common';
 import { ValidatorMessages } from '../../errors/messages/validators.messages';
 import { RegexProjects } from './projects.constants';
-import { IProject, IProjectRef } from './projects.interfaces';
+import { IProject, IProjectFilter, IProjectRef } from './projects.interfaces';
 
+//#region REQUESTERS
 export class ProjectRefDTO implements IProjectRef {
   @IsMongoId({ message: ValidatorMessages.isMongoId })
   @IsNotEmpty({ message: ValidatorMessages.isNotEmpty })
   readonly _id: Types.ObjectId;
 }
 
-export class ProjectFilterDTO extends PaginationDTO {}
+export class ProjectFilterDTO implements IProjectFilter {
+  @IsBoolean({ message: ValidatorMessages.isBoolean })
+  @IsOptional({ message: ValidatorMessages.isOptional })
+  @Transform(({ value }) => value === 'true')
+  readonly active?: boolean;
+}
 
+export class ProjectFilterPGDTO extends IntersectionType(
+  ProjectFilterDTO,
+  PaginationDTO,
+) {}
+//#endregion REQUESTERS
+
+//#region BODIES
 export class ProjectAddDTO implements IProject {
   @IsString({ message: ValidatorMessages.isString })
   @IsNotEmpty({ message: ValidatorMessages.isNotEmpty })
@@ -57,3 +72,4 @@ export class ProjectArchiveDTO extends ProjectEditDTO {
   @IsNotEmpty({ message: ValidatorMessages.isNotEmpty })
   declare readonly active: boolean;
 }
+//#endregion BODIES

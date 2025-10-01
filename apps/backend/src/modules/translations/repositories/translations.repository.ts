@@ -5,7 +5,7 @@ import {
   FlatTranslation,
   IQueryOptions,
   ITranslation,
-  ITranslationFilter,
+  ITranslationFilterPG,
   ITranslationRef,
   ITranslationRepository,
   PopulateTranslation,
@@ -41,16 +41,16 @@ export class TranslationRepository
   }
 
   async findMany(
-    filter: ITranslationFilter,
+    filter: ITranslationFilterPG,
   ): Promise<WithPagination<PopulateTranslation>> {
-    const { sort, pagination } = filter;
+    const { sort, pagination, ...filters } = filter;
 
     return this.execute({
       fn: async () => {
         const [total, data] = await Promise.all([
           this.model.countDocuments().exec(),
           this.model
-            .find()
+            .find(filters)
             .sort({ [sort.by]: sort.order === 'ASC' ? 1 : -1 })
             .skip(pagination.skip)
             .limit(pagination.limit)

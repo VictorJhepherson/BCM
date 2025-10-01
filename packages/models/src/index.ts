@@ -1,10 +1,6 @@
-export * from './bases/bases.types';
-
-export * from './common/common.dtos';
-export * from './common/common.interfaces';
-export * from './common/common.types';
-
-export * from './mappers/mappers.types';
+export * from './bases';
+export * from './common';
+export * from './mappers';
 
 export * from './modules/languages';
 export * from './modules/projects';

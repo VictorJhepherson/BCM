@@ -1,3 +1,5 @@
+import { IntersectionType } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import {
   IsBoolean,
   IsMongoId,
@@ -7,19 +9,36 @@ import {
   Matches,
 } from 'class-validator';
 import { Types } from 'mongoose';
-import { PaginationDTO } from '../..';
+import { PaginationDTO } from '../../common';
 import { ValidatorMessages } from '../../errors/messages/validators.messages';
 import { RegexLanguages } from './languages.constants';
-import { ILanguage, ILanguageRef } from './languages.interfaces';
+import {
+  ILanguage,
+  ILanguageFilter,
+  ILanguageRef,
+} from './languages.interfaces';
 
+//#region REQUESTERS
 export class LanguageRefDTO implements ILanguageRef {
   @IsMongoId({ message: ValidatorMessages.isMongoId })
   @IsNotEmpty({ message: ValidatorMessages.isNotEmpty })
   readonly _id: Types.ObjectId;
 }
 
-export class LanguageFilterDTO extends PaginationDTO {}
+export class LanguageFilterDTO implements ILanguageFilter {
+  @IsBoolean({ message: ValidatorMessages.isBoolean })
+  @IsOptional({ message: ValidatorMessages.isOptional })
+  @Transform(({ value }) => value === 'true')
+  readonly active?: boolean;
+}
 
+export class LanguageFilterPGDTO extends IntersectionType(
+  LanguageFilterDTO,
+  PaginationDTO,
+) {}
+//#endregion REQUESTERS
+
+//#region BODIES
 export class LanguageAddDTO implements ILanguage {
   @IsString({ message: ValidatorMessages.isString })
   @IsNotEmpty({ message: ValidatorMessages.isNotEmpty })
@@ -47,3 +66,4 @@ export class LanguageArchiveDTO extends LanguageEditDTO {
   @IsNotEmpty({ message: ValidatorMessages.isNotEmpty })
   declare readonly active: boolean;
 }
+//#endregion BODIES

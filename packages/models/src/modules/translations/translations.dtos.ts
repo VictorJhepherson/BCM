@@ -1,3 +1,5 @@
+import { IntersectionType } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import {
   IsBoolean,
   IsMongoId,
@@ -6,11 +8,16 @@ import {
   IsOptional,
 } from 'class-validator';
 import { Types } from 'mongoose';
-import { PaginationDTO } from '../..';
+import { PaginationDTO } from '../../common';
 import { ValidatorMessages } from '../../errors/messages/validators.messages';
-import { ITranslation, ITranslationRef } from './translations.interfaces';
+import {
+  ITranslation,
+  ITranslationFilter,
+  ITranslationRef,
+} from './translations.interfaces';
 import { type TranslationTree } from './translations.types';
 
+//#region REQUESTERS
 export class TranslationRefDTO implements ITranslationRef {
   @IsMongoId({ message: ValidatorMessages.isMongoId })
   @IsNotEmpty({ message: ValidatorMessages.isNotEmpty })
@@ -21,8 +28,20 @@ export class TranslationRefDTO implements ITranslationRef {
   readonly language: Types.ObjectId;
 }
 
-export class TranslationFilterDTO extends PaginationDTO {}
+export class TranslationFilterDTO implements ITranslationFilter {
+  @IsBoolean({ message: ValidatorMessages.isBoolean })
+  @IsOptional({ message: ValidatorMessages.isOptional })
+  @Transform(({ value }) => value === 'true')
+  readonly active?: boolean;
+}
 
+export class TranslationFilterPGDTO extends IntersectionType(
+  TranslationFilterDTO,
+  PaginationDTO,
+) {}
+//#endregion REQUESTERS
+
+//#region BODIES
 export class TranslationAddDTO implements ITranslation {
   @IsBoolean({ message: ValidatorMessages.isBoolean })
   @IsNotEmpty({ message: ValidatorMessages.isNotEmpty })
@@ -58,3 +77,4 @@ export class TranslationEditDTO implements Partial<ITranslation> {
   @IsOptional({ message: ValidatorMessages.isOptional })
   readonly translations?: TranslationTree;
 }
+//#endregion BODIES

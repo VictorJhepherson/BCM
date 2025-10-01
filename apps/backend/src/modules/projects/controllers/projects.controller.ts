@@ -18,7 +18,7 @@ import {
   ProjectAddDTO,
   ProjectArchiveDTO,
   ProjectEditDTO,
-  ProjectFilterDTO,
+  ProjectFilterPGDTO,
   ProjectRefDTO,
   WithPagination,
 } from '@shared/models';
@@ -45,7 +45,7 @@ export class ProjectController
   @Scopes(['PROJECTS'])
   @Groups(['VIEWER', 'EDITOR', 'ADMIN'])
   async getAll(
-    @Query(PaginationPipe) query: ProjectFilterDTO,
+    @Query(PaginationPipe) query: ProjectFilterPGDTO,
   ): Promise<WithPagination<MappedProject>> {
     return this.execute({
       fn: () => this.service.getAll(query),
