@@ -1,4 +1,3 @@
-import { getConnectionToken } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
 import { format } from '@shared/helpers';
 import {
@@ -9,7 +8,6 @@ import {
   MockMethodFactory,
   MockPropsOf,
 } from '@shared/testing';
-import { Connection } from 'mongoose';
 import { LoggerProvider } from '../../../../providers';
 import { TranslationRepository } from '../../../translations/repositories/translations.repository';
 import { LanguageRepository } from '../../repositories/languages.repository';
@@ -27,7 +25,6 @@ describe('[strategies] - LanguageDeleteStrategy', () => {
     LanguageDeleteStrategy,
     {
       logger: LoggerProvider;
-      connection: Connection;
       language: LanguageRepository;
       translation: TranslationRepository;
     }
@@ -45,13 +42,6 @@ describe('[strategies] - LanguageDeleteStrategy', () => {
               .add('warn', jest.fn())
               .add('error', jest.fn())
               .add('debug', jest.fn())
-              .build(),
-        },
-        {
-          provide: getConnectionToken(),
-          useFactory: () =>
-            new MockMethodFactory<Connection>()
-              .add('startSession', jest.fn())
               .build(),
         },
         {
@@ -76,19 +66,12 @@ describe('[strategies] - LanguageDeleteStrategy', () => {
     context.strategy = moduleRef.get(LanguageDeleteStrategy);
     context.others = {
       logger: moduleRef.get(LoggerProvider),
-      connection: moduleRef.get(getConnectionToken()),
       language: moduleRef.get(LanguageRepository),
       translation: moduleRef.get(TranslationRepository),
     };
   });
 
   describe('[softDelete]', () => {
-    beforeEach(() => {
-      (context.others.connection.startSession as jest.Mock).mockResolvedValue(
-        mockConnection.startSession(),
-      );
-    });
-
     it('[success] - should apply the update', async () => {
       (context.others.language.updateOne as jest.Mock).mockResolvedValue(data);
       (context.others.translation.updateMany as jest.Mock).mockResolvedValue({
@@ -150,12 +133,6 @@ describe('[strategies] - LanguageDeleteStrategy', () => {
   });
 
   describe('[hardDelete]', () => {
-    beforeEach(() => {
-      (context.others.connection.startSession as jest.Mock).mockResolvedValue(
-        mockConnection.startSession(),
-      );
-    });
-
     it('[success] - should apply the delete', async () => {
       (context.others.language.deleteOne as jest.Mock).mockResolvedValue({
         deletedCount: 1,

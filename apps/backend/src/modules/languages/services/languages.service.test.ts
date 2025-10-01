@@ -1,24 +1,22 @@
+import { getConnectionToken } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
 import { format } from '@shared/helpers';
 import {
   LanguageMock,
   mockData,
   MockDataFactory,
+  mockHelpers,
   MockMethodFactory,
   MockPropsOf,
 } from '@shared/testing';
+import { Connection } from 'mongoose';
 import { LoggerProvider } from '../../../providers';
+import { LanguageMapper } from '../mappers/languages.mapper';
 import { LanguageRepository } from '../repositories/languages.repository';
 import { LanguageDeleteStrategy } from '../strategies';
 import { LanguageService } from './languages.service';
 
-jest.mock('../mappers/languages.mapper', () => ({
-  ...jest.requireActual('../mappers/languages.mapper'),
-  LanguageMapper: jest.fn().mockImplementation(() => ({
-    mapLanguage: jest.fn().mockImplementation((data) => data),
-    mapLanguages: jest.fn().mockImplementation((data) => data),
-  })),
-}));
+const { mockConnection } = mockHelpers.mongo.getMocks();
 
 const { ref, body, data, filter } = new MockDataFactory<LanguageMock>(
   mockData.factory.language,
@@ -29,6 +27,8 @@ describe('[services] - LanguageService', () => {
     'service',
     LanguageService,
     {
+      mapper: LanguageMapper;
+      connection: Connection;
       repository: LanguageRepository;
       deleteStrategy: LanguageDeleteStrategy;
     }
@@ -46,6 +46,21 @@ describe('[services] - LanguageService', () => {
               .add('warn', jest.fn())
               .add('error', jest.fn())
               .add('debug', jest.fn())
+              .build(),
+        },
+        {
+          provide: getConnectionToken(),
+          useFactory: () =>
+            new MockMethodFactory<Connection>()
+              .add('startSession', jest.fn())
+              .build(),
+        },
+        {
+          provide: LanguageMapper,
+          useFactory: () =>
+            new MockMethodFactory<LanguageMapper>()
+              .add('mapLanguage', jest.fn())
+              .add('mapLanguages', jest.fn())
               .build(),
         },
         {
@@ -72,9 +87,25 @@ describe('[services] - LanguageService', () => {
 
     context.service = moduleRef.get(LanguageService);
     context.others = {
+      mapper: moduleRef.get(LanguageMapper),
+      connection: moduleRef.get(getConnectionToken()),
       repository: moduleRef.get(LanguageRepository),
       deleteStrategy: moduleRef.get(LanguageDeleteStrategy),
     };
+  });
+
+  beforeEach(() => {
+    (context.others.connection.startSession as jest.Mock).mockResolvedValue(
+      mockConnection.startSession(),
+    );
+
+    (context.others.mapper.mapLanguage as jest.Mock).mockImplementation(
+      (data) => data,
+    );
+
+    (context.others.mapper.mapLanguages as jest.Mock).mockImplementation(
+      (data) => data,
+    );
   });
 
   afterEach(() => jest.clearAllMocks());

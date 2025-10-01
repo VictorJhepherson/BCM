@@ -8,6 +8,7 @@ import {
   TranslationMock,
 } from '@shared/testing';
 import { LoggerProvider } from '../../../providers';
+import { TranslationMapper } from '../mappers/translations.mapper';
 import { TranslationRepository } from '../repositories/translations.repository';
 import { TranslationService } from './translations.service';
 
@@ -28,6 +29,7 @@ describe('[services] - TranslationService', () => {
     'service',
     TranslationService,
     {
+      mapper: TranslationMapper;
       repository: TranslationRepository;
     }
   >;
@@ -47,6 +49,14 @@ describe('[services] - TranslationService', () => {
               .build(),
         },
         {
+          provide: TranslationMapper,
+          useFactory: () =>
+            new MockMethodFactory<TranslationMapper>()
+              .add('mapTranslation', jest.fn())
+              .add('mapTranslations', jest.fn())
+              .build(),
+        },
+        {
           provide: TranslationRepository,
           useFactory: () =>
             new MockMethodFactory<TranslationRepository>()
@@ -62,8 +72,19 @@ describe('[services] - TranslationService', () => {
 
     context.service = moduleRef.get(TranslationService);
     context.others = {
+      mapper: moduleRef.get(TranslationMapper),
       repository: moduleRef.get(TranslationRepository),
     };
+  });
+
+  beforeEach(() => {
+    (context.others.mapper.mapTranslation as jest.Mock).mockImplementation(
+      (data) => data,
+    );
+
+    (context.others.mapper.mapTranslations as jest.Mock).mockImplementation(
+      (data) => data,
+    );
   });
 
   afterEach(() => jest.clearAllMocks());

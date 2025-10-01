@@ -1,24 +1,22 @@
+import { getConnectionToken } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
 import { format } from '@shared/helpers';
 import {
   mockData,
   MockDataFactory,
+  mockHelpers,
   MockMethodFactory,
   MockPropsOf,
   ProjectMock,
 } from '@shared/testing';
+import { Connection } from 'mongoose';
 import { LoggerProvider } from '../../../providers';
+import { ProjectMapper } from '../mappers/projects.mapper';
 import { ProjectRepository } from '../repositories/projects.repository';
 import { ProjectDeleteStrategy } from '../strategies';
 import { ProjectService } from './projects.service';
 
-jest.mock('../mappers/projects.mapper', () => ({
-  ...jest.requireActual('../mappers/projects.mapper'),
-  ProjectMapper: jest.fn().mockImplementation(() => ({
-    mapProject: jest.fn().mockImplementation((data) => data),
-    mapProjects: jest.fn().mockImplementation((data) => data),
-  })),
-}));
+const { mockConnection } = mockHelpers.mongo.getMocks();
 
 const { ref, body, data, filter } = new MockDataFactory<ProjectMock>(
   mockData.factory.project,
@@ -29,6 +27,8 @@ describe('[services] - ProjectService', () => {
     'service',
     ProjectService,
     {
+      mapper: ProjectMapper;
+      connection: Connection;
       repository: ProjectRepository;
       deleteStrategy: ProjectDeleteStrategy;
     }
@@ -46,6 +46,21 @@ describe('[services] - ProjectService', () => {
               .add('warn', jest.fn())
               .add('error', jest.fn())
               .add('debug', jest.fn())
+              .build(),
+        },
+        {
+          provide: getConnectionToken(),
+          useFactory: () =>
+            new MockMethodFactory<Connection>()
+              .add('startSession', jest.fn())
+              .build(),
+        },
+        {
+          provide: ProjectMapper,
+          useFactory: () =>
+            new MockMethodFactory<ProjectMapper>()
+              .add('mapProject', jest.fn())
+              .add('mapProjects', jest.fn())
               .build(),
         },
         {
@@ -72,9 +87,25 @@ describe('[services] - ProjectService', () => {
 
     context.service = moduleRef.get(ProjectService);
     context.others = {
+      mapper: moduleRef.get(ProjectMapper),
+      connection: moduleRef.get(getConnectionToken()),
       repository: moduleRef.get(ProjectRepository),
       deleteStrategy: moduleRef.get(ProjectDeleteStrategy),
     };
+  });
+
+  beforeEach(() => {
+    (context.others.connection.startSession as jest.Mock).mockResolvedValue(
+      mockConnection.startSession(),
+    );
+
+    (context.others.mapper.mapProject as jest.Mock).mockImplementation(
+      (data) => data,
+    );
+
+    (context.others.mapper.mapProjects as jest.Mock).mockImplementation(
+      (data) => data,
+    );
   });
 
   afterEach(() => jest.clearAllMocks());
