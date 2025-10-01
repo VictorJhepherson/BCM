@@ -21,8 +21,6 @@ export class LanguageMapper implements ILanguageMapper {
   ): WithPagination<MappedLanguage> {
     const { data, sort, pagination } = payload;
 
-    console.log('TESTE', this);
-
     return {
       data: data.map((language: FlatLanguage) => this.mapLanguage(language)),
       sort: { by: sort.by, order: sort.order },

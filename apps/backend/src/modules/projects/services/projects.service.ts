@@ -47,7 +47,7 @@ export class ProjectService extends BaseService implements IProjectService {
 
   async getById(ref: IProjectRef): Promise<MappedProject> {
     return this.execute({
-      fn: async (builder) => {
+      fn: (builder) => {
         const promise = async () => {
           const finded = await this.repository.findOne(ref);
 

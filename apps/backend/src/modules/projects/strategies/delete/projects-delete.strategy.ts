@@ -3,7 +3,6 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { InjectConnection } from '@nestjs/mongoose';
 import { BaseStrategy } from '@shared/core';
 import { format } from '@shared/helpers';
 import {
@@ -14,7 +13,6 @@ import {
   IQueryOptions,
   RequiredField,
 } from '@shared/models';
-import { Connection } from 'mongoose';
 import { LoggerProvider } from '../../../../providers';
 import { TranslationRepository } from '../../../translations/repositories/translations.repository';
 import { ProjectRepository } from '../../repositories/projects.repository';
@@ -26,8 +24,6 @@ export class ProjectDeleteStrategy
 {
   constructor(
     logger: LoggerProvider,
-    @InjectConnection()
-    private readonly connection: Connection,
     private readonly project: ProjectRepository,
     private readonly translation: TranslationRepository,
   ) {

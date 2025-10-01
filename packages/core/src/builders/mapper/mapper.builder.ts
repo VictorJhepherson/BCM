@@ -18,10 +18,8 @@ export class MapBuilder<T, M> {
   map<K extends keyof M, R = MapReturn<M, K>>({
     key,
   }: MapperProps<K>): MapBuilder<R, M> {
-    this.transformers.push((value: T) => {
-      const mapperFn = this.mapper[key] as Function;
-      return mapperFn(value);
-    });
+    const mapperFn = this.mapper[key] as Function;
+    this.transformers.push((value: T) => mapperFn.call(this.mapper, value));
 
     return new MapBuilder<R, M>(
       this.mapper,

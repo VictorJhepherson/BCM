@@ -46,17 +46,17 @@ export class ExecutorBuilder<T> {
         response: { value },
       });
 
-      if (this.session) this.session.commitTransaction();
+      if (this.session) await this.session.commitTransaction();
       return value as T;
     } catch (error) {
-      if (this.session) this.session.abortTransaction();
+      if (this.session) await this.session.abortTransaction();
 
       throw AppError.handler(this.logger, {
         referrer: this.options.referrer,
         error,
       });
     } finally {
-      if (this.session) this.session.endSession();
+      if (this.session) await this.session.endSession();
     }
   }
 }

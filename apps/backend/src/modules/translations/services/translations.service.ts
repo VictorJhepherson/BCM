@@ -45,7 +45,7 @@ export class TranslationService
 
   async getById(ref: ITranslationRef): Promise<MappedTranslation> {
     return this.execute({
-      fn: async (builder) => {
+      fn: (builder) => {
         const promise = async () => {
           const finded = await this.repository.findOne(ref);
 
@@ -69,7 +69,8 @@ export class TranslationService
 
   async addTranslation(payload: ITranslation): Promise<Translation> {
     return this.execute({
-      fn: () => this.repository.createOne(payload),
+      fn: (builder) =>
+        builder.use(() => this.repository.createOne(payload)).build(),
     });
   }
 
@@ -78,7 +79,7 @@ export class TranslationService
     payload: Partial<ITranslation>,
   ): Promise<MappedTranslation> {
     return this.execute({
-      fn: async (builder) => {
+      fn: (builder) => {
         const promise = async () => {
           const updated = await this.repository.updateOne(ref, payload);
 
@@ -102,14 +103,18 @@ export class TranslationService
 
   async deleteTranslation(ref: ITranslationRef): Promise<void> {
     return this.execute({
-      fn: async () => {
-        const deleted = await this.repository.deleteOne(ref);
+      fn: (builder) => {
+        const promise = async () => {
+          const deleted = await this.repository.deleteOne(ref);
 
-        if (deleted.deletedCount < 1) {
-          throw new NotFoundException({
-            message: `Failed to delete a translation for: ${format.base(ref)}`,
-          });
-        }
+          if (deleted.deletedCount < 1) {
+            throw new NotFoundException({
+              message: `Failed to delete a translation for: ${format.base(ref)}`,
+            });
+          }
+        };
+
+        return builder.use(promise).build();
       },
     });
   }
