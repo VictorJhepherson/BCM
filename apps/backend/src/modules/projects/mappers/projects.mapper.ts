@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import {
   FlatProject,
   IProjectMapper,
@@ -5,6 +6,7 @@ import {
   WithPagination,
 } from '@shared/models';
 
+@Injectable()
 export class ProjectMapper implements IProjectMapper {
   mapProject(project: FlatProject): MappedProject {
     return {

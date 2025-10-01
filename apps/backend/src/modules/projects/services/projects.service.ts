@@ -20,18 +20,15 @@ import { ProjectDeleteStrategy } from '../strategies';
 
 @Injectable()
 export class ProjectService extends BaseService implements IProjectService {
-  private readonly mapper: ProjectMapper;
-
   constructor(
     logger: LoggerProvider,
+    private readonly mapper: ProjectMapper,
     @InjectConnection()
     private readonly connection: Connection,
     private readonly repository: ProjectRepository,
     private readonly deleteStrategy: ProjectDeleteStrategy,
   ) {
     super('[projects]', logger);
-
-    this.mapper = new ProjectMapper();
   }
 
   async getAll(filter: IProjectFilter): Promise<WithPagination<MappedProject>> {

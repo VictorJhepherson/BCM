@@ -9,6 +9,7 @@ import {
 import { LoggerProvider } from '../../providers';
 import { TranslationRepository } from '../translations/repositories/translations.repository';
 import { ProjectController } from './controllers/projects.controller';
+import { ProjectMapper } from './mappers/projects.mapper';
 import { ProjectRepository } from './repositories/projects.repository';
 import { ProjectService } from './services/projects.service';
 import { ProjectDeleteStrategy } from './strategies';
@@ -23,6 +24,7 @@ import { ProjectDeleteStrategy } from './strategies';
   controllers: [ProjectController],
   providers: [
     LoggerProvider,
+    ProjectMapper,
     ProjectService,
     ProjectRepository,
     ProjectDeleteStrategy,

@@ -18,26 +18,17 @@ import { LanguageMapper } from '../mappers/languages.mapper';
 import { LanguageRepository } from '../repositories/languages.repository';
 import { LanguageDeleteStrategy } from '../strategies';
 
-export type Mappers<T> = {
-  [K in keyof T]: T[K] extends (arg: infer A) => infer R
-    ? (arg: A) => R
-    : never;
-};
-
 @Injectable()
 export class LanguageService extends BaseService implements ILanguageService {
-  private readonly mapper: LanguageMapper;
-
   constructor(
     logger: LoggerProvider,
+    private readonly mapper: LanguageMapper,
     @InjectConnection()
     private readonly connection: Connection,
     private readonly repository: LanguageRepository,
     private readonly deleteStrategy: LanguageDeleteStrategy,
   ) {
     super('[languages]', logger);
-
-    this.mapper = new LanguageMapper();
   }
 
   async getAll(

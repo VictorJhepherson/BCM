@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import {
   ITranslationMapper,
   MappedTranslation,
@@ -5,6 +6,7 @@ import {
   WithPagination,
 } from '@shared/models';
 
+@Injectable()
 export class TranslationMapper implements ITranslationMapper {
   mapTranslation(translation: PopulateTranslation): MappedTranslation {
     return {

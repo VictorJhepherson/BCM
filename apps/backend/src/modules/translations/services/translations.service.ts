@@ -19,15 +19,12 @@ export class TranslationService
   extends BaseService
   implements ITranslationService
 {
-  private readonly mapper: TranslationMapper;
-
   constructor(
     logger: LoggerProvider,
+    private readonly mapper: TranslationMapper,
     private readonly repository: TranslationRepository,
   ) {
     super('[translations]', logger);
-
-    this.mapper = new TranslationMapper();
   }
 
   async getAll(

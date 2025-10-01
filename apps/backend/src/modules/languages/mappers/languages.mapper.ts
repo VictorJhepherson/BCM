@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import {
   FlatLanguage,
   ILanguageMapper,
@@ -5,6 +6,7 @@ import {
   WithPagination,
 } from '@shared/models';
 
+@Injectable()
 export class LanguageMapper implements ILanguageMapper {
   mapLanguage(language: FlatLanguage): MappedLanguage {
     return {
