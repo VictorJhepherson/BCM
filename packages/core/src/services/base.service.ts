@@ -1,7 +1,6 @@
-import { ILoggerProvider } from '@shared/models';
+import { ExecuteProps, ILoggerProvider } from '@shared/models';
 import { ExecutorBuilder } from '../builders/executor.builder';
 import { AppError } from '../models';
-import { ExecutorProps } from './base.service.types';
 
 export abstract class BaseService {
   private readonly referrer: string;
@@ -13,7 +12,9 @@ export abstract class BaseService {
     this.referrer = `${this.name}[service]`;
   }
 
-  protected async execute<T>({ fn }: ExecutorProps<T>): Promise<T> {
+  protected async execute<T>({
+    fn,
+  }: ExecuteProps<T, ExecutorBuilder<T>>): Promise<T> {
     try {
       const builder = new ExecutorBuilder<T>(this.logger, {
         referrer: this.referrer,

@@ -1,8 +1,8 @@
 import { InternalServerErrorException } from '@nestjs/common';
-import { ILoggerProvider, PromiseFn } from '@shared/models';
+import { ExecuteOptions, ILoggerProvider, PromiseFn } from '@shared/models';
 import { ClientSession, Connection } from 'mongoose';
 import { AppError } from '../models';
-import { BuildOptions, ExecutorOptions } from './executor.builder.types';
+import { BuildOptions } from './executor.builder.types';
 import { MapBuilder } from './mapper/mapper.builder';
 
 export class ExecutorBuilder<T> {
@@ -12,7 +12,7 @@ export class ExecutorBuilder<T> {
 
   constructor(
     private readonly logger: ILoggerProvider,
-    private readonly options: ExecutorOptions,
+    private readonly options: ExecuteOptions,
   ) {}
 
   use<P>(fn: PromiseFn<P, ClientSession>): this {

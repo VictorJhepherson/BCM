@@ -4,10 +4,12 @@ import { format } from '@shared/helpers';
 import {
   ITranslation,
   ITranslationFilterPG,
-  ITranslationRef,
   ITranslationService,
   MappedTranslation,
+  TBody,
+  TQuery,
   Translation,
+  UFilterTranslation,
   WithPagination,
 } from '@shared/models';
 import { LoggerProvider } from '../../../providers';
@@ -27,28 +29,30 @@ export class TranslationService
     super('[translations]', logger);
   }
 
-  async getAll(
-    filter: ITranslationFilterPG,
-  ): Promise<WithPagination<MappedTranslation>> {
+  async getAll({
+    filter,
+  }: TQuery<ITranslationFilterPG>): Promise<WithPagination<MappedTranslation>> {
     return this.execute({
       fn: (builder) =>
         builder
-          .use(() => this.repository.findMany(filter))
+          .use(() => this.repository.findMany({ filter }))
           .withMapper(this.mapper)
           .map({ key: 'mapTranslations' })
           .build(),
     });
   }
 
-  async getById(ref: ITranslationRef): Promise<MappedTranslation> {
+  async getById({
+    filter,
+  }: TQuery<UFilterTranslation>): Promise<MappedTranslation> {
     return this.execute({
       fn: (builder) => {
         const promise = async () => {
-          const finded = await this.repository.findOne(ref);
+          const finded = await this.repository.findOne({ filter });
 
           if (!finded) {
             throw new NotFoundException({
-              message: `Unable to find a translation for: ${format.base(ref)}`,
+              message: `Unable to find a translation for: ${format.base(filter)}`,
             });
           }
 
@@ -64,24 +68,27 @@ export class TranslationService
     });
   }
 
-  async addTranslation(payload: ITranslation): Promise<Translation> {
+  async addTranslation({ payload }: TBody<ITranslation>): Promise<Translation> {
     return this.execute({
-      fn: () => this.repository.createOne(payload),
+      fn: () => this.repository.createOne({ payload }),
     });
   }
 
-  async editTranslation(
-    ref: ITranslationRef,
-    payload: Partial<ITranslation>,
-  ): Promise<MappedTranslation> {
+  async editTranslation({
+    filter,
+    payload,
+  }: TQuery<
+    UFilterTranslation,
+    Partial<ITranslation>
+  >): Promise<MappedTranslation> {
     return this.execute({
       fn: (builder) => {
         const promise = async () => {
-          const updated = await this.repository.updateOne(ref, payload);
+          const updated = await this.repository.updateOne({ filter, payload });
 
           if (!updated) {
             throw new NotFoundException({
-              message: `Unable to find a translation for: ${format.base(ref)}`,
+              message: `Unable to find a translation for: ${format.base(filter)}`,
             });
           }
 
@@ -97,10 +104,12 @@ export class TranslationService
     });
   }
 
-  async deleteTranslation(ref: ITranslationRef): Promise<void> {
+  async deleteTranslation({
+    filter,
+  }: TQuery<UFilterTranslation>): Promise<void> {
     return this.execute({
       fn: async () => {
-        await this.repository.deleteOne(ref);
+        await this.repository.deleteOne({ filter });
       },
     });
   }

@@ -1,7 +1,7 @@
+import { ExecuteProps } from '@shared/models';
 import { TestLogger } from '@shared/testing';
 import { ExecutorBuilder } from '../builders/executor.builder';
 import { BaseService } from './base.service';
-import { ExecutorProps } from './base.service.types';
 
 jest.mock('../builders/executor.builder', () => ({
   ExecutorBuilder: jest.fn().mockImplementation(() => {
@@ -18,7 +18,7 @@ class TestService extends BaseService {
     super('[test]', logger);
   }
 
-  async run<T>(props: ExecutorProps<T>) {
+  async run<T>(props: ExecuteProps<T, ExecutorBuilder<T>>) {
     return this.execute(props);
   }
 }

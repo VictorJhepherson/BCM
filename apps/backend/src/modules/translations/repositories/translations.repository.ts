@@ -5,11 +5,14 @@ import {
   FlatTranslation,
   IQueryOptions,
   ITranslation,
+  ITranslationFilter,
   ITranslationFilterPG,
-  ITranslationRef,
   ITranslationRepository,
+  TBody,
+  TQuery,
   Translation,
   TranslationEntity,
+  UFilterTranslation,
   WithPagination,
 } from '@shared/models';
 import { DeleteResult, Model, UpdateResult } from 'mongoose';
@@ -28,20 +31,17 @@ export class TranslationRepository
     super('[translations]', logger);
   }
 
-  async findOne(ref: ITranslationRef): Promise<FlatTranslation | null> {
+  async findOne({
+    filter,
+  }: TQuery<UFilterTranslation>): Promise<FlatTranslation | null> {
     return this.execute({
-      fn: () =>
-        this.model
-          .findOne(ref)
-          .populate({ path: 'language', select: 'name' })
-          .lean<FlatTranslation>()
-          .exec(),
+      fn: () => this.model.findOne(filter).lean<FlatTranslation>().exec(),
     });
   }
 
-  async findMany(
-    filter: ITranslationFilterPG,
-  ): Promise<WithPagination<FlatTranslation>> {
+  async findMany({
+    filter,
+  }: TQuery<ITranslationFilterPG>): Promise<WithPagination<FlatTranslation>> {
     const { sort, pagination, ...filters } = filter;
 
     return this.execute({
@@ -53,7 +53,6 @@ export class TranslationRepository
             .sort({ [sort.by]: sort.order === 'ASC' ? 1 : -1 })
             .skip(pagination.skip)
             .limit(pagination.limit)
-            .populate({ path: 'language', select: 'name' })
             .lean<FlatTranslation[]>()
             .exec(),
         ]);
@@ -63,51 +62,49 @@ export class TranslationRepository
     });
   }
 
-  async createOne(payload: ITranslation): Promise<Translation> {
+  async createOne({ payload }: TBody<ITranslation>): Promise<Translation> {
     return this.execute({
       fn: () => this.model.create(payload),
     });
   }
 
   async updateOne(
-    ref: ITranslationRef,
-    payload: Partial<ITranslation>,
+    { filter, payload }: TQuery<UFilterTranslation, Partial<ITranslation>>,
     { session }: IQueryOptions = {},
   ): Promise<FlatTranslation | null> {
     return this.execute({
       fn: () =>
         this.model
-          .findOneAndUpdate(ref, payload, { new: true, session })
+          .findOneAndUpdate(filter, payload, { new: true, session })
           .lean<FlatTranslation>()
           .exec(),
     });
   }
 
   async updateMany(
-    ref: Partial<ITranslationRef>,
-    payload: Partial<ITranslation>,
+    { filter, payload }: TQuery<ITranslationFilter, Partial<ITranslation>>,
     { session }: IQueryOptions = {},
   ): Promise<UpdateResult> {
     return this.execute({
-      fn: () => this.model.updateMany(ref, payload, { session }).exec(),
+      fn: () => this.model.updateMany(filter, payload, { session }).exec(),
     });
   }
 
   async deleteOne(
-    ref: ITranslationRef,
+    { filter }: TQuery<UFilterTranslation>,
     { session }: IQueryOptions = {},
   ): Promise<DeleteResult> {
     return this.execute({
-      fn: () => this.model.deleteOne(ref, { session }).exec(),
+      fn: () => this.model.deleteOne(filter, { session }).exec(),
     });
   }
 
   async deleteMany(
-    ref: Partial<ITranslationRef>,
+    { filter }: TQuery<ITranslationFilter>,
     { session }: IQueryOptions = {},
   ): Promise<DeleteResult> {
     return this.execute({
-      fn: () => this.model.deleteMany(ref, { session }).exec(),
+      fn: () => this.model.deleteMany(filter, { session }).exec(),
     });
   }
 }

@@ -61,8 +61,17 @@ export type WithId<T> = Omit<T, '_id'> & {
 export type PartialField<T, K extends keyof T> = Omit<T, K> &
   Partial<Pick<T, K>>;
 
+export type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
+};
+
 export type RequiredField<T, K extends keyof T> = Omit<T, K> &
   Required<Pick<T, K>>;
+
+export type TBody<P> = { payload: P };
+export type TQuery<T, P = void> = P extends void
+  ? { filter: T }
+  : { filter: T; payload: P };
 
 export type ArrayContainer<T> = T[] | { data: T[] };
 export type ElementType<T> =

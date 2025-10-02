@@ -1,10 +1,10 @@
 import { ClientSession } from 'mongoose';
 
-export type ExecuteProps<T> = {
-  fn: (session?: ClientSession) => Promise<T>;
+type OptionalArgs<A> = {} extends A ? [args?: A] : [args: A];
+export type ExecuteProps<T, A = Partial<ClientSession>> = {
+  fn: (...args: OptionalArgs<A>) => Promise<T>;
 };
 
-export type WithTransaction<T> = {
-  fn: (session: ClientSession) => Promise<T>;
-  session: ClientSession;
+export type ExecuteOptions = {
+  referrer: string;
 };

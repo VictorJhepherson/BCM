@@ -1,4 +1,5 @@
 import { ExecuteProps, ILoggerProvider } from '@shared/models';
+import { FacadeQueryBuilder } from '../builders/query/query.builder';
 import { AppError } from '../models';
 
 export abstract class BaseController {
@@ -11,9 +12,15 @@ export abstract class BaseController {
     this.referrer = `${this.name}[controller]`;
   }
 
-  protected async execute<T>({ fn }: ExecuteProps<T>): Promise<T> {
+  protected async execute<T>({
+    fn,
+  }: ExecuteProps<T, FacadeQueryBuilder>): Promise<T> {
     try {
-      const value = await fn();
+      const builer = new FacadeQueryBuilder(this.logger, {
+        referrer: this.referrer,
+      });
+
+      const value = await fn(builer);
       this.logger.info(this.referrer, { response: { value } });
 
       return value;

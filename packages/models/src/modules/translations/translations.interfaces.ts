@@ -1,8 +1,15 @@
 import { DeleteResult, Types, UpdateResult } from 'mongoose';
-import { IPaginationFilter, IQueryOptions, WithPagination } from '../../common';
+import {
+  IPaginationFilter,
+  IQueryOptions,
+  TBody,
+  TQuery,
+  WithPagination,
+} from '../../common';
 import {
   TranslationAddDTO,
   TranslationEditDTO,
+  TranslationFilterDTO,
   TranslationFilterPGDTO,
   TranslationRefDTO,
 } from './translations.dtos';
@@ -11,6 +18,7 @@ import {
   MappedTranslation,
   Translation,
   TranslationTree,
+  UFilterTranslation,
 } from './translations.types';
 
 //#region REQUESTERS
@@ -41,63 +49,73 @@ export interface ITranslationController {
     query: TranslationFilterPGDTO,
   ): Promise<WithPagination<MappedTranslation>>;
 
-  getById(params: TranslationRefDTO): Promise<MappedTranslation>;
+  getById(
+    params: TranslationRefDTO,
+    query: TranslationFilterDTO,
+  ): Promise<MappedTranslation>;
 
   addTranslation(body: TranslationAddDTO): Promise<Translation>;
 
   editTranslation(
     params: TranslationRefDTO,
+    query: TranslationFilterDTO,
     body: TranslationEditDTO,
   ): Promise<MappedTranslation>;
 
-  deleteTranslation(params: TranslationRefDTO): Promise<void>;
+  deleteTranslation(
+    params: TranslationRefDTO,
+    query: TranslationFilterDTO,
+  ): Promise<void>;
 }
 
 export interface ITranslationService {
-  getAll(
-    filter: ITranslationFilterPG,
-  ): Promise<WithPagination<MappedTranslation>>;
+  getAll({
+    filter,
+  }: TQuery<ITranslationFilterPG>): Promise<WithPagination<MappedTranslation>>;
 
-  getById(ref: ITranslationRef): Promise<MappedTranslation>;
+  getById({ filter }: TQuery<UFilterTranslation>): Promise<MappedTranslation>;
 
-  addTranslation(payload: ITranslation): Promise<Translation>;
+  addTranslation({ payload }: TBody<ITranslation>): Promise<Translation>;
 
-  editTranslation(
-    ref: ITranslationRef,
-    payload: Partial<ITranslation>,
-  ): Promise<MappedTranslation>;
+  editTranslation({
+    filter,
+    payload,
+  }: TQuery<
+    UFilterTranslation,
+    Partial<ITranslation>
+  >): Promise<MappedTranslation>;
 
-  deleteTranslation(ref: ITranslationRef): Promise<void>;
+  deleteTranslation({ filter }: TQuery<UFilterTranslation>): Promise<void>;
 }
 
 export interface ITranslationRepository {
-  findOne(ref: ITranslationRef): Promise<FlatTranslation | null>;
+  findOne({
+    filter,
+  }: TQuery<UFilterTranslation>): Promise<FlatTranslation | null>;
 
-  findMany(
-    filter: ITranslationFilterPG,
-  ): Promise<WithPagination<FlatTranslation>>;
+  findMany({
+    filter,
+  }: TQuery<ITranslationFilterPG>): Promise<WithPagination<FlatTranslation>>;
 
-  createOne(payload: ITranslation): Promise<Translation>;
+  createOne({ payload }: TBody<ITranslation>): Promise<Translation>;
 
   updateOne(
-    ref: ITranslationRef,
-    payload: Partial<ITranslation>,
+    { filter, payload }: TQuery<UFilterTranslation, Partial<ITranslation>>,
     options?: IQueryOptions,
   ): Promise<FlatTranslation | null>;
 
   updateMany(
-    ref: Partial<ITranslationRef>,
-    payload: Partial<ITranslation>,
+    { filter, payload }: TQuery<ITranslationFilter, Partial<ITranslation>>,
     options?: IQueryOptions,
   ): Promise<UpdateResult>;
 
   deleteOne(
-    ref: ITranslationRef,
+    { filter }: TQuery<UFilterTranslation>,
     options?: IQueryOptions,
   ): Promise<DeleteResult>;
 
   deleteMany(
-    ref: Partial<ITranslationRef>,
+    { filter }: TQuery<ITranslationFilter>,
     options?: IQueryOptions,
   ): Promise<DeleteResult>;
 }

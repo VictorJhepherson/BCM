@@ -17,6 +17,7 @@ import {
   Translation,
   TranslationAddDTO,
   TranslationEditDTO,
+  TranslationFilterDTO,
   TranslationFilterPGDTO,
   TranslationRefDTO,
   WithPagination,
@@ -47,7 +48,11 @@ export class TranslationController
     @Query(PaginationPipe) query: TranslationFilterPGDTO,
   ): Promise<WithPagination<MappedTranslation>> {
     return this.execute({
-      fn: () => this.service.getAll(query),
+      fn: (builder) =>
+        builder
+          .use(this.service.getAll)
+          .addTo('filter', { args: query })
+          .build(),
     });
   }
 
@@ -58,9 +63,15 @@ export class TranslationController
   @Groups(['VIEWER', 'EDITOR', 'ADMIN'])
   async getById(
     @Param() params: TranslationRefDTO,
+    @Query() query: TranslationFilterDTO,
   ): Promise<MappedTranslation> {
     return this.execute({
-      fn: () => this.service.getById(params),
+      fn: (builder) =>
+        builder
+          .use(this.service.getById)
+          .addTo('filter', { args: params })
+          .addTo('filter', { args: query })
+          .build(),
     });
   }
 
@@ -71,7 +82,11 @@ export class TranslationController
   @Groups(['EDITOR', 'ADMIN'])
   async addTranslation(@Body() body: TranslationAddDTO): Promise<Translation> {
     return this.execute({
-      fn: () => this.service.addTranslation(body),
+      fn: (builder) =>
+        builder
+          .use(this.service.addTranslation)
+          .addTo('payload', { args: body })
+          .build(),
     });
   }
 
@@ -85,7 +100,12 @@ export class TranslationController
     @Body() body: TranslationEditDTO,
   ): Promise<MappedTranslation> {
     return this.execute({
-      fn: () => this.service.editTranslation(params, body),
+      fn: (builder) =>
+        builder
+          .use(this.service.editTranslation)
+          .addTo('filter', { args: params })
+          .addTo('payload', { args: body })
+          .build(),
     });
   }
 
@@ -96,7 +116,11 @@ export class TranslationController
   @Groups(['ADMIN'])
   async deleteTranslation(@Param() params: TranslationRefDTO): Promise<void> {
     return this.execute({
-      fn: () => this.service.deleteTranslation(params),
+      fn: (builder) =>
+        builder
+          .use(this.service.deleteTranslation)
+          .addTo('filter', { args: params })
+          .build(),
     });
   }
 }
