@@ -16,6 +16,7 @@ const body: ProjectMockBody = {
     active: values.project.active,
     name: values.project.name,
     description: values.project.description,
+    languages: values.project.languages,
   },
   edit: {
     description: 'project-description-edited',
@@ -27,9 +28,10 @@ const body: ProjectMockBody = {
 
 const data: ProjectMockData = {
   _id: values.mongo._id,
-  name: values.project.name,
   active: values.project.active,
+  name: values.project.name,
   description: values.project.description,
+  languages: values.project.languages,
   createdAt: values.mongo.createdAt,
   updatedAt: values.mongo.updatedAt,
 };

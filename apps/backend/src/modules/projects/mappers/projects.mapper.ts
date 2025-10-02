@@ -11,9 +11,10 @@ export class ProjectMapper implements IProjectMapper {
   mapProject(project: FlatProject): MappedProject {
     return {
       id: project._id,
-      name: project.name,
       active: project.active,
+      name: project.name,
       description: project.description,
+      languages: project.languages,
       createdAt: project.createdAt,
       updatedAt: project.updatedAt,
     };

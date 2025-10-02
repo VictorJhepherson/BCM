@@ -25,9 +25,10 @@ describe('[mappers] - ProjectMapper', () => {
     it('should map a project correctly', () => {
       expect(context.mapper.mapProject(data)).toEqual({
         id: data._id,
-        name: data.name,
         active: data.active,
+        name: data.name,
         description: data.description,
+        languages: data.languages,
         createdAt: data.createdAt,
         updatedAt: data.updatedAt,
       });
@@ -46,9 +47,10 @@ describe('[mappers] - ProjectMapper', () => {
         data: expect.arrayContaining([
           {
             id: data._id,
-            name: data.name,
             active: data.active,
+            name: data.name,
             description: data.description,
+            languages: data.languages,
             createdAt: data.createdAt,
             updatedAt: data.updatedAt,
           },

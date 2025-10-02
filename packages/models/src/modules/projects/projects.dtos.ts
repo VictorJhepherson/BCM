@@ -1,6 +1,7 @@
 import { IntersectionType } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import {
+  IsArray,
   IsBoolean,
   IsMongoId,
   IsNotEmpty,
@@ -45,6 +46,15 @@ export class ProjectAddDTO implements IProject {
   @IsNotEmpty({ message: ValidatorMessages.isNotEmpty })
   readonly active: boolean;
 
+  @IsArray({ message: ValidatorMessages.isArray })
+  @IsString({ each: true, message: ValidatorMessages.isString })
+  @IsNotEmpty({ message: ValidatorMessages.isNotEmpty })
+  @Matches(RegexProjects.LANGUAGE, {
+    each: true,
+    message: ValidatorMessages.isMatches,
+  })
+  readonly languages: string[];
+
   @IsString({ message: ValidatorMessages.isString })
   @IsNotEmpty({ message: ValidatorMessages.isNotEmpty })
   @Matches(RegexProjects.DESCRIPTION, { message: ValidatorMessages.isMatches })
@@ -60,6 +70,15 @@ export class ProjectEditDTO implements Partial<IProject> {
   @IsBoolean({ message: ValidatorMessages.isBoolean })
   @IsOptional({ message: ValidatorMessages.isOptional })
   readonly active?: boolean;
+
+  @IsArray({ message: ValidatorMessages.isArray })
+  @IsString({ each: true, message: ValidatorMessages.isString })
+  @IsOptional({ message: ValidatorMessages.isOptional })
+  @Matches(RegexProjects.LANGUAGE, {
+    each: true,
+    message: ValidatorMessages.isMatches,
+  })
+  readonly languages?: string[];
 
   @IsString({ message: ValidatorMessages.isString })
   @IsOptional({ message: ValidatorMessages.isOptional })

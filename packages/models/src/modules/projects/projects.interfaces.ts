@@ -18,6 +18,7 @@ import { FlatProject, MappedProject, Project } from './projects.types';
 export interface IProject {
   name: string;
   active: boolean;
+  languages: string[];
   description: string;
 }
 

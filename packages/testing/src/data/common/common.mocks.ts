@@ -32,6 +32,7 @@ const project: IProject = {
   active: true,
   name: 'project-name',
   description: 'project-description',
+  languages: ['en', 'es', 'fr', 'pt'],
 };
 
 const translation: ITranslation = {

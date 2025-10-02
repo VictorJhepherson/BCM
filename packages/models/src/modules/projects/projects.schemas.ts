@@ -10,6 +10,9 @@ export class ProjectEntity implements IProject {
   @Prop({ required: true })
   readonly active: boolean;
 
+  @Prop({ required: true, match: RegexProjects.LANGUAGE })
+  readonly languages: string[];
+
   @Prop({ required: true, match: RegexProjects.DESCRIPTION })
   readonly description: string;
 }
