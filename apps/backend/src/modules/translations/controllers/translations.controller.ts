@@ -51,7 +51,7 @@ export class TranslationController
     });
   }
 
-  @Get('/projects/:project/languages/:language')
+  @Get('/:_id')
   @Version('1')
   @HttpCode(200)
   @Scopes(['TRANSLATIONS'])
@@ -75,7 +75,7 @@ export class TranslationController
     });
   }
 
-  @Patch('/projects/:project/languages/:language')
+  @Patch('/:_id')
   @Version('1')
   @HttpCode(200)
   @Scopes(['TRANSLATIONS'])
@@ -89,11 +89,11 @@ export class TranslationController
     });
   }
 
-  @Delete('/projects/:project/languages/:language')
+  @Delete('/:_id')
   @Version('1')
   @HttpCode(204)
   @Scopes(['TRANSLATIONS'])
-  @Groups(['EDITOR', 'ADMIN'])
+  @Groups(['ADMIN'])
   async deleteTranslation(@Param() params: TranslationRefDTO): Promise<void> {
     return this.execute({
       fn: () => this.service.deleteTranslation(params),

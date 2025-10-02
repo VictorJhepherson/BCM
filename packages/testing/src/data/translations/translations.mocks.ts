@@ -8,8 +8,7 @@ import {
 } from './translations.mocks.types';
 
 const ref: TranslationMockRef = {
-  project: values.translation.project,
-  language: values.translation.language,
+  _id: values.mongo._id,
 };
 
 const body: TranslationMockBody = {

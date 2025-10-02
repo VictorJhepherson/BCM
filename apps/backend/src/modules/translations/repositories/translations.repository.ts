@@ -8,7 +8,6 @@ import {
   ITranslationFilterPG,
   ITranslationRef,
   ITranslationRepository,
-  PopulateTranslation,
   Translation,
   TranslationEntity,
   WithPagination,
@@ -29,20 +28,20 @@ export class TranslationRepository
     super('[translations]', logger);
   }
 
-  async findOne(ref: ITranslationRef): Promise<PopulateTranslation | null> {
+  async findOne(ref: ITranslationRef): Promise<FlatTranslation | null> {
     return this.execute({
       fn: () =>
         this.model
           .findOne(ref)
           .populate({ path: 'language', select: 'name' })
-          .lean<PopulateTranslation>()
+          .lean<FlatTranslation>()
           .exec(),
     });
   }
 
   async findMany(
     filter: ITranslationFilterPG,
-  ): Promise<WithPagination<PopulateTranslation>> {
+  ): Promise<WithPagination<FlatTranslation>> {
     const { sort, pagination, ...filters } = filter;
 
     return this.execute({
@@ -55,7 +54,7 @@ export class TranslationRepository
             .skip(pagination.skip)
             .limit(pagination.limit)
             .populate({ path: 'language', select: 'name' })
-            .lean<PopulateTranslation[]>()
+            .lean<FlatTranslation[]>()
             .exec(),
         ]);
 

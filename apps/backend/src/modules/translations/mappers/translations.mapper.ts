@@ -1,18 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import {
+  FlatTranslation,
   ITranslationMapper,
   MappedTranslation,
-  PopulateTranslation,
   WithPagination,
 } from '@shared/models';
 
 @Injectable()
 export class TranslationMapper implements ITranslationMapper {
-  mapTranslation(translation: PopulateTranslation): MappedTranslation {
+  mapTranslation(translation: FlatTranslation): MappedTranslation {
     return {
       id: translation._id,
       active: translation.active,
-      language: translation.language.name,
+      language: translation.language,
+      project: translation.project,
       translations: translation.translations,
       createdAt: translation.createdAt,
       updatedAt: translation.updatedAt,
@@ -20,14 +21,12 @@ export class TranslationMapper implements ITranslationMapper {
   }
 
   mapTranslations(
-    payload: WithPagination<PopulateTranslation>,
+    payload: WithPagination<FlatTranslation>,
   ): WithPagination<MappedTranslation> {
     const { data, sort, pagination } = payload;
 
     return {
-      data: data.map((translation: PopulateTranslation) =>
-        this.mapTranslation(translation),
-      ),
+      data: data.map(this.mapTranslation),
       sort: { by: sort.by, order: sort.order },
       pagination: {
         page: pagination.page,

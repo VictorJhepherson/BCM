@@ -70,7 +70,7 @@ export class ProjectDeleteStrategy
     return this.execute({
       fn: async () => {
         await this.project.deleteOne(ref, { session });
-        await this.translation.deleteMany({ language: ref._id }, { session });
+        await this.translation.deleteMany({ project: ref._id }, { session });
       },
     });
   }

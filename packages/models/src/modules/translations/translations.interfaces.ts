@@ -9,7 +9,6 @@ import {
 import {
   FlatTranslation,
   MappedTranslation,
-  PopulateTranslation,
   Translation,
   TranslationTree,
 } from './translations.types';
@@ -17,18 +16,18 @@ import {
 //#region REQUESTERS
 export interface ITranslation {
   active: boolean;
+  language: string;
   project: Types.ObjectId;
-  language: Types.ObjectId;
   translations: TranslationTree;
 }
 
 export interface ITranslationRef {
-  project: Types.ObjectId;
-  language: Types.ObjectId;
+  _id: Types.ObjectId;
 }
 
 export interface ITranslationFilter {
   active?: boolean;
+  project?: Types.ObjectId;
 }
 
 export interface ITranslationFilterPG
@@ -72,11 +71,11 @@ export interface ITranslationService {
 }
 
 export interface ITranslationRepository {
-  findOne(ref: ITranslationRef): Promise<PopulateTranslation | null>;
+  findOne(ref: ITranslationRef): Promise<FlatTranslation | null>;
 
   findMany(
     filter: ITranslationFilterPG,
-  ): Promise<WithPagination<PopulateTranslation>>;
+  ): Promise<WithPagination<FlatTranslation>>;
 
   createOne(payload: ITranslation): Promise<Translation>;
 
@@ -106,10 +105,10 @@ export interface ITranslationRepository {
 
 //#region MAPPERS
 export interface ITranslationMapper {
-  mapTranslation(translation: PopulateTranslation): MappedTranslation;
+  mapTranslation(translation: FlatTranslation): MappedTranslation;
 
   mapTranslations(
-    payload: WithPagination<PopulateTranslation>,
+    payload: WithPagination<FlatTranslation>,
   ): WithPagination<MappedTranslation>;
 }
 //#endregion MAPPERS
