@@ -1,4 +1,4 @@
-import { IPaginationFilter } from '@/common';
+import { IPaginationFilter, IPaginationQuery } from '@/common';
 import { Types } from 'mongoose';
 
 export interface IProjectEntity {
@@ -13,9 +13,12 @@ export interface IProjectParams {
   _id: Types.ObjectId;
 }
 
-export interface IProjectQuery extends IPaginationFilter {
+export interface IProjectQuery extends IPaginationQuery {
   active?: boolean;
 }
 
-export interface IProjectFilter extends IProjectQuery {}
-export interface IUProjectFilter extends IProjectParams, IProjectQuery {}
+export interface IProjectFilter extends IProjectFilterPG {}
+export interface IUProjectFilter extends IProjectParams, IProjectFilterPG {}
+
+/** Only for pagination pipe mapping */
+interface IProjectFilterPG extends IProjectQuery, IPaginationFilter {}
