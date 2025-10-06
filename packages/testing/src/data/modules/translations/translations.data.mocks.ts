@@ -18,8 +18,13 @@ const mockData: TMockData = {
 };
 
 const mockFilter: TMockFilter = {
-  united: { _id: values.database._id, active: true },
   default: { active: true, ...values.sort, ...values.pagination },
+  united: {
+    _id: values.database._id,
+    active: true,
+    sort: values.sort.sort,
+    pagination: values.pagination.pagination,
+  },
 };
 
 const mockPayload: TMockPayload = {

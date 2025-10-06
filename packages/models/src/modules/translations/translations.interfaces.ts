@@ -1,4 +1,4 @@
-import { IPaginationQuery, TStringTree, WorkflowStatus } from '@/common';
+import { IPaginationFilter, TStringTree, WorkflowStatus } from '@/common';
 import { TTranslationDraft } from '@/modules/translations';
 import { Types } from 'mongoose';
 
@@ -11,11 +11,11 @@ export interface ITranslationEntity {
   drafts: TTranslationDraft[];
 }
 
-export interface ITranslationParam {
+export interface ITranslationParams {
   _id: Types.ObjectId;
 }
 
-export interface ITranslationQuery extends IPaginationQuery {
+export interface ITranslationQuery extends IPaginationFilter {
   locale?: string;
   active?: boolean;
   status?: WorkflowStatus;
@@ -24,5 +24,5 @@ export interface ITranslationQuery extends IPaginationQuery {
 
 export interface ITranslationFilter extends ITranslationQuery {}
 export interface IUTranslationFilter
-  extends ITranslationParam,
+  extends ITranslationParams,
     ITranslationQuery {}
