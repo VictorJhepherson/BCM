@@ -4,7 +4,7 @@ import { ILoggerProvider, TRunProps } from '@/shared/models';
 export abstract class BaseStrategy {
   private readonly referrer: string;
 
-  constructor(
+  protected constructor(
     private readonly name: string,
     private readonly logger: ILoggerProvider,
   ) {

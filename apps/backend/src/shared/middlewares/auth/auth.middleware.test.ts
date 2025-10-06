@@ -125,7 +125,7 @@ describe('[middlewares] - AuthMiddleware', () => {
     ).toThrow(
       expect.objectContaining({
         referrer: '[middleware][auth]',
-        error: expect.any(Error),
+        error: { message: 'Invalid Token' },
       }),
     );
 

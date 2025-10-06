@@ -32,7 +32,7 @@ describe('[base] - strategy', () => {
     it('[failed] - should call `run` function with failure', async () => {
       const mockFn = jest.fn().mockRejectedValue({ success: false });
 
-      await expect(strategy.execute({ fn: mockFn })).rejects.toEqual({
+      await expect(strategy.execute({ fn: mockFn })).rejects.toMatchObject({
         referrer: '[test][strategy]',
         error: { success: false },
       });

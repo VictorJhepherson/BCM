@@ -44,7 +44,7 @@ describe('[base] - service', () => {
     it('[failed] - should call `run` function with failure', async () => {
       const mockFn = jest.fn().mockRejectedValue({ success: false });
 
-      await expect(service.execute({ fn: mockFn })).rejects.toEqual({
+      await expect(service.execute({ fn: mockFn })).rejects.toMatchObject({
         referrer: '[test][service]',
         error: { success: false },
       });

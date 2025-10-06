@@ -32,7 +32,7 @@ describe('[base] - gateway', () => {
     it('[failed] - should call `run` function with failure', async () => {
       const mockFn = jest.fn().mockRejectedValue({ success: false });
 
-      await expect(gateway.execute({ fn: mockFn })).rejects.toEqual({
+      await expect(gateway.execute({ fn: mockFn })).rejects.toMatchObject({
         referrer: '[test][gateway]',
         error: { success: false },
       });

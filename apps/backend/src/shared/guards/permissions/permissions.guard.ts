@@ -30,7 +30,7 @@ export class PermissionGuard implements CanActivate {
 
       if (!user) {
         throw new ForbiddenException({
-          message: 'User not found!',
+          message: 'User not found',
         });
       }
 

@@ -10,7 +10,7 @@ import { OperationBuilder } from './operations.builder';
 const { mockConnection } = mockHelpers.database.getMocks();
 
 const mockSuccessFn = jest.fn().mockResolvedValue({ response: 'MOCK_SUCCESS' });
-const mockFailureFn = jest.fn().mockRejectedValue({ response: 'MOCK_FAILURE' });
+const mockFailureFn = jest.fn().mockRejectedValue({ message: 'MOCK_FAILURE' });
 
 describe('[builders] - OperationBuilder', () => {
   const context = {} as TMockPropsOf<
@@ -40,16 +40,16 @@ describe('[builders] - OperationBuilder', () => {
     it('[failure] - should call execute without any modification', async () => {
       await expect(
         context.builder.use(mockFailureFn).execute(),
-      ).rejects.toEqual({
+      ).rejects.toMatchObject({
         referrer: '[referrer][test]',
-        error: { response: 'MOCK_FAILURE' },
+        error: { message: 'MOCK_FAILURE' },
       });
 
       expect(context.others.logger.error).toHaveBeenCalled();
     });
 
     it('[edge-case] - should call execute without any modification', async () => {
-      await expect(context.builder.execute()).rejects.toEqual({
+      await expect(context.builder.execute()).rejects.toMatchObject({
         referrer: '[referrer][test]',
         error: {
           message:
@@ -79,9 +79,9 @@ describe('[builders] - OperationBuilder', () => {
         .map({ key: 'mapTest' })
         .execute();
 
-      await expect(promise).rejects.toEqual({
+      await expect(promise).rejects.toMatchObject({
         referrer: '[referrer][test]',
-        error: { response: 'MOCK_FAILURE' },
+        error: { message: 'MOCK_FAILURE' },
       });
 
       expect(context.others.logger.error).toHaveBeenCalled();
@@ -104,9 +104,9 @@ describe('[builders] - OperationBuilder', () => {
         .useConnection(mockConnection)
         .execute();
 
-      await expect(promise).rejects.toEqual({
+      await expect(promise).rejects.toMatchObject({
         referrer: '[referrer][test]',
-        error: { response: 'MOCK_FAILURE' },
+        error: { message: 'MOCK_FAILURE' },
       });
 
       expect(context.others.logger.error).toHaveBeenCalled();

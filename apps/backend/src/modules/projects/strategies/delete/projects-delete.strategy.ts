@@ -20,7 +20,7 @@ export class ProjectDeleteStrategy
     logger: LoggerProvider,
     private readonly project: ProjectRepository,
   ) {
-    super('[languages]', logger);
+    super('[projects]', logger);
   }
 
   async softDelete(

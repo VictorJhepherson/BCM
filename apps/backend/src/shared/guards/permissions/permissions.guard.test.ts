@@ -78,7 +78,7 @@ describe('[guards] - PermissionGuard', () => {
     expect(() => context.guard.canActivate(mockContext)).toThrow(
       expect.objectContaining({
         referrer: '[guard][permission]',
-        error: { message: 'User not found!' },
+        error: { message: 'User not found' },
       }),
     );
 

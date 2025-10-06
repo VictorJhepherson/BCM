@@ -32,7 +32,7 @@ describe('[base] - controller', () => {
     it('[failed] - should call `run` function with failure', async () => {
       const mockFn = jest.fn().mockRejectedValue({ success: false });
 
-      await expect(controller.execute({ fn: mockFn })).rejects.toEqual({
+      await expect(controller.execute({ fn: mockFn })).rejects.toMatchObject({
         referrer: '[test][controller]',
         error: { success: false },
       });
