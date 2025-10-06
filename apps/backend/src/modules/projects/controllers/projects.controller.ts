@@ -4,8 +4,6 @@ import {
   ProjectArchiveDTO,
   ProjectEditDTO,
   ProjectFilterDTO,
-  TMappedProject,
-  TProject,
   UProjectFilterDTO,
 } from '@/modules/projects/models';
 import { ProjectService } from '@/modules/projects/services/projects.service';
@@ -14,7 +12,7 @@ import { Filter, Groups, Payload, Scopes } from '@/shared/decorators';
 import { PaginationPipe } from '@/shared/pipes';
 import { LoggerProvider } from '@/shared/providers';
 
-import { TWithPagination } from '@bcm/models';
+import { TMappedProject, TProject, TWithPagination } from '@bcm/models';
 
 import {
   Controller,

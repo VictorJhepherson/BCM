@@ -1,9 +1,4 @@
-import {
-  IProjectRepository,
-  ProjectEntity,
-  TFlatProject,
-  TProject,
-} from '@/modules/projects/models';
+import { IProjectRepository, ProjectEntity } from '@/modules/projects/models';
 import { BaseRepository } from '@/shared/core';
 import { IQueryOptions } from '@/shared/models';
 import { LoggerProvider } from '@/shared/providers';
@@ -13,6 +8,8 @@ import {
   IProjectFilter,
   IUProjectFilter,
   TBody,
+  TFlatProject,
+  TProject,
   TQuery,
   TWithPagination,
 } from '@bcm/models';

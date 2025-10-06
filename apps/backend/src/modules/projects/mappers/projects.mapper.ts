@@ -1,6 +1,7 @@
-import { TWithPagination } from '@bcm/models';
+import { IProjectMapper } from '@/modules/projects/models';
+
+import { TFlatProject, TMappedProject, TWithPagination } from '@bcm/models';
 import { Injectable } from '@nestjs/common';
-import { IProjectMapper, TFlatProject, TMappedProject } from '../models';
 
 @Injectable()
 export class ProjectMapper implements IProjectMapper {

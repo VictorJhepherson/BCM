@@ -1,4 +1,4 @@
-import { TFlatProject } from '@/modules/projects/models';
+import { TFlatProject } from '@bcm/models';
 import {
   MockDataFactory,
   TMockProject,

@@ -1,14 +1,17 @@
-import {
-  IProjectDeleteStrategy,
-  TFlatProject,
-} from '@/modules/projects/models';
+import { IProjectDeleteStrategy } from '@/modules/projects/models';
 import { ProjectRepository } from '@/modules/projects/repositories/projects.repository';
 import { BaseStrategy } from '@/shared/core';
 import { format } from '@/shared/helpers';
 import { IQueryOptions } from '@/shared/models';
 import { LoggerProvider } from '@/shared/providers';
 
-import { IProjectEntity, IUProjectFilter, TQuery } from '@bcm/models';
+import {
+  IProjectEntity,
+  IUProjectFilter,
+  TFlatProject,
+  TQuery,
+} from '@bcm/models';
+
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 @Injectable()

@@ -1,9 +1,5 @@
 import { ProjectMapper } from '@/modules/projects/mappers/projects.mapper';
-import {
-  IProjectService,
-  TMappedProject,
-  TProject,
-} from '@/modules/projects/models';
+import { IProjectService } from '@/modules/projects/models';
 import { ProjectRepository } from '@/modules/projects/repositories/projects.repository';
 import { ProjectDeleteStrategy } from '@/modules/projects/strategies';
 import { BaseService } from '@/shared/core';
@@ -15,6 +11,8 @@ import {
   IProjectFilter,
   IUProjectFilter,
   TBody,
+  TMappedProject,
+  TProject,
   TQuery,
   TWithPagination,
 } from '@bcm/models';

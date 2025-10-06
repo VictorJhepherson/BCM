@@ -4,12 +4,7 @@ import {
   ProjectEditDTO,
   ProjectFilterDTO,
   UProjectFilterDTO,
-} from '@/modules/projects/models/projects.dtos';
-import {
-  TFlatProject,
-  TMappedProject,
-  TProject,
-} from '@/modules/projects/models/projects.types';
+} from '@/modules/projects/models';
 import { IQueryOptions } from '@/shared/models';
 
 import {
@@ -17,6 +12,9 @@ import {
   IProjectFilter,
   IUProjectFilter,
   TBody,
+  TFlatProject,
+  TMappedProject,
+  TProject,
   TQuery,
   TWithPagination,
 } from '@bcm/models';
