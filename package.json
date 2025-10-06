@@ -1,0 +1,25 @@
+{
+  "name": "bcm",
+  "private": true,
+  "scripts": {
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "build": "turbo run build",
+    "start:back:dev": "turbo run start:back:dev --filter=@bcm/backend",
+    "test:coverage": "turbo run test:coverage"
+  },
+  "devDependencies": {
+    "@bcm/build": "workspace:^",
+    "@types/jest": "^30.0.0",
+    "jest": "^30.0.0",
+    "prettier": "^3.6.2",
+    "ts-jest": "^29.2.5",
+    "tsc-alias": "^1.8.16",
+    "turbo": "^2.5.8",
+    "typescript": "5.9.2"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=18"
+  }
+}

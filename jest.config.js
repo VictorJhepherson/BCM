@@ -1,0 +1,38 @@
+/** @type {import('ts-jest').JestConfigWithTsJest} */
+module.exports = {
+  preset: 'ts-jest',
+  testEnvironment: 'node',
+  rootDir: './',
+  roots: ['<rootDir>/apps', '<rootDir>/packages'],
+  testMatch: ['**/?(*).test.+(ts|tsx|js)'],
+  transform: {
+    '^.+\\.(ts|tsx)$': 'ts-jest',
+  },
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  collectCoverageFrom: [
+    '!**/*.d.ts',
+    '!**/main.ts',
+    '!**/index.ts',
+    '!**/*.dtos.ts',
+    '!**/*.types.ts',
+    '!**/*.module.ts',
+    '!**/*.schemas.ts',
+    '!**/*.messages.ts',
+    '!**/*.constants.ts',
+    '!**/*.interfaces.ts',
+  ],
+  testPathIgnorePatterns: [
+    '\\.d\\.ts$',
+    'index\\.ts$',
+    '\\.dtos\\.ts$',
+    '\\.mocks\\.ts$',
+    '\\.types\\.ts$',
+    '\\.schemas\\.ts$',
+    '\\.messages\\.ts$',
+    '\\.constants\\.ts$',
+    '\\.interfaces\\.ts$',
+    '<rootDir>/packages/build/',
+    '<rootDir>/packages/models/',
+    '<rootDir>/packages/testing/',
+  ],
+};

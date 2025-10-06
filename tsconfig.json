@@ -1,0 +1,3 @@
+{
+  "extends": "@bcm/build/base.json"
+}
