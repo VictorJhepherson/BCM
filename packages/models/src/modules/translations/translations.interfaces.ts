@@ -32,5 +32,7 @@ export interface IUTranslationFilter
   extends ITranslationParams,
     ITranslationFilterPG {}
 
-/** Only for pagination pipe mapping */
-interface ITranslationFilterPG extends ITranslationQuery, IPaginationFilter {}
+/** Omit unused paging data in filters, keeping only data remapped by PaginationPipe */
+interface ITranslationFilterPG
+  extends Omit<ITranslationQuery, keyof IPaginationQuery>,
+    IPaginationFilter {}

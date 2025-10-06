@@ -20,5 +20,7 @@ export interface IProjectQuery extends IPaginationQuery {
 export interface IProjectFilter extends IProjectFilterPG {}
 export interface IUProjectFilter extends IProjectParams, IProjectFilterPG {}
 
-/** Only for pagination pipe mapping */
-interface IProjectFilterPG extends IProjectQuery, IPaginationFilter {}
+/** Omit unused paging data in filters, keeping only data remapped by PaginationPipe */
+interface IProjectFilterPG
+  extends Omit<IProjectQuery, keyof IPaginationQuery>,
+    IPaginationFilter {}
