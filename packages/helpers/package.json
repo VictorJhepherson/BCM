@@ -1,0 +1,17 @@
+{
+  "name": "@bcm/helpers",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
+    "test:coverage": "jest --collect-coverage --passWithNoTests"
+  },
+  "devDependencies": {
+    "@bcm/build": "workspace:*",
+    "typescript": "5.9.2"
+  },
+  "dependencies": {
+    "@bcm/models": "workspace:*"
+  }
+}

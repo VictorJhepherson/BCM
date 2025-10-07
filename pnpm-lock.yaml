@@ -156,6 +156,19 @@ importers:
 
   packages/build: {}
 
+  packages/helpers:
+    dependencies:
+      '@bcm/models':
+        specifier: workspace:*
+        version: link:../models
+    devDependencies:
+      '@bcm/build':
+        specifier: workspace:*
+        version: link:../build
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+
   packages/models:
     dependencies:
       mongoose:

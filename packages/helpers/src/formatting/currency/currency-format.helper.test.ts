@@ -1,0 +1,26 @@
+import { TFormatReturn } from '@bcm/models';
+import { formatCurrency as format } from './currency-format.helper';
+
+describe('[formatting] - formatCurrency', () => {
+  it('[BRL][pt-BR] - should return value and formatted values', () => {
+    const currency = format('pt-BR', { value: 123456, currency: 'BRL' });
+    const expected: TFormatReturn<'currency'> = {
+      value: 123456,
+      formatted: { simple: '1.234,56', completed: 'R$ 1.234,56' },
+    };
+
+    expect(currency.value).toBe(expected.value);
+    expect(currency.formatted).toMatchObject(currency.formatted);
+  });
+
+  it('[USD][en-US] - should return value and formatted values', () => {
+    const currency = format('en-US', { value: 123456, currency: 'USD' });
+    const expected: TFormatReturn<'currency'> = {
+      value: 123456,
+      formatted: { simple: '1.234.56', completed: '$1.234.56' },
+    };
+
+    expect(currency.value).toBe(expected.value);
+    expect(currency.formatted).toMatchObject(currency.formatted);
+  });
+});
