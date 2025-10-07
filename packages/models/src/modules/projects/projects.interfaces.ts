@@ -17,10 +17,18 @@ export interface IProjectQuery extends IPaginationQuery {
   active?: boolean;
 }
 
-export interface IProjectFilter extends IProjectFilterPG {}
-export interface IUProjectFilter extends IProjectParams, IProjectFilterPG {}
+export interface IProjectFilter
+  extends Omit<IProjectQuery, keyof IPaginationQuery> {}
 
-/** Omit unused paging data in filters, keeping only data remapped by PaginationPipe */
-interface IProjectFilterPG
+export interface IProjectFilterPG
   extends Omit<IProjectQuery, keyof IPaginationQuery>,
+    IPaginationFilter {}
+
+export interface IUProjectFilter
+  extends IProjectParams,
+    Omit<IProjectQuery, keyof IPaginationQuery> {}
+
+export interface IUProjectFilterPG
+  extends IProjectParams,
+    Omit<IProjectQuery, keyof IPaginationQuery>,
     IPaginationFilter {}

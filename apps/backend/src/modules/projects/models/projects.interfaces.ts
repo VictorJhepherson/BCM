@@ -9,7 +9,7 @@ import { IQueryOptions } from '@/shared/models';
 
 import {
   IProjectEntity,
-  IProjectFilter,
+  IProjectFilterPG,
   IUProjectFilter,
   TBody,
   TFlatProject,
@@ -44,7 +44,7 @@ export interface IProjectController {
 export interface IProjectService {
   getAll({
     filter,
-  }: TQuery<IProjectFilter>): Promise<TWithPagination<TMappedProject>>;
+  }: TQuery<IProjectFilterPG>): Promise<TWithPagination<TMappedProject>>;
 
   getById({ filter }: TQuery<IUProjectFilter>): Promise<TMappedProject>;
 
@@ -74,7 +74,7 @@ export interface IProjectRepository {
   ): Promise<TFlatProject | null>;
 
   findMany(
-    { filter }: TQuery<IProjectFilter>,
+    { filter }: TQuery<IProjectFilterPG>,
     options?: IQueryOptions,
   ): Promise<TWithPagination<TFlatProject>>;
 

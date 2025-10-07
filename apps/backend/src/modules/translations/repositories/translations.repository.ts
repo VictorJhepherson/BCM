@@ -9,6 +9,7 @@ import { LoggerProvider } from '@/shared/providers';
 import {
   ITranslationEntity,
   ITranslationFilter,
+  ITranslationFilterPG,
   IUTranslationFilter,
   TBody,
   TFlatTranslation,
@@ -44,7 +45,7 @@ export class TranslationRepository
 
   async findMany({
     filter,
-  }: TQuery<ITranslationFilter>): Promise<TWithPagination<TFlatTranslation>> {
+  }: TQuery<ITranslationFilterPG>): Promise<TWithPagination<TFlatTranslation>> {
     const { sort, pagination, ...filters } = filter;
 
     return this.run({

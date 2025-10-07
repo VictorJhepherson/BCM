@@ -1,15 +1,15 @@
 import { TMockQueryFilter } from '@/data/common/common.data.mocks.types';
 import {
   ITranslationEntity,
-  ITranslationFilter,
-  IUTranslationFilter,
+  ITranslationFilterPG,
+  IUTranslationFilterPG,
   TRequiredField,
 } from '@bcm/models';
 
 export type TMockData = ITranslationEntity;
 export type TMockFilter = TMockQueryFilter<
-  ITranslationFilter,
-  IUTranslationFilter
+  ITranslationFilterPG,
+  IUTranslationFilterPG
 >;
 
 export type TMockPayload = {

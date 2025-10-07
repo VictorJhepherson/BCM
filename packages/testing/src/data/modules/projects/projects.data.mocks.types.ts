@@ -1,13 +1,13 @@
 import { TMockQueryFilter } from '@/data/common/common.data.mocks.types';
 import {
   IProjectEntity,
-  IProjectFilter,
-  IUProjectFilter,
+  IProjectFilterPG,
+  IUProjectFilterPG,
   TRequiredField,
 } from '@bcm/models';
 
 export type TMockData = IProjectEntity;
-export type TMockFilter = TMockQueryFilter<IProjectFilter, IUProjectFilter>;
+export type TMockFilter = TMockQueryFilter<IProjectFilterPG, IUProjectFilterPG>;
 
 export type TMockPayload = {
   add: IProjectEntity;

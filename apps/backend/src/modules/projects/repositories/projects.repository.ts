@@ -5,7 +5,7 @@ import { LoggerProvider } from '@/shared/providers';
 
 import {
   IProjectEntity,
-  IProjectFilter,
+  IProjectFilterPG,
   IUProjectFilter,
   TBody,
   TFlatProject,
@@ -41,7 +41,7 @@ export class ProjectRepository
 
   async findMany({
     filter,
-  }: TQuery<IProjectFilter>): Promise<TWithPagination<TFlatProject>> {
+  }: TQuery<IProjectFilterPG>): Promise<TWithPagination<TFlatProject>> {
     const { sort, pagination, ...filters } = filter;
 
     return this.run({

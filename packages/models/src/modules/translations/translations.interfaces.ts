@@ -27,12 +27,18 @@ export interface ITranslationQuery extends IPaginationQuery {
   project?: Types.ObjectId;
 }
 
-export interface ITranslationFilter extends ITranslationFilterPG {}
+export interface ITranslationFilter
+  extends Omit<ITranslationQuery, keyof IPaginationQuery> {}
+
+export interface ITranslationFilterPG
+  extends Omit<ITranslationQuery, keyof IPaginationQuery>,
+    IPaginationFilter {}
+
 export interface IUTranslationFilter
   extends ITranslationParams,
-    ITranslationFilterPG {}
+    Omit<ITranslationQuery, keyof IPaginationQuery> {}
 
-/** Omit unused paging data in filters, keeping only data remapped by PaginationPipe */
-interface ITranslationFilterPG
-  extends Omit<ITranslationQuery, keyof IPaginationQuery>,
+export interface IUTranslationFilterPG
+  extends ITranslationParams,
+    Omit<ITranslationQuery, keyof IPaginationQuery>,
     IPaginationFilter {}

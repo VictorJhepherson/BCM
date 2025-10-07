@@ -7,6 +7,8 @@ import {
   TMockProject,
 } from './projects.data.mocks.types';
 
+const { sort, pagination } = values;
+
 const mockData: TMockData = {
   active: true,
   name: 'project-name',
@@ -16,12 +18,12 @@ const mockData: TMockData = {
 };
 
 const mockFilter: TMockFilter = {
-  default: { active: true, ...values.sort, ...values.pagination },
+  default: { active: true, ...sort, ...pagination },
   united: {
     _id: values.database._id,
     active: true,
-    sort: values.sort.sort,
-    pagination: values.pagination.pagination,
+    sort: sort.sort,
+    pagination: pagination.pagination,
   },
 };
 

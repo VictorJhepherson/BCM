@@ -7,7 +7,7 @@ import { LoggerProvider } from '@/shared/providers';
 
 import {
   ITranslationEntity,
-  ITranslationFilter,
+  ITranslationFilterPG,
   IUTranslationFilter,
   TBody,
   TMappedTranslation,
@@ -33,7 +33,9 @@ export class TranslationService
 
   async getAll({
     filter,
-  }: TQuery<ITranslationFilter>): Promise<TWithPagination<TMappedTranslation>> {
+  }: TQuery<ITranslationFilterPG>): Promise<
+    TWithPagination<TMappedTranslation>
+  > {
     return this.run({
       fn: (builder) =>
         builder

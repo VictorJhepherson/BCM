@@ -8,7 +8,7 @@ import { LoggerProvider } from '@/shared/providers';
 
 import {
   IProjectEntity,
-  IProjectFilter,
+  IProjectFilterPG,
   IUProjectFilter,
   TBody,
   TMappedProject,
@@ -36,7 +36,7 @@ export class ProjectService extends BaseService implements IProjectService {
 
   async getAll({
     filter,
-  }: TQuery<IProjectFilter>): Promise<TWithPagination<TMappedProject>> {
+  }: TQuery<IProjectFilterPG>): Promise<TWithPagination<TMappedProject>> {
     return this.run({
       fn: (builder) =>
         builder

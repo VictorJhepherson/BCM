@@ -10,6 +10,7 @@ import { IQueryOptions } from '@/shared/models';
 import {
   ITranslationEntity,
   ITranslationFilter,
+  ITranslationFilterPG,
   IUTranslationFilter,
   TBody,
   TFlatTranslation,
@@ -46,7 +47,9 @@ export interface ITranslationController {
 export interface ITranslationService {
   getAll({
     filter,
-  }: TQuery<ITranslationFilter>): Promise<TWithPagination<TMappedTranslation>>;
+  }: TQuery<ITranslationFilterPG>): Promise<
+    TWithPagination<TMappedTranslation>
+  >;
 
   getById({ filter }: TQuery<IUTranslationFilter>): Promise<TMappedTranslation>;
 
@@ -79,7 +82,7 @@ export interface ITranslationRepository {
   ): Promise<TFlatTranslation | null>;
 
   findMany(
-    { filter }: TQuery<ITranslationFilter>,
+    { filter }: TQuery<ITranslationFilterPG>,
     options?: IQueryOptions,
   ): Promise<TWithPagination<TFlatTranslation>>;
 
