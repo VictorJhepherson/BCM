@@ -1,11 +1,11 @@
-import { ProjectEntity } from '@/modules/projects/models';
+import { TranslationEntity } from '@/modules/translations/models';
 import { LoggerProvider } from '@/shared/providers';
 
 import {
   MockDataFactory,
   MockMethodFactory,
-  TMockProject,
   TMockPropsOf,
+  TMockTranslation,
   mockData,
 } from '@bcm/testing';
 
@@ -13,25 +13,25 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
 import { Model } from 'mongoose';
 
-import { ProjectRepository } from './projects.repository';
+import { TranslationRepository } from './translations.repository';
 
-const { data, filter, payload } = new MockDataFactory<TMockProject>(
-  mockData.project,
+const { data, filter, payload } = new MockDataFactory<TMockTranslation>(
+  mockData.translation,
 ).build();
 
-describe('[repositories] - ProjectRepository', () => {
+describe('[repositories] - TranslationRepository', () => {
   const context = {} as TMockPropsOf<
     'repository',
-    ProjectRepository,
+    TranslationRepository,
     {
-      model: Model<ProjectEntity>;
+      model: Model<TranslationEntity>;
     }
   >;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
-        ProjectRepository,
+        TranslationRepository,
         {
           provide: LoggerProvider,
           useFactory: () =>
@@ -43,13 +43,15 @@ describe('[repositories] - ProjectRepository', () => {
               .build(),
         },
         {
-          provide: getModelToken(ProjectEntity.name),
+          provide: getModelToken(TranslationEntity.name),
           useFactory: () =>
-            new MockMethodFactory<Model<ProjectEntity>>()
+            new MockMethodFactory<Model<TranslationEntity>>()
               .add('find', jest.fn())
               .add('findOne', jest.fn())
               .add('create', jest.fn())
               .add('deleteOne', jest.fn())
+              .add('deleteMany', jest.fn())
+              .add('updateMany', jest.fn())
               .add('countDocuments', jest.fn())
               .add('findOneAndUpdate', jest.fn())
               .build(),
@@ -57,16 +59,16 @@ describe('[repositories] - ProjectRepository', () => {
       ],
     }).compile();
 
-    context.repository = moduleRef.get(ProjectRepository);
+    context.repository = moduleRef.get(TranslationRepository);
     context.others = {
-      model: moduleRef.get(getModelToken(ProjectEntity.name)),
+      model: moduleRef.get(getModelToken(TranslationEntity.name)),
     };
   });
 
   afterEach(() => jest.clearAllMocks());
 
   describe('[findOne]', () => {
-    it('[success] - should get a project', async () => {
+    it('[success] - should get a translation', async () => {
       (context.others.model.findOne as jest.Mock).mockReturnValue({
         lean: jest.fn().mockReturnValue({
           exec: jest.fn().mockResolvedValue(data),
@@ -88,14 +90,14 @@ describe('[repositories] - ProjectRepository', () => {
       await expect(
         context.repository.findOne({ filter: filter.united }),
       ).rejects.toMatchObject({
-        referrer: '[projects][repository]',
+        referrer: '[translations][repository]',
         error: { message: 'MODEL ERROR' },
       });
     });
   });
 
   describe('[findMany]', () => {
-    it('[success] - should get all projects', async () => {
+    it('[success] - should get all translations', async () => {
       (context.others.model.countDocuments as jest.Mock).mockReturnValue({
         exec: jest.fn().mockResolvedValue(100),
       });
@@ -141,12 +143,12 @@ describe('[repositories] - ProjectRepository', () => {
       await expect(
         context.repository.findMany({ filter: filter.default }),
       ).rejects.toMatchObject({
-        referrer: '[projects][repository]',
+        referrer: '[translations][repository]',
         error: { message: 'MODEL ERROR' },
       });
     });
 
-    it('[edge-case] - should get all projects with sort.order ASC', async () => {
+    it('[edge-case] - should get all translations with sort.order ASC', async () => {
       (context.others.model.countDocuments as jest.Mock).mockReturnValue({
         exec: jest.fn().mockResolvedValue(100),
       });
@@ -179,7 +181,7 @@ describe('[repositories] - ProjectRepository', () => {
   });
 
   describe('[createOne]', () => {
-    it('[success] - should add project', async () => {
+    it('[success] - should add translation', async () => {
       (context.others.model.create as jest.Mock).mockResolvedValue(data);
 
       expect(
@@ -195,14 +197,14 @@ describe('[repositories] - ProjectRepository', () => {
       await expect(
         context.repository.createOne({ payload: payload.add }),
       ).rejects.toMatchObject({
-        referrer: '[projects][repository]',
+        referrer: '[translations][repository]',
         error: { message: 'MODEL ERROR' },
       });
     });
   });
 
   describe('[updateOne]', () => {
-    it('[success] - should edit a project', async () => {
+    it('[success] - should edit a translation', async () => {
       (context.others.model.findOneAndUpdate as jest.Mock).mockReturnValue({
         lean: jest.fn().mockReturnValue({
           exec: jest.fn().mockResolvedValue(data),
@@ -230,14 +232,45 @@ describe('[repositories] - ProjectRepository', () => {
           payload: payload.edit,
         }),
       ).rejects.toMatchObject({
-        referrer: '[projects][repository]',
+        referrer: '[translations][repository]',
+        error: { message: 'MODEL ERROR' },
+      });
+    });
+  });
+
+  describe('[updateMany]', () => {
+    it('[success] - should edit filtered translations', async () => {
+      (context.others.model.updateMany as jest.Mock).mockReturnValue({
+        exec: jest.fn().mockResolvedValue(data),
+      });
+
+      expect(
+        await context.repository.updateMany({
+          filter: filter.united,
+          payload: payload.edit,
+        }),
+      ).toEqual(data);
+    });
+
+    it('[failure] - should handle an error', async () => {
+      (context.others.model.updateMany as jest.Mock).mockReturnValue({
+        exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
+      });
+
+      await expect(
+        context.repository.updateMany({
+          filter: filter.united,
+          payload: payload.edit,
+        }),
+      ).rejects.toMatchObject({
+        referrer: '[translations][repository]',
         error: { message: 'MODEL ERROR' },
       });
     });
   });
 
   describe('[deleteOne]', () => {
-    it('[success] - should delete a project', async () => {
+    it('[success] - should delete a translation', async () => {
       (context.others.model.deleteOne as jest.Mock).mockReturnValue({
         exec: jest.fn().mockResolvedValue({ deletedCount: 1 }),
       });
@@ -257,7 +290,34 @@ describe('[repositories] - ProjectRepository', () => {
       await expect(
         context.repository.deleteOne({ filter: filter.united }),
       ).rejects.toMatchObject({
-        referrer: '[projects][repository]',
+        referrer: '[translations][repository]',
+        error: { message: 'MODEL ERROR' },
+      });
+    });
+  });
+
+  describe('[deleteMany]', () => {
+    it('[success] - should delete filtered translations', async () => {
+      (context.others.model.deleteMany as jest.Mock).mockReturnValue({
+        exec: jest.fn().mockResolvedValue({ deletedCount: 1 }),
+      });
+
+      expect(
+        await context.repository.deleteMany({ filter: filter.united }),
+      ).toEqual({
+        deletedCount: 1,
+      });
+    });
+
+    it('[failure] - should handle an error', async () => {
+      (context.others.model.deleteMany as jest.Mock).mockReturnValue({
+        exec: jest.fn().mockRejectedValue(new Error('MODEL ERROR')),
+      });
+
+      await expect(
+        context.repository.deleteMany({ filter: filter.united }),
+      ).rejects.toMatchObject({
+        referrer: '[translations][repository]',
         error: { message: 'MODEL ERROR' },
       });
     });

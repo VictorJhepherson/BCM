@@ -1,5 +1,6 @@
 import { IProjectDeleteStrategy } from '@/modules/projects/models';
 import { ProjectRepository } from '@/modules/projects/repositories/projects.repository';
+import { TranslationRepository } from '@/modules/translations/repositories/translations.repository';
 import { BaseStrategy } from '@/shared/core';
 import { format } from '@/shared/helpers';
 import { IQueryOptions } from '@/shared/models';
@@ -22,6 +23,7 @@ export class ProjectDeleteStrategy
   constructor(
     logger: LoggerProvider,
     private readonly project: ProjectRepository,
+    private readonly translation: TranslationRepository,
   ) {
     super('[projects]', logger);
   }
@@ -46,7 +48,18 @@ export class ProjectDeleteStrategy
           });
         }
 
-        /** TODO: Add translations repository */
+        const { _id: project, ...filters } = filter;
+        const { matchedCount, modifiedCount } =
+          await this.translation.updateMany(
+            { filter: { ...filters, project }, payload },
+            { session },
+          );
+
+        if (matchedCount > 0 && modifiedCount < 1) {
+          throw new NotFoundException({
+            message: `Unable to archive translations for: ${format.base(filter)}`,
+          });
+        }
 
         return updated;
       },
@@ -60,7 +73,12 @@ export class ProjectDeleteStrategy
     return this.run({
       fn: async () => {
         await this.project.deleteOne({ filter }, { session });
-        /** TODO: Add translations repository */
+
+        const { _id: project, ...filters } = filter;
+        await this.translation.deleteMany(
+          { filter: { ...filters, project } },
+          { session },
+        );
       },
     });
   }

@@ -1,4 +1,4 @@
-import { HealthModule, ProjectModule } from '@/modules';
+import { HealthModule, ProjectModule, TranslationModule } from '@/modules';
 import { PermissionGuard } from '@/shared/guards';
 import { AuthMiddleware } from '@/shared/middlewares';
 import { LoggerProvider } from '@/shared/providers';
@@ -35,6 +35,7 @@ import { MongooseModule } from '@nestjs/mongoose';
     }),
     HealthModule,
     ProjectModule,
+    TranslationModule,
   ],
   exports: [PermissionGuard],
   providers: [LoggerProvider, PermissionGuard],

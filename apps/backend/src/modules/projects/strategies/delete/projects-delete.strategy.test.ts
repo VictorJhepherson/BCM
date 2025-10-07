@@ -1,4 +1,5 @@
 import { ProjectRepository } from '@/modules/projects/repositories/projects.repository';
+import { TranslationRepository } from '@/modules/translations/repositories/translations.repository';
 import { format } from '@/shared/helpers';
 import { LoggerProvider } from '@/shared/providers';
 
@@ -24,6 +25,7 @@ describe('[strategies] - ProjectDeleteStrategy', () => {
     {
       logger: LoggerProvider;
       project: ProjectRepository;
+      translation: TranslationRepository;
     }
   >;
 
@@ -49,6 +51,14 @@ describe('[strategies] - ProjectDeleteStrategy', () => {
               .add('deleteOne', jest.fn())
               .build(),
         },
+        {
+          provide: TranslationRepository,
+          useFactory: () =>
+            new MockMethodFactory<TranslationRepository>()
+              .add('updateMany', jest.fn())
+              .add('deleteMany', jest.fn())
+              .build(),
+        },
       ],
     }).compile();
 
@@ -56,12 +66,17 @@ describe('[strategies] - ProjectDeleteStrategy', () => {
     context.others = {
       logger: moduleRef.get(LoggerProvider),
       project: moduleRef.get(ProjectRepository),
+      translation: moduleRef.get(TranslationRepository),
     };
   });
 
   describe('[softDelete]', () => {
     it('[success] - should apply the update', async () => {
       (context.others.project.updateOne as jest.Mock).mockResolvedValue(data);
+      (context.others.translation.updateMany as jest.Mock).mockResolvedValue({
+        matchedCount: 1,
+        modifiedCount: 1,
+      });
 
       expect(
         await context.strategy.softDelete({
@@ -73,6 +88,28 @@ describe('[strategies] - ProjectDeleteStrategy', () => {
 
     it('[failure][updateOne] - should handler an error', async () => {
       (context.others.project.updateOne as jest.Mock).mockRejectedValue(
+        new Error('REPOSITORY ERROR'),
+      );
+
+      (context.others.translation.updateMany as jest.Mock).mockResolvedValue({
+        matchedCount: 1,
+        modifiedCount: 1,
+      });
+
+      await expect(
+        context.strategy.softDelete({
+          filter: filter.united,
+          payload: payload.archive,
+        }),
+      ).rejects.toMatchObject({
+        referrer: '[projects][strategy]',
+        error: { message: 'REPOSITORY ERROR' },
+      });
+    });
+
+    it('[failure][updateMany] - should handler an error', async () => {
+      (context.others.project.updateOne as jest.Mock).mockResolvedValue(data);
+      (context.others.translation.updateMany as jest.Mock).mockRejectedValue(
         new Error('REPOSITORY ERROR'),
       );
 
@@ -92,6 +129,11 @@ describe('[strategies] - ProjectDeleteStrategy', () => {
         undefined,
       );
 
+      (context.others.translation.updateMany as jest.Mock).mockResolvedValue({
+        matchedCount: 1,
+        modifiedCount: 1,
+      });
+
       await expect(
         context.strategy.softDelete({
           filter: filter.united,
@@ -104,11 +146,36 @@ describe('[strategies] - ProjectDeleteStrategy', () => {
         },
       });
     });
+
+    it('[edge-case][updateMany] - should failed to archive a project', async () => {
+      (context.others.project.updateOne as jest.Mock).mockResolvedValue(data);
+
+      (context.others.translation.updateMany as jest.Mock).mockResolvedValue({
+        matchedCount: 1,
+        modifiedCount: 0,
+      });
+
+      await expect(
+        context.strategy.softDelete({
+          filter: filter.united,
+          payload: payload.archive,
+        }),
+      ).rejects.toMatchObject({
+        referrer: '[projects][strategy]',
+        error: {
+          message: `Unable to archive translations for: ${format.base(filter.united)}`,
+        },
+      });
+    });
   });
 
   describe('[hardDelete]', () => {
     it('[success] - should apply the delete', async () => {
       (context.others.project.deleteOne as jest.Mock).mockResolvedValue({
+        deletedCount: 1,
+      });
+
+      (context.others.translation.deleteMany as jest.Mock).mockResolvedValue({
         deletedCount: 1,
       });
 
@@ -119,6 +186,27 @@ describe('[strategies] - ProjectDeleteStrategy', () => {
 
     it('[failure][deleteOne] - should handler an error', async () => {
       (context.others.project.deleteOne as jest.Mock).mockRejectedValue(
+        new Error('REPOSITORY ERROR'),
+      );
+
+      (context.others.translation.deleteMany as jest.Mock).mockResolvedValue({
+        deletedCount: 1,
+      });
+
+      await expect(
+        context.strategy.hardDelete({ filter: filter.united }),
+      ).rejects.toMatchObject({
+        referrer: '[projects][strategy]',
+        error: { message: 'REPOSITORY ERROR' },
+      });
+    });
+
+    it('[failure][deleteMany] - should handler an error', async () => {
+      (context.others.project.deleteOne as jest.Mock).mockResolvedValue({
+        deletedCount: 1,
+      });
+
+      (context.others.translation.deleteMany as jest.Mock).mockRejectedValue(
         new Error('REPOSITORY ERROR'),
       );
 

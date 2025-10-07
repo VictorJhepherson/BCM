@@ -1,4 +1,5 @@
 import { ProjectRGX } from '@/modules/projects/models/projects.constants';
+import { CommonRGX } from '@/shared/models';
 
 import { IProjectEntity } from '@bcm/models';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
@@ -11,7 +12,7 @@ export class ProjectEntity implements IProjectEntity {
   @Prop({ required: true })
   active: boolean;
 
-  @Prop({ required: true, default: [], match: ProjectRGX.LOCALE })
+  @Prop({ required: true, default: [], match: CommonRGX.LOCALE })
   locales: string[];
 
   @Prop({ required: true, match: ProjectRGX.DESCRIPTION })

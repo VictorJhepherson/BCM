@@ -1,6 +1,6 @@
 import { ProjectRGX } from '@/modules/projects/models/projects.constants';
 import { ValidatorMessages } from '@/shared/core';
-import { PaginationDTO } from '@/shared/models';
+import { CommonRGX, PaginationDTO } from '@/shared/models';
 
 import { IProjectEntity, IProjectFilter, IUProjectFilter } from '@bcm/models';
 
@@ -46,11 +46,11 @@ export class ProjectAddDTO implements IProjectEntity {
   @IsArray({ message: ValidatorMessages.isArray })
   @IsString({ each: true, message: ValidatorMessages.isString })
   @IsNotEmpty({ message: ValidatorMessages.isNotEmpty })
-  @Matches(ProjectRGX.LOCALE, {
+  @Matches(CommonRGX.LOCALE, {
     each: true,
     message: ValidatorMessages.isMatches,
   })
-  readonly locales: string[];
+  readonly locales: string[] = [];
 
   @IsString({ message: ValidatorMessages.isString })
   @IsNotEmpty({ message: ValidatorMessages.isNotEmpty })
@@ -76,7 +76,7 @@ export class ProjectEditDTO implements Partial<IProjectEntity> {
   @IsArray({ message: ValidatorMessages.isArray })
   @IsString({ each: true, message: ValidatorMessages.isString })
   @IsOptional({ message: ValidatorMessages.isOptional })
-  @Matches(ProjectRGX.LOCALE, {
+  @Matches(CommonRGX.LOCALE, {
     each: true,
     message: ValidatorMessages.isMatches,
   })

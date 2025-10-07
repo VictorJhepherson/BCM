@@ -47,7 +47,7 @@ export class ProjectRepository
     return this.run({
       fn: async () => {
         const [total, data] = await Promise.all([
-          this.model.countDocuments().exec(),
+          this.model.countDocuments(filters).exec(),
           this.model
             .find(filters)
             .sort({ [sort.by]: sort.order === 'ASC' ? 1 : -1 })
