@@ -31,7 +31,7 @@ export interface ITranslationFilter
   extends Omit<ITranslationQuery, keyof IPaginationQuery> {}
 
 export interface ITranslationFilterPG
-  extends Omit<ITranslationQuery, keyof IPaginationQuery>,
+  extends ITranslationFilter,
     IPaginationFilter {}
 
 export interface IUTranslationFilter
@@ -40,5 +40,5 @@ export interface IUTranslationFilter
 
 export interface IUTranslationFilterPG
   extends ITranslationParams,
-    Omit<ITranslationQuery, keyof IPaginationQuery>,
+    IUTranslationFilter,
     IPaginationFilter {}

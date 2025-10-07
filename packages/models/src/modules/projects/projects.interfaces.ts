@@ -20,9 +20,7 @@ export interface IProjectQuery extends IPaginationQuery {
 export interface IProjectFilter
   extends Omit<IProjectQuery, keyof IPaginationQuery> {}
 
-export interface IProjectFilterPG
-  extends Omit<IProjectQuery, keyof IPaginationQuery>,
-    IPaginationFilter {}
+export interface IProjectFilterPG extends IProjectFilter, IPaginationFilter {}
 
 export interface IUProjectFilter
   extends IProjectParams,
@@ -30,5 +28,5 @@ export interface IUProjectFilter
 
 export interface IUProjectFilterPG
   extends IProjectParams,
-    Omit<IProjectQuery, keyof IPaginationQuery>,
+    IUProjectFilter,
     IPaginationFilter {}
