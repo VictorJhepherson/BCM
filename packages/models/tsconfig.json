@@ -1,5 +1,5 @@
 {
-  "extends": "@bcm/build/base.json",
+  "extends": "@bcm/config/base.json",
   "include": ["src"],
   "exclude": ["node_modules", "dist", "**/*test.ts"],
   "compilerOptions": {

@@ -7,7 +7,7 @@
     "build": "tsc -p tsconfig.json && tsc-alias -p tsconfig.json"
   },
   "devDependencies": {
-    "@bcm/build": "workspace:*",
+    "@bcm/config": "workspace:*",
     "@types/express": "^5.0.0",
     "typescript": "5.9.2"
   },

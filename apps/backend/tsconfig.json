@@ -1,5 +1,5 @@
 {
-  "extends": "@bcm/build/nestjs.json",
+  "extends": "@bcm/config/nestjs.json",
   "compilerOptions": {
     "baseUrl": "src",
     "outDir": "dist",

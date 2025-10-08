@@ -8,7 +8,7 @@
     "test:coverage": "jest --collect-coverage --passWithNoTests"
   },
   "devDependencies": {
-    "@bcm/build": "workspace:*",
+    "@bcm/config": "workspace:*",
     "typescript": "5.9.2"
   },
   "dependencies": {
