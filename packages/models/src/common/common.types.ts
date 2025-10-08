@@ -63,6 +63,11 @@ export type TWithPagination<T> = {
   sort: TSort;
   pagination: Omit<TPagination, 'skip'> & { total: number };
 };
+
+export type TWithLean<T> = FlattenMaps<Require_id<T>> & {
+  createdAt: Date;
+  updatedAt: Date;
+};
 //#endregion UTILS
 
 //#region GENERICS
@@ -86,8 +91,5 @@ export type TPromiseFn<T, A = void> = A extends void
   ? () => Promise<T>
   : (args: A) => Promise<T>;
 
-export type TWithLean<T> = FlattenMaps<Require_id<T>> & {
-  createdAt: Date;
-  updatedAt: Date;
-};
+export type TPrimitiveOnly<T> = T extends string | number | boolean ? T : never;
 //#endregion GENERICS

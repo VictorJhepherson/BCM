@@ -1,10 +1,11 @@
-export interface IFormatOptionsMap {
+export interface IFormatMap {
   date: {
     value: string | Date;
-    style: Intl.DateTimeFormatOptions['dateStyle'];
+    config: { locale: string };
+    options: { style: Intl.DateTimeFormatOptions['dateStyle'] };
   };
   currency: {
     value: number;
-    currency: Intl.NumberFormatOptions['currency'];
+    config: { locale: string; currency: Intl.NumberFormatOptions['currency'] };
   };
 }
