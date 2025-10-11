@@ -12,6 +12,7 @@
     "typescript": "5.9.2"
   },
   "dependencies": {
-    "@bcm/models": "workspace:*"
+    "@bcm/models": "workspace:*",
+    "locale-currency": "^1.0.0"
   }
 }

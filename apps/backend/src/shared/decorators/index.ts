@@ -13,5 +13,6 @@ export {
   ByPass,
 } from '@/shared/decorators/by-pass/by-pass.decorator';
 
+export { Context } from '@/shared/decorators/context/context.decorator';
 export { Filter } from '@/shared/decorators/filter/filter.decorator';
 export { Payload } from '@/shared/decorators/payload/payload.decorator';

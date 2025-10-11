@@ -18,3 +18,5 @@ export const formatDate = ({ locale }: TFormatConfig<'date'>) => {
     return { value, formatted: { simple: formatted, completed: formatted } };
   };
 };
+
+export type TDateFormatter = ReturnType<typeof formatDate>;

@@ -1,1 +1,1 @@
-export { format } from '@/formatting';
+export { format, type TFormatting } from '@/formatting';

@@ -1,13 +1,11 @@
 import { TFormatConfig, TFormatReturn, TFormatValue } from '@bcm/models';
+import { getCurrency } from 'locale-currency';
 
-export const formatCurrency = ({
-  locale,
-  currency,
-}: TFormatConfig<'currency'>) => {
+export const formatCurrency = ({ locale }: TFormatConfig<'currency'>) => {
   return (value: TFormatValue<'currency'>): TFormatReturn<'currency'> => {
     const completed = new Intl.NumberFormat(locale, {
       style: 'currency',
-      currency,
+      currency: getCurrency(locale) ?? 'USD',
     }).format(value / 100);
 
     return {
@@ -19,3 +17,5 @@ export const formatCurrency = ({
     };
   };
 };
+
+export type TCurrencyFormatter = ReturnType<typeof formatCurrency>;

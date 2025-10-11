@@ -6,6 +6,6 @@ export interface IFormatMap {
   };
   currency: {
     value: number;
-    config: { locale: string; currency: Intl.NumberFormatOptions['currency'] };
+    config: { locale: string };
   };
 }

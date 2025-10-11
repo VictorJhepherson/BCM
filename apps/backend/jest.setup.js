@@ -15,3 +15,12 @@ jest.mock('@/shared/core', () => ({
     }),
   },
 }));
+
+jest.mock('locale-currency', () => ({
+  getCurrency: jest.fn().mockImplementation((locale) => {
+    if (locale === 'pt-BR') return 'BRL';
+    if (locale === 'en-US') return 'USD';
+
+    return null;
+  }),
+}));

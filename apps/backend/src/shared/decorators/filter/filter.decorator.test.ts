@@ -4,7 +4,7 @@ import { Filter } from './filter.decorator';
 
 export const getFactory = (decorator: Function) => {
   class TestDecorator {
-    run(@decorator() value: { _id: string; page: string }) {}
+    run(@decorator() _: { _id: string; page: string }) {}
   }
 
   const args = Reflect.getMetadata(ROUTE_ARGS_METADATA, TestDecorator, 'run');

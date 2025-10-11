@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@bcm/models": "workspace:*",
+    "@bcm/helpers": "workspace:*",
     "@bcm/testing": "workspace:*",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",

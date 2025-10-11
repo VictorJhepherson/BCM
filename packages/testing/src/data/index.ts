@@ -8,6 +8,8 @@ export { type TMockTranslation } from '@/data/modules/translations/translations.
 export const mockData = {
   project,
   translation,
+  user: values.user,
+  headers: values.headers,
   database: values.database,
   filter: { ...values.sort, ...values.pagination },
 };

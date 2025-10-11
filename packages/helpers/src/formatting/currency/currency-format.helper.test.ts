@@ -1,9 +1,20 @@
 import { TFormatReturn } from '@bcm/models';
 import { formatCurrency } from './currency-format.helper';
 
+jest.mock('locale-currency', () => ({
+  getCurrency: jest.fn().mockImplementation((locale: string) => {
+    if (locale === 'pt-BR') return 'BRL';
+    if (locale === 'en-US') return 'USD';
+
+    return null;
+  }),
+}));
+
 describe('[formatting] - formatCurrency', () => {
+  afterEach(() => jest.clearAllMocks());
+
   it('[BRL][pt-BR] - should return value and formatted values', () => {
-    const format = formatCurrency({ locale: 'pt-BR', currency: 'BRL' });
+    const format = formatCurrency({ locale: 'pt-BR' });
     const currency = format(123456);
 
     const expected: TFormatReturn<'currency'> = {
@@ -16,7 +27,20 @@ describe('[formatting] - formatCurrency', () => {
   });
 
   it('[USD][en-US] - should return value and formatted values', () => {
-    const format = formatCurrency({ locale: 'en-US', currency: 'USD' });
+    const format = formatCurrency({ locale: 'en-US' });
+    const currency = format(123456);
+
+    const expected: TFormatReturn<'currency'> = {
+      value: 123456,
+      formatted: { simple: '1.234.56', completed: '$1.234.56' },
+    };
+
+    expect(currency.value).toBe(expected.value);
+    expect(currency.formatted).toMatchObject(currency.formatted);
+  });
+
+  it('[USD][fr-CA] - should return value and formatted values', () => {
+    const format = formatCurrency({ locale: 'fr-CA' });
     const currency = format(123456);
 
     const expected: TFormatReturn<'currency'> = {
